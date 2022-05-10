@@ -3,28 +3,39 @@
 </script>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	<div class="container">
+		<div class="canvas">
+			{#each Array(1700) as _, index (index)}
+				<div class="pixel"></div>
+			{/each}
+		</div> 
+	</div>
 </main>
 
 <style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
+	.container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background: #f4f4f4;
+		width: 1020px;
+		height: 190px;
 	}
 
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
+	.canvas {
+		width: 1000px;
+		height: 170px;
 	}
 
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
+	.pixel {
+		width: 10px;
+		height: 10px;
+		float: left;
+		box-shadow: 0px 0px 1px #fff;
+		background-color: black;
+	}
+	
+	.pixel:nth-child(101) {
+		background: orange;
 	}
 </style>
