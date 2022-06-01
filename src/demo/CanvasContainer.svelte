@@ -1,223 +1,200 @@
 <script>
-    import Decore from './CanvasDecore.svelte'
+    import CanvasDecore from './CanvasDecore.svelte'
+//    import { watchResize } from "svelte-watch-resize";
+
+    let pixelSize = 10;
+//    let screenWidth = 0;
+//    let screenHeight = 0;
 </script>
 
-<div class="container">
-    <div class="container-top-gradient"></div>
-    <div class="container-top">
-        {#each Array(116) as _, index (index)}
-            <div class="container-column">
-                {#each Array(3) as _, index (index)}
-                    <div class="container-pixel"></div>
-                {/each}
+<!--get available screen size and adjust pixel size by it
+<svelte:window bind:screenWidth bind:screenHeight />-->
+
+<!--constants in braces represent the amount of pixels, as defined by the canvas matrix-->
+<div class="container" style="width: {116 * pixelSize}px; height: {27 * pixelSize}px">
+    <div class="container-top-gradient" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px"></div>
+    <div class="container-left-gradient" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px"></div>
+    <div class="container-right-gradient" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px"></div>
+    <div class="container-bot-gradient" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px"></div>
+
+    <div class="decore-container" style="width: {116 * pixelSize}px; height: {27 * pixelSize}px">
+        <CanvasDecore {pixelSize}></CanvasDecore>
+    </div>
+
+    <!--font-size adjustments might be harmful, need testing on mobile devices-->
+    <div class="container-axis-y" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px">
+        <div class="container-axis-y-arrow-body"></div>
+		<div class="container-axis-y-arrow-head" style="width: {pixelSize}px; height: {pixelSize}px; top: {pixelSize / 5}px"></div>
+        <div class="container-axis-y-arrow-rest" style="width: {5 * pixelSize}px; height: {22 * pixelSize}px">
+            <div class="container-axis-y-arrow-rest-name" style="font-size: {pixelSize / 10}em; right: {pixelSize * -1.5}px; top: {pixelSize}px"><b>Y</b></div> 
+            <div class="container-axis-y-arrow-rest-dash" style="width: {5 * pixelSize}px; height: {17 * pixelSize}px">
+                <div class="container-axis-y-arrow-rest-dash-first" style="font-size: {pixelSize / 10}em; right: {pixelSize / 2}px; bottom: {pixelSize / 5}px"><b><i>k</i></b></div>
+                <div class="container-axis-y-arrow-rest-dash-last" style="font-size: {pixelSize / 10}em; right: {pixelSize / 2}px; top: {pixelSize * -1}px"><b><i>k+17</i></b></div>
             </div>
-        {/each}
-    </div>
-
-    <div class="container-left-gradient"></div>
-    <div class="container-left">
-        {#each Array(3) as _, index (index)}
-            <div class="container-column">
-                {#each Array(21) as _, index (index)}
-                    <div class="container-pixel"></div>
-                {/each}
-            </div>
-        {/each}
-    </div>
-
-    <div class="decore-container">
-        <Decore></Decore>
-    </div>
-
-    <div class="container-right-gradient"></div>
-    <div class="container-right">
-        {#each Array(3) as _, index (index)}
-            <div class="container-column">
-                {#each Array(21) as _, index (index)}
-                    <div class="container-pixel"></div>
-                {/each}
-            </div>
-        {/each}
-    </div>
-
-    <div class="container-bot-gradient"></div>
-    <div class="container-bot">
-        {#each Array(116) as _, index (index)}
-            <div class="container-column">
-                {#each Array(3) as _, index (index)}
-                    <div class="container-pixel"></div>
-                {/each}
-            </div>
-        {/each}
-    </div>
-
-    <div class="container-axis-y">
-        <div class="container-arrow-body"></div>
-		<div class="container-arrow-head"></div>
-        <div class="container-arrow-name">
-            <b>y-axis</b>
         </div>
     </div>
 
-    <div class="container-axis-x">
-        <div class="container-arrow-body"></div>
-        <div class="container-arrow-head"></div>
-        <div class="container-arrow-name">
-            <b>x-axis</b>
+    <!--font-size adjustments might be harmful, need testing on mobile devices-->
+    <div class="container-axis-x" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px">
+        <div class="container-axis-x-arrow-body"></div> 
+        <div class="container-axis-x-arrow-head" style="width: {pixelSize}px; height: {pixelSize}px; right: {pixelSize / 5}px"></div>
+        <div class="container-axis-x-arrow-rest" style="width: {111 * pixelSize}px; height: {5 * pixelSize}px">
+            <div class="container-axis-x-arrow-rest-name" style="font-size: {pixelSize / 10}em; right: {pixelSize * 1.3}px; top: {pixelSize * -2}px"><b>X</b></div> 
+            <div class="container-axis-x-arrow-rest-dash" style="width: {106 * pixelSize}px; height: {5 * pixelSize}px">
+                <div class="container-axis-x-arrow-rest-dash-first" style="font-size: {pixelSize / 10}em; left: {pixelSize / 5}px"><b><i>0</i></b></div>
+                <div class="container-axis-x-arrow-rest-dash-last" style="font-size: {pixelSize / 10}em; right: {pixelSize * -1}px"><b><i>106</i></b></div>
+            </div>
         </div>
     </div>
 </div>
 
 <style>
     .container {
-		transform: translateY(-50%) translateX(-50%);
 		flex-flow: row wrap;
-		position: absolute;
-		contain: content;
-		display: flex;
-		width: 1160px;
-		height: 270px;
-		left: 50%;
-		top: 50%;
-	}
-
-    .container-top {
-		width: 1160px;
-		height: 30px;
+		position: inherit;
+		contain: inherit;
+		display: inherit;
 	}
 
     .container-top-gradient {
-		background-image: linear-gradient(to top, #ff000000, #790000);
-		position: absolute;
-		width: 1160px;
-		height: 50px;
+		background-image: linear-gradient(to top, #ff000000, #ffffff);
+		position: inherit;
         z-index: 3;   
         top: 0;
 	}
 
-	.container-left {
-        height: 210px;
-		width: 30px;
-	}
-
     .container-left-gradient {
-		background-image: linear-gradient(to left, #ff000000, #790000);
-		position: absolute;
-		height: 270px;
-		width: 50px;
+		background-image: linear-gradient(to left, #ff000000, #ffffff);
+		position: inherit;
         z-index: 3; 
         left: 0;
 	}
 
-	.decore-container {
-        position: relative;
-        display: flex;
-        width: 1100px;
-        height: 210px;
-		z-index: 2;
-	}
-
-	.container-right {
-        height: 210px;
-		width: 30px;
-	}
+    .decore-container {
+        flex-flow: inherit;
+		display: flex;
+    }
 
 	.container-right-gradient {
-		background-image: linear-gradient(to right, #ff000000, #790000);
-		position: absolute;
-		height: 270px;
-		width: 50px;
+		background-image: linear-gradient(to right, #ff000000, #ffffff);
+		position: inherit;
         z-index: 3;
         right: 0;
 	}
 
-	.container-bot {
-		width: 1160px;
-		height: 30px;
-	}
-
 	.container-bot-gradient {
-		background-image: linear-gradient(to bottom, #ff000000, #790000);
-		position: absolute;
-		width: 1160px;
-		height: 50px;
+		background-image: linear-gradient(to bottom, #ff000000, #ffffff);
+		position: inherit;
         z-index: 3;   
         bottom: 0;
 	}
 
-    .container-pixel {
-        float: left;
-		width: 10px;
-		height: 10px;
-		box-shadow: 0px 0px 1px #999999;
-	}
-
     .container-axis-y {
-		position: absolute;
-        height: inherit;
-        width: 10px;
-		left: 40px;
+		position: inherit;
         z-index: 4;
+        left: 0;
+        top: 0;
     }
 
-    .container-axis-y .container-arrow-body {
+    .container-axis-y-arrow-body {
         border-left: 2px solid #000000;
-		position: absolute;
+		position: inherit;
         height: inherit;
-		left: 9px;
+		right: -1px;
     }
 
-    .container-axis-y .container-arrow-head {
-        top: 2px;
+    .container-axis-y-arrow-head {
         left: 100%;
-        width: 10px;
-        height: 10px;
         float: right;
-        position: absolute;
+        position: inherit;
         border-top: 2px solid #000000;
         border-right: 2px solid #000000;
         transform: translateX(-50%) rotate(-45deg);
         /* Hacky as fuck but it somehow works, so fuck off! */
     }
 
-    .container-axis-y .container-arrow-name {
-        position: absolute;
+    .container-axis-y-arrow-rest {
+        position: inherit;
+        z-index: 5;
+        left: 0;
+        top: 0;
+    }
+
+    .container-axis-y-arrow-rest-name {
+        position: inherit;
         color: #000000;
-        content: "Y";
-        top: 15px;
+    }
+
+    .container-axis-y-arrow-rest-dash {
+        position: inherit;
+        text-align: right;
+        z-index: 5;
+        bottom: 0;
+        left: 0;
+    }
+
+    .container-axis-y-arrow-rest-dash-first {
+        position: inherit;
+        color: #000000;
+        bottom: 0;
+    }
+
+    .container-axis-y-arrow-rest-dash-last {
+        position: inherit;
+        color: #000000;
     }
 
     .container-axis-x {
-		position: absolute;
-        width: inherit;
-        height: 10px;
-		bottom: 40px;
+		position: inherit;
         z-index: 4;
+        bottom: 0;
     }
 
-    .container-axis-x .container-arrow-body {
+    .container-axis-x-arrow-body {
         border-bottom: 2px solid #000000;
-		position: absolute;
+		position: inherit;
         width: inherit;
-        bottom: 9px;
+        top: -1px;
     }
 
-    .container-axis-x .container-arrow-head {
-        right: 2px;
-        width: 10px;
-        height: 10px;
+    .container-axis-x-arrow-head {
         float: right;
-        position: absolute;
+        position: inherit;
         border-top: 2px solid #000000;
         border-right: 2px solid #000000;
         transform: translateY(-50%) rotate(45deg);
         /* Hacky as fuck but it somehow works, so fuck off! */
     } 
 
-    .container-axis-x .container-arrow-name {
-        position: absolute;
-        color: #000000;
-        right: 15px;
+    .container-axis-x-arrow-rest {
+        position: inherit;
+        z-index: 5;
+        right: 0;
+        top: 0;
     }
 
+    .container-axis-x-arrow-rest-name {
+        position: inherit;
+        color: #000000;
+    }
+
+    .container-axis-x-arrow-rest-dash {
+        position: inherit;
+        text-align: left;
+        z-index: 5;
+        bottom: 0;
+        left: 0;
+    }
+
+    .container-axis-x-arrow-rest-dash-first {
+        position: inherit;
+        color: #000000;
+        top: 0;
+    }
+
+    .container-axis-x-arrow-rest-dash-last {
+        position: inherit;
+        color: #000000;
+        top: 0;
+    }    
 </style>
