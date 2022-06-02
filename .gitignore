@@ -1,4 +1,4 @@
 /node_modules/
-#/public/build/
+#/public/build/ #git subtree push --prefix public/ origin gh-pages
 
 .DS_Store
