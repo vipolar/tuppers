@@ -1,100 +1,73 @@
-<script>
-    import Decore from './demo/Graph.svelte'
-</script>
-
-<div class="graph-container">
-
-    <div class="decore"><Decore></Decore></div>
-
-    
-
-    
-    
+<div class="vertical flip-container" ontouchstart="this.classList.toggle('hover');">
+    <div class="flipper">
+        <div class="front">
+            Front Side
+        </div>
+        <div class="back">
+            Back Side
+        </div>
+    </div>
 </div>
 
 <style>
-
-
-    .graph-container {
-        contain: content;
-        width: 1150px;
-	    height: 260px;
-    }
-    
-    .graph-axis-y {
-        position: fixed;
-        top: 0%;
-        left: 15px;
-        contain: content;
-        height: 260px;
-        width: 12px;
+    /* entire container, keeps perspective */
+    .flip-container {
+        perspective: 1000px;
     }
 
-    .graph-axis-y .arrow-body {
-        transform: translateX(-50%);
-        background-color: #000000;
+    .flip-container, .front, .back {
+        width: 320px;
+        height: 480px;
+    }
+
+    /* flip speed goes here */
+    .flipper {
+        transition: 0.6s;
+        transform-style: preserve-3d;
+        position: relative;
+    }
+
+    /* hide back of pane during swap */
+    .front, .back {
         position: absolute;
-        height: inherit;
-        width: 2px;
-        left: 50%;
+        top: 0;
+        left: 0;
+        backface-visibility:hidden;
+        -webkit-backface-visibility:hidden;
     }
 
-    .graph-axis-y .arrow-head {
-        top: 2px;
-        left: 50%;
-        width: 10px;
-        height: 10px;
-        float: right;
-        position: absolute;
-        border-top: 2px solid #000000;
-        border-right: 2px solid #000000;
-        transform: translateX(-50%) rotate(-45deg);
+    /* front pane, placed above back */
+    .front {
+        z-index: 1;
+        background-color:red;
     }
 
-    .graph-axis-x {
-        position: fixed;
-        top: 90%;
-        contain: content;
-        width: 1110px;
-        height: 12px;
+    /* back, initially hidden pane */
+    .back {
+        transform: rotateX(-180deg);
+        background-color:green; 
+        animation: toFront 0.3s linear normal forwards;
+    }
+    .vertical.flip-container {
+        position: relative;
+    }
+    .vertical.flip-container:hover .back {
+        animation-delay: 0.3s;
+        animation: toBack 0.3s linear normal  forwards;
+    }
+    @keyframes toBack {  
+    0% {z-index:0;}
+    100% {z-index:1;}
+    }
+    @keyframes toFront {
+    0% {z-index:1;}
+    100% {z-index:0;}
+    }
+    .vertical.flip-container .flipper {
+        transform-origin: 100% 240px; /* half of height */
     }
 
-    .graph-axis-x .arrow-body {
-        transform: translateY(-50%);
-        background-color: #000000;
-        position: absolute;
-        width: inherit;
-        height: 2px;
-        top: 50%;
-    }
-
-    .graph-axis-x .arrow-head {
-        top: 50%;
-        right: 2px;
-        width: 10px;
-        height: 10px;
-        float: right;
-        position: absolute;
-        border-top: 2px solid #000000;
-        border-right: 2px solid #000000;
-        transform: translateY(-50%) rotate(45deg);
-    }
-
-    .chart {
-        border-left: 2px solid black;
-        border-bottom: 2px solid black;
-        width: 1120px;
-        height: 230px;
-    }
-
-    .decor {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: #f4f4f4;
-        width: 1120px;
-        height: 210px;
-        margin-bottom: 20px;
-        margin-left: 20px;
+    .vertical.flip-container:hover .flipper {
+        transform: rotateX(-180deg);
     }
 </style>

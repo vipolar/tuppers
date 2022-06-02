@@ -1,14 +1,7 @@
 <script>
     import CanvasDecore from './CanvasDecore.svelte'
-//    import { watchResize } from "svelte-watch-resize";
-
-    let pixelSize = 10;
-//    let screenWidth = 0;
-//    let screenHeight = 0;
+    export let pixelSize;
 </script>
-
-<!--get available screen size and adjust pixel size by it
-<svelte:window bind:screenWidth bind:screenHeight />-->
 
 <!--constants in braces represent the amount of pixels, as defined by the canvas matrix-->
 <div class="container" style="width: {116 * pixelSize}px; height: {27 * pixelSize}px">
@@ -51,9 +44,9 @@
 <style>
     .container {
 		flex-flow: row wrap;
-		position: inherit;
-		contain: inherit;
-		display: inherit;
+		position: absolute;
+		contain: content;
+		display: flex;        
 	}
 
     .container-top-gradient {
