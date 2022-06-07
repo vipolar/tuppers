@@ -1,7 +1,30 @@
+:root {
+	/* Matrix */
+	--matrix-box-shadow: #990000;
+	--matrix-pixel-box-shadow: #ffffff;
+	--matrix-pixel-background-color: #999999;
+	--matrix-pixel-box-shadow-hover: #ff0000;
+	--matrix-pixel-background-color-hover: #ffa500;
+
+	/* Decore */
+	--decore-box-shadow: #cccccc;
+	--decore-inner-box-shadow: #bbbbbb;
+	--decore-outer-pixel-box-shadow: #ffffff;
+	--decore-outer-pixel-background-color: #aaaaaa;
+	--decore-inner-pixel-box-shadow: #ffffff;
+	--decore-inner-pixel-background-color: #a7a7a7;
+
+	/* Container */
+	--container-gradient-start: transparent;
+	--container-gradient-finish: #ffffff;
+	--container-decore-arrow-line: #000000;
+	--container-decore-arrow-legend: #000000;
+}
+
 html, body {
 	position: relative;
-	width: 100%; /* WHY??? */
-	height: 100%; /* HOW??? */
+/*	width: 100%; 
+	height: 100%; */
 }
 
 body {
@@ -12,8 +35,13 @@ body {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
+div {
+	padding: 0;        
+	margin: 0;
+}
+
 a {
-	color: rgb(0,100,200);
+	color: #0064c8;
 	text-decoration: none;
 }
 
@@ -22,23 +50,41 @@ a:hover {
 }
 
 a:visited {
-	color: rgb(0,80,160);
+	color: #0050a0;
 }
 
+input, button, select, textarea {
+	background-color: #dddddd; /* colors are subject to change */
+	border: 1px solid #ff0000;
+	box-sizing: border-box;
+	font-family: inherit;
+	font-size: inherit;
+	border-radius: 7px;
+	outline: none;
+	padding: 0;
+	margin: 0;
+}
+
+input:hover, button:hover, select:hover, textarea:hover {
+	outline: 1px solid #0064c8;
+	outline-offset: -1px;
+}
+
+input:focus, button:focus, select:focus, textarea:focus {
+	outline: 1px solid #0064c8;
+	outline-offset: -1px;
+}
+
+sub {
+	font-size: 0.6em;
+}
+
+/*
 label {
 	display: block;
 }
 
-input, button, select, textarea {
-	font-family: inherit;
-	font-size: inherit;
-	-webkit-padding: 0.4em 0;
-	padding: 0.4em;
-	margin: 0 0 0.5em 0;
-	box-sizing: border-box;
-	border: 1px solid #ccc;
-	border-radius: 2px;
-}
+
 
 input:disabled {
 	color: #ccc;
@@ -61,3 +107,4 @@ button:not(:disabled):active {
 button:focus {
 	border-color: #666;
 }
+*/
