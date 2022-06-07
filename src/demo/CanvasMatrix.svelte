@@ -15,18 +15,18 @@
 
 <style>
 	.matrix {
-		box-shadow: 0px 0px 2px #990000;
+		box-shadow: 0px 0px 2px var(--matrix-box-shadow);
 		display: inherit;
 	}
 
 	.matrix-pixel {
-		box-shadow: 0px 0px 1px #ffffff;
-		background-color: #999999;	
+		box-shadow: 0px 0px 1px var(--matrix-pixel-box-shadow);
+		background-color: var(--matrix-pixel-background-color);	
 		float: left;		
 	}
 
 	.matrix-pixel:hover {
-		box-shadow: 0px 0px 1px #ff0000;
-		background: #ffa500;
+		box-shadow: 0px 0px 1px var(--matrix-pixel-background-color-hover);
+		background: var(--matrix-pixel-background-color-hover);
 	}
 </style>

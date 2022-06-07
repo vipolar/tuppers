@@ -1,6 +1,6 @@
 <script>
 	//export let name;
-	import Demo from './demo/CanvasBlanket.svelte'
+	import Demo from './Demo.svelte'
 </script>
 
 <Demo></Demo>

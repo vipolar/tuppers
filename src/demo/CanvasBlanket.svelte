@@ -1,5 +1,5 @@
 <script>
-    import CanvasContainer from './CanvasContainer.svelte'
+    import CanvasButtons from './CanvasButtons.svelte'
     import { onMount } from 'svelte';
 
     let pixelSize = 0;
@@ -7,50 +7,41 @@
     let tempPHeight = 0;
     let windowWidth = 0;
     let windowHeight = 0;
-    let windowDegree = 0;
-	
-	const debounce = (func, delay) => {
-		let timer;
-
-		return function () {
-			const context = this;
-			const args = arguments;
-			clearTimeout(timer);
-			timer = setTimeout(() => func.apply(context, args), delay);
-		};
-	};
+    let loaderDisplay = false;
 
 	const setPixelSize = () => {
+        /* display loader */
+        loaderDisplay = true;
+
+        /* get client screen size */
         windowWidth = window.innerWidth;
         windowHeight = window.innerHeight;
 
         if (windowWidth > windowHeight) {
-            windowDegree = 0;
-            tempPHeight = Math.floor(windowHeight / 27);
+            tempPHeight = Math.floor(windowHeight / 34);
             tempPWidth =  Math.floor(windowWidth / 116);
         } else if (windowWidth < windowHeight) {
-            windowDegree = -90;
             tempPHeight = Math.floor(windowHeight / 116);
-            tempPWidth =  Math.floor(windowWidth / 27);
+            tempPWidth =  Math.floor(windowWidth / 34);
         } else {
-            windowDegree = 0;
-            tempPHeight = Math.floor(windowHeight / 27);
+            tempPHeight = Math.floor(windowHeight / 34);
             tempPWidth =  Math.floor(windowWidth / 116);
         }
 
         /* check for the boundaries and the balance of Height vs Width */
         pixelSize = tempPWidth > tempPHeight ? tempPHeight : tempPWidth;
         pixelSize = pixelSize <= 10 ? pixelSize : 10;
-        pixelSize = pixelSize >= 2 ? pixelSize : 2;
+        pixelSize = pixelSize >= 4 ? pixelSize : 4;
+
+        /* remove display loader (serves no purpose other than being pretty) */
+        setTimeout( () => {loaderDisplay = false}, Math.random() * 1200 | 600);
 	};
 	
-	const debouncedsetPixelSize = debounce(setPixelSize, 300);
-	
 	onMount(() => {		
-		window.addEventListener('resize', debouncedsetPixelSize);
+		window.addEventListener('resize', setPixelSize);
 		
 		return () => {
-			window.removeEventListener('resize', debouncedsetPixelSize);
+			window.removeEventListener('resize', setPixelSize);
 		}
 	});
 
@@ -58,185 +49,186 @@
     setPixelSize();
 </script>
 
-<!--constants in braces represent the amount of pixels, as defined by the canvas matrix-->
-<div class="container-container" style="transform: rotate({windowDegree}deg)"> <!--width: {116 * pixelSize}px; height: {27 * pixelSize}px;-->
-    <CanvasContainer {pixelSize}></CanvasContainer>
-    <h1>{windowWidth} {windowHeight} {tempPWidth} {tempPHeight} {pixelSize}</h1>
+<div class="butons-container" style="width: {116 * pixelSize}px; height: {34 * pixelSize}px">
+    <CanvasButtons {pixelSize}></CanvasButtons>
+    <h1 class="butons-container-debug" style="font-size: {pixelSize / 10}em">{windowWidth} {windowHeight} {pixelSize}</h1>
 </div>
 
+{#if loaderDisplay}
+    <div class="blanket-loading">
+        <div class="blanket-loading-mosaic" style="--cell-size: {64 * (pixelSize / 10)}px">
+            <h1 class="blanket-loading-text">Loading...</h1>
 
-
-<div class="loader">
-    <h2>LOADING</h2>
-    <div class="mosaic-loader">
-        <div class="cell d-0"></div>
-        <div class="cell d-1"></div>
-        <div class="cell d-2"></div>
-        <div class="cell d-3"></div>
-        <div class="cell d-1"></div>
-        <div class="cell d-2"></div>
-        <div class="cell d-3"></div>
-        <div class="cell d-4"></div>
-        <div class="cell d-2"></div>
-        <div class="cell d-3"></div>
-        <div class="cell d-4"></div>
-        <div class="cell d-5"></div>
-        <div class="cell d-3"></div>
-        <div class="cell d-4"></div>
-        <div class="cell d-5"></div>
-        <div class="cell d-6"></div>
+            <div class="cell d-0"></div>
+            <div class="cell d-1"></div>
+            <div class="cell d-2"></div>
+            <div class="cell d-3"></div>
+            <div class="cell d-1"></div>
+            <div class="cell d-2"></div>
+            <div class="cell d-3"></div>
+            <div class="cell d-4"></div>
+            <div class="cell d-2"></div>
+            <div class="cell d-3"></div>
+            <div class="cell d-4"></div>
+            <div class="cell d-5"></div>
+            <div class="cell d-3"></div>
+            <div class="cell d-4"></div>
+            <div class="cell d-5"></div>
+            <div class="cell d-6"></div>
+        </div>
     </div>
-</div>
+{/if}
 
 <style>
-    .container-container {
-        justify-content: center;
-        align-items: center;
-        flex-flow: row wrap;
+    .butons-container {
+        position: relative; 
+        margin-right: auto;
+		margin-left: auto;
+        display: block;
+    }
+
+    .butons-container-debug {
         position: absolute;
+        color: orangered; 
+        font-weight: 500;
+        display: block;
+        right: 2%;
+        top: 2%;
+    }
+
+    .blanket-loading {
+        justify-content: center;
+        flex-direction: column;
+        background: #2b2b2b;
+        font-family: "Lato";
+        align-items: center;
+        font-weight: 300;
+        font-size: 24px;
+        position: fixed;
         display: flex;
         height: 100%;
         width: 100%;
-    }
-
-    h1 {
-        display: block;
-        font-weight: 500;
-        font-size: 1em;
-        color: orangered;
-        position: absolute;
-        z-index: 99;
-        right: 0;
+        margin: 0;
+        left: 0;
         top: 0;
     }
 
-    h2 {
+    .blanket-loading-text {
+        position: absolute;
+        color: #ffffff; 
+        font-weight: 500;
+        font-size: 0.6em;
         display: block;
-        color: white;
-        font-weight: 100;
-        text-align: center;
+        right: 5%;
+        top: 0;
     }
 
-    .loader {
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        margin: 0;
-        font-family: "Lato";
-        font-weight: 300;
-        font-size: 24px;
-        background: #2b2b2b;
-    }
-
-    .mosaic-loader {
-        --cell-size: 64px;
-        --cell-spacing: 1px;
-        --border-width: 1px;
-        --cells: 4;
+    .blanket-loading-mosaic {
         --total-size: calc(var(--cells) * (var(--cell-size) + 2 * var(--cell-spacing)));
-        display: flex;
-        flex-wrap: wrap;
-        width: var(--total-size);
         height: var(--total-size);
+        width: var(--total-size);
+        --border-width: 1px;
+        --cell-spacing: 1px;
+        flex-wrap: wrap;
+        display: flex;
+        --cells: 4;
     }
 
-    .mosaic-loader > .cell {
-        --cell-color: white;
-        flex: 0 0 var(--cell-size);
-        margin: var(--cell-spacing);
-        background-color: transparent;
-        box-sizing: border-box;
+    .blanket-loading-mosaic > .cell {
         border: var(--border-width) solid var(--cell-color);
         animation: 1.5s ripple ease infinite;
+        background-color: transparent;
+        margin: var(--cell-spacing);
+        flex: 0 0 var(--cell-size);
+        box-sizing: border-box;
+        --cell-color: white;
     }
 
-    .mosaic-loader > .cell.d-1 {
+    .blanket-loading-mosaic > .cell.d-1 {
         animation-delay: 100ms;
     }
 
-    .mosaic-loader > .cell.d-2 {
+    .blanket-loading-mosaic > .cell.d-2 {
         animation-delay: 200ms;
     }
 
-    .mosaic-loader > .cell.d-3 {
+    .blanket-loading-mosaic > .cell.d-3 {
         animation-delay: 300ms;
     }
 
-    .mosaic-loader > .cell.d-4 {
+    .blanket-loading-mosaic > .cell.d-4 {
         animation-delay: 400ms;
     }
 
-    .mosaic-loader > .cell.d-5 {
+    .blanket-loading-mosaic > .cell.d-5 {
         animation-delay: 500ms;
     }
 
-    .mosaic-loader > .cell.d-6 {
+    .blanket-loading-mosaic > .cell.d-6 {
         animation-delay: 600ms;
     }
 
-    .mosaic-loader > .cell:nth-child(1) {
+    .blanket-loading-mosaic > .cell:nth-child(1) {
         --cell-color: #d4aee0;
     }
 
-    .mosaic-loader > .cell:nth-child(2) {
+    .blanket-loading-mosaic > .cell:nth-child(2) {
         --cell-color: #8975b4;
     }
 
-    .mosaic-loader > .cell:nth-child(3) {
+    .blanket-loading-mosaic > .cell:nth-child(3) {
         --cell-color: #64518a;
     }
 
-    .mosaic-loader > .cell:nth-child(4) {
+    .blanket-loading-mosaic > .cell:nth-child(4) {
         --cell-color: #565190;
     }
 
-    .mosaic-loader > .cell:nth-child(5) {
+    .blanket-loading-mosaic > .cell:nth-child(5) {
         --cell-color: #44abac;
     }
 
-    .mosaic-loader > .cell:nth-child(6) {
+    .blanket-loading-mosaic > .cell:nth-child(6) {
         --cell-color: #2ca7d8;
     }
 
-    .mosaic-loader > .cell:nth-child(7) {
+    .blanket-loading-mosaic > .cell:nth-child(7) {
         --cell-color: #1482ce;
     }
 
-    .mosaic-loader > .cell:nth-child(8) {
+    .blanket-loading-mosaic > .cell:nth-child(8) {
         --cell-color: #05597c;
     }
 
-    .mosaic-loader > .cell:nth-child(9) {
+    .blanket-loading-mosaic > .cell:nth-child(9) {
         --cell-color: #b2dd57;
     }
 
-    .mosaic-loader > .cell:nth-child(10) {
+    .blanket-loading-mosaic > .cell:nth-child(10) {
         --cell-color: #57c443;
     }
 
-    .mosaic-loader > .cell:nth-child(11) {
+    .blanket-loading-mosaic > .cell:nth-child(11) {
         --cell-color: #05b853;
     }
 
-    .mosaic-loader > .cell:nth-child(12) {
+    .blanket-loading-mosaic > .cell:nth-child(12) {
         --cell-color: #19962e;
     }
 
-    .mosaic-loader > .cell:nth-child(13) {
+    .blanket-loading-mosaic > .cell:nth-child(13) {
         --cell-color: #fdc82e;
     }
 
-    .mosaic-loader > .cell:nth-child(14) {
+    .blanket-loading-mosaic > .cell:nth-child(14) {
         --cell-color: #fd9c2e;
     }
 
-    .mosaic-loader > .cell:nth-child(15) {
+    .blanket-loading-mosaic > .cell:nth-child(15) {
         --cell-color: #d5385a;
     }
 
-    .mosaic-loader > .cell:nth-child(16) {
+    .blanket-loading-mosaic > .cell:nth-child(16) {
         --cell-color: #911750;
     }
 

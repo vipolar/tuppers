@@ -46,18 +46,18 @@
 		flex-flow: row wrap;
 		position: absolute;
 		contain: content;
-		display: flex;        
+		display: flex;
 	}
 
     .container-top-gradient {
-		background-image: linear-gradient(to top, #ff000000, #ffffff);
+		background-image: linear-gradient(to top, var(--container-gradient-start), var(--container-gradient-finish));
 		position: inherit;
         z-index: 3;   
         top: 0;
 	}
 
     .container-left-gradient {
-		background-image: linear-gradient(to left, #ff000000, #ffffff);
+		background-image: linear-gradient(to left, var(--container-gradient-start), var(--container-gradient-finish));
 		position: inherit;
         z-index: 3; 
         left: 0;
@@ -69,14 +69,14 @@
     }
 
 	.container-right-gradient {
-		background-image: linear-gradient(to right, #ff000000, #ffffff);
+		background-image: linear-gradient(to right, var(--container-gradient-start), var(--container-gradient-finish));
 		position: inherit;
         z-index: 3;
         right: 0;
 	}
 
 	.container-bot-gradient {
-		background-image: linear-gradient(to bottom, #ff000000, #ffffff);
+		background-image: linear-gradient(to bottom, var(--container-gradient-start), var(--container-gradient-finish));
 		position: inherit;
         z-index: 3;   
         bottom: 0;
@@ -90,7 +90,7 @@
     }
 
     .container-axis-y-arrow-body {
-        border-left: 2px solid #000000;
+        border-left: 2px solid var(--container-decore-arrow-line);
 		position: inherit;
         height: inherit;
 		right: -1px;
@@ -100,9 +100,9 @@
         left: 100%;
         float: right;
         position: inherit;
-        border-top: 2px solid #000000;
-        border-right: 2px solid #000000;
         transform: translateX(-50%) rotate(-45deg);
+        border-top: 2px solid var(--container-decore-arrow-line);
+        border-right: 2px solid var(--container-decore-arrow-line);
         /* Hacky as fuck but it somehow works, so fuck off! */
     }
 
@@ -114,8 +114,8 @@
     }
 
     .container-axis-y-arrow-rest-name {
+        color: var(--container-decore-arrow-legend);
         position: inherit;
-        color: #000000;
     }
 
     .container-axis-y-arrow-rest-dash {
@@ -127,14 +127,14 @@
     }
 
     .container-axis-y-arrow-rest-dash-first {
+        color: var(--container-decore-arrow-legend);
         position: inherit;
-        color: #000000;
         bottom: 0;
     }
 
     .container-axis-y-arrow-rest-dash-last {
+        color: var(--container-decore-arrow-legend);
         position: inherit;
-        color: #000000;
     }
 
     .container-axis-x {
@@ -144,7 +144,7 @@
     }
 
     .container-axis-x-arrow-body {
-        border-bottom: 2px solid #000000;
+        border-bottom: 2px solid var(--container-decore-arrow-line);
 		position: inherit;
         width: inherit;
         top: -1px;
@@ -153,9 +153,9 @@
     .container-axis-x-arrow-head {
         float: right;
         position: inherit;
-        border-top: 2px solid #000000;
-        border-right: 2px solid #000000;
         transform: translateY(-50%) rotate(45deg);
+        border-top: 2px solid var(--container-decore-arrow-line);
+        border-right: 2px solid var(--container-decore-arrow-line);
         /* Hacky as fuck but it somehow works, so fuck off! */
     } 
 
@@ -167,8 +167,8 @@
     }
 
     .container-axis-x-arrow-rest-name {
+        color: var(--container-decore-arrow-legend);
         position: inherit;
-        color: #000000;
     }
 
     .container-axis-x-arrow-rest-dash {
@@ -180,14 +180,14 @@
     }
 
     .container-axis-x-arrow-rest-dash-first {
+        color: var(--container-decore-arrow-legend);
         position: inherit;
-        color: #000000;
         top: 0;
     }
 
     .container-axis-x-arrow-rest-dash-last {
+        color: var(--container-decore-arrow-legend);
         position: inherit;
-        color: #000000;
         top: 0;
     }    
 </style>

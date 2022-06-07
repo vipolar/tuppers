@@ -1,21 +1,27 @@
 <script>
-	import Graph from './demo/CanvasContainer.svelte'
+	import Graph from './demo/CanvasBlanket.svelte'
 </script>
 
-<div class="demo-container">
-	<div class="graph"><Graph></Graph></div>
-    
+<div class="graph-container">
+	<Graph></Graph>    
 </div>
 
 <style>
-	.demo-container {
-		height: 600px;
-		width: 1300px;
-	}
+	@media only screen and (orientation: portrait) {
+        .graph-container {
+			position:relative; 
+			margin-right: auto;
+			margin-left: auto;
+			display: block;
+		}
+    }
 
-	.graph {
-		
-		position: absolute;
-
-	}
+	@media only screen and (orientation: landscape) {
+        .graph-container {
+			position:relative;
+			margin-right: auto;
+			margin-left: auto;
+			display: block;
+		}
+    }
 </style>

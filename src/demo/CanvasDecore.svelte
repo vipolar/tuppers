@@ -94,7 +94,7 @@
 
 <style>
     .decore {
-		box-shadow: 0px 0px 1px #cccccc;
+		box-shadow: 0px 0px 1px var(--decore-box-shadow);
 		flex-flow: row wrap;
 		position: inherit;
 		display: inherit;
@@ -106,7 +106,7 @@
     }
 
     .decore-inner {
-        box-shadow: 0px 0px 1px #bbbbbb;
+        box-shadow: 0px 0px 1px var(--decore-inner-box-shadow);
         flex-flow: row wrap;
         position: relative;
         display: inherit;
@@ -125,14 +125,14 @@
 	}
 
     .decore-outer-pixel {
-		box-shadow: 0px 0px 1px #ffffff;
-		background-color: #aaaaaa;
+		box-shadow: 0px 0px 1px var(--decore-outer-pixel-box-shadow);
+		background-color: var(--decore-outer-pixel-background-color);
         float: left;
 	}
 
     .decore-inner-pixel {
-		box-shadow: 0px 0px 1px #ffffff;
-		background-color: #a7a7a7;
+		box-shadow: 0px 0px 1px var(--decore-inner-pixel-box-shadow);
+		background-color: var(--decore-inner-pixel-background-color);
 		float: left;
 	}
 </style>
