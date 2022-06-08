@@ -19,6 +19,7 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
+    "bignumber.js": "^9.0.2",
     "sirv-cli": "^2.0.0"
   }
 }

@@ -1,7 +1,84 @@
 <script>
     import CanvasContainer from './CanvasContainer.svelte'
+    import { kValueStringBin } from './Stores.js';
+    import { BigNumber } from "bignumber.js";
     export let pixelSize;
-    const kValue = '4858487703217654168507377107565676789145697178497253677539145555247620343537955749299116772611982962556356527603203744742682135448820545638134012705381689785851604674225344958377377969928942335793703373498110479735981161931616997837568312568489938311294622859986621379234205529965392091893253288500432782862263410646820171439206408889517627953930924005233285455643232746873900205120036557171717499335122490912065694632935352302178602108137941774883061885522205403967593003199773578952627785152838963495027790689532144351329310799436758088941551';
+
+    let kValueTextAreaString = '';
+    let kValueStringBinary = '';
+    let kValueMode = 'dec';
+	let kValueBigNumber;
+    
+    kValueStringBin.subscribe(value => {
+        kValueStringBinary = value;
+        kValueDisplay(kValueStringBinary);
+    });
+
+    function kValueDisplay(value) {
+        if (kValueMode === 'b32') {
+            kValueBigNumber = new BigNumber(value, 2).times(17);
+            kValueTextAreaString = kValueBigNumber.toString(32);
+        } else if (kValueMode === 'dec') {
+            kValueBigNumber = new BigNumber(value, 2).times(17);
+            kValueTextAreaString = kValueBigNumber.toString(10);
+        } else if (kValueMode === 'bin') {
+            kValueTextAreaString = value;
+        } else { /* shouldn't be possible */
+            kValueTextAreaString = 'ERR!'; 
+        }
+    }
+
+    function kValueDisplayButton() {
+        if (kValueMode === 'b32') {  
+            kValueMode = 'dec';
+        } else if (kValueMode === 'dec') {
+            kValueMode = 'bin';
+        } else if (kValueMode === 'bin') {
+            kValueMode = 'b32';
+        } else { /* default */
+            kValueMode = 'dec';
+        }
+
+        kValueDisplay(kValueStringBinary);
+	}
+
+    //$: kValueTextAreaString, console.log('hit');
+    //$: kValueMode, kValueDisplay(kValue);
+
+   /* function convertInputToOutput(stringNum) {
+        if (kValueMode === 'bin') {
+            kValueStringBin.update(n => stringNum);
+        } else {
+            kValueStringBin.update(n => BigNumber(stringNum).div(17).toString(2).padStart(1802, 0));
+        }
+    }
+
+    $: convertValue(value);
+   */
+
+    
+		
+ /*   function handleValueConversion() {
+        if (kValueMode === 'bin') {
+            kValueStringBin.update(n => BigNumber(kValueString).div(17).toString(2).padStart(1802, 0));
+        }
+        if (kValueMode === 'dec') {
+            kValueBigNumber = BigNumber(kValueStringBin, 2).times(17);
+            kValueString = kValueBigNumber.toFixed();
+            kValue = kValueString;
+        } else 
+        //
+    }
+
+		let kValueTemp = 
+		console.log(kValueTemp);
+		
+		console.log(kValueStringBin);
+		console.log(kValueString);
+		*/
+
+   // convertValueButton();
+
 </script>
 
 <!--constants in braces represent the amount of pixels, as defined by the canvas matrix-->
@@ -11,11 +88,10 @@
     </div>
     <div class="k-buttons" style="width: {96 * pixelSize}px; height: {6 * pixelSize}px">
         <div  class="k-buttons-value" style="width: {96 * pixelSize}px; height: {2.5 * pixelSize}px">
-            <button type="button" style="font-size: {2 * pixelSize - 4}px; width: {8 * pixelSize}px; height: {2.5 * pixelSize}px"><i>k<sub>dec</sub></i></button>
-            <textarea style="line-height: {2.5 * pixelSize - 1}px; font-size: {2 * pixelSize - 6}px; width: {88 * pixelSize}px; height: {2.5 * pixelSize}px">{kValue}</textarea>
+            <button on:click={kValueDisplayButton} type="button" style="font-size: {2 * pixelSize - 4}px; width: {8 * pixelSize}px; height: {2.5 * pixelSize}px"><i>k<sub>{kValueMode}</sub></i></button>
+            <textarea bind:value={kValueTextAreaString} id="textar" style="line-height: {2.5 * pixelSize - 1}px; font-size: {2 * pixelSize - 6}px; width: {88 * pixelSize}px; height: {2.5 * pixelSize}px"></textarea>
         </div>
          <div class="k-buttons-action" style="width: {96 * pixelSize}px; height: {2.5 * pixelSize}px">
-            <!--60 pixels worth of real estate is left here!-->
             <button class="k-buttons-action-comment" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Comment</button>          
             <button class="k-buttons-action-paste" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Paste</button>
             <button class="k-buttons-action-copy" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Copy</button>

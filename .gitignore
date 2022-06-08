@@ -1,4 +1,7 @@
+#to deploy to github pages: git subtree push --prefix public/ origin gh-pages
+
+#ignores
 /node_modules/
-#/public/build/ #git subtree push --prefix public/ origin gh-pages
+#/public/build/
 
 .DS_Store

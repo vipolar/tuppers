@@ -1,5 +1,6 @@
 <script>
-    import CanvasButtons from './CanvasButtons.svelte'
+    import CanvasButtons from './CanvasButtons.svelte';
+    import { graphPaddingLeft, graphPaddingTop } from './Stores.js';
     import { onMount } from 'svelte';
 
     let pixelSize = 0;
@@ -7,6 +8,9 @@
     let tempPHeight = 0;
     let windowWidth = 0;
     let windowHeight = 0;
+    let windowRotateDeg = 0;
+    let windowTranslateX = 0;
+    let windowTranslateY = 0;
     let loaderDisplay = false;
 
 	const setPixelSize = () => {
@@ -17,21 +21,41 @@
         windowWidth = window.innerWidth;
         windowHeight = window.innerHeight;
 
-        if (windowWidth > windowHeight) {
-            tempPHeight = Math.floor(windowHeight / 34);
-            tempPWidth =  Math.floor(windowWidth / 116);
-        } else if (windowWidth < windowHeight) {
+        const balancePixelSize = () => {
+            pixelSize = tempPWidth > tempPHeight ? tempPHeight : tempPWidth;
+            pixelSize = pixelSize <= 10 ? pixelSize : 10;
+            pixelSize = pixelSize >= 4 ? pixelSize : 4;
+        };
+
+        if (window.matchMedia("(orientation: portrait)").matches) {
+            /* calculate, balance, and set the size of a pixel */
             tempPHeight = Math.floor(windowHeight / 116);
             tempPWidth =  Math.floor(windowWidth / 34);
-        } else {
+            balancePixelSize();
+
+            /* adjust placement according to graph to window ratio */
+            windowTranslateX = (windowHeight - (windowHeight - (pixelSize * 116)) / 2) * -1;
+            windowTranslateY = (windowWidth - (pixelSize * 34)) / 2;
+            windowRotateDeg = -90;
+
+            /* export padding values for matrix to access */
+            graphPaddingLeft.update(n => windowTranslateY);
+            graphPaddingTop.update(n => windowTranslateX);
+        } else if (window.matchMedia("(orientation: landscape)").matches) {
+            /* calculate, balance, and set the size of a pixel */
             tempPHeight = Math.floor(windowHeight / 34);
             tempPWidth =  Math.floor(windowWidth / 116);
-        }
+            balancePixelSize();
 
-        /* check for the boundaries and the balance of Height vs Width */
-        pixelSize = tempPWidth > tempPHeight ? tempPHeight : tempPWidth;
-        pixelSize = pixelSize <= 10 ? pixelSize : 10;
-        pixelSize = pixelSize >= 4 ? pixelSize : 4;
+            /* adjust placement according to graph to window ratio */
+            windowTranslateX = (windowWidth - (pixelSize * 116)) / 2;
+            windowTranslateY = (windowHeight - (pixelSize * 34)) / 2; 
+            windowRotateDeg = 0;
+
+            /* export padding values for matrix to access */
+            graphPaddingLeft.update(n => windowTranslateX);
+            graphPaddingTop.update(n => windowTranslateY);
+        }
 
         /* remove display loader (serves no purpose other than being pretty) */
         setTimeout( () => {loaderDisplay = false}, Math.random() * 1200 | 600);
@@ -49,7 +73,7 @@
     setPixelSize();
 </script>
 
-<div class="butons-container" style="width: {116 * pixelSize}px; height: {34 * pixelSize}px">
+<div class="butons-container" style="width: {116 * pixelSize}px; height: {34 * pixelSize}px; transform: rotate({windowRotateDeg}deg) translate({windowTranslateX}px, {windowTranslateY}px);">
     <CanvasButtons {pixelSize}></CanvasButtons>
     <h1 class="butons-container-debug" style="font-size: {pixelSize / 10}em">{windowWidth} {windowHeight} {pixelSize}</h1>
 </div>
@@ -81,9 +105,9 @@
 
 <style>
     .butons-container {
+        transform-style: preserve-3D;
+		transform-origin: top left;
         position: relative; 
-        margin-right: auto;
-		margin-left: auto;
         display: block;
     }
 
@@ -121,6 +145,21 @@
         display: block;
         right: 5%;
         top: 0;
+    }
+
+    @media only screen and (orientation: portrait) {
+        .blanket-loading-text {
+            transform: rotate(-90deg) translateX(-80px);
+            transform-style: preserve-3D;
+			transform-origin: top left;
+            position: absolute;
+            color: #ffffff; 
+            font-weight: 500;
+            font-size: 0.6em;
+            display: block;
+            left: 5%;
+            top: 0;
+        }
     }
 
     .blanket-loading-mosaic {

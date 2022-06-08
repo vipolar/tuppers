@@ -9,9 +9,12 @@
 <style>
 	@media only screen and (orientation: portrait) {
         .graph-container {
-			position:relative; 
+			transform: rotate(-90deg) translateX(-1160px);
+			transform-style: preserve-3D;
+			transform-origin: top left;
 			margin-right: auto;
 			margin-left: auto;
+			position:relative; 
 			display: block;
 		}
     }
