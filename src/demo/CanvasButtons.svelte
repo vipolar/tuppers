@@ -1,6 +1,6 @@
 <script>
     import CanvasContainer from './CanvasContainer.svelte'
-    import { kValueStringBin } from './Stores.js';
+    import { kValueStringBin, isInBrushMode } from './Stores.js';
     import { BigNumber } from "bignumber.js";
     export let pixelSize;
 
@@ -26,7 +26,7 @@
         } else { /* shouldn't be possible */
             kValueTextAreaString = 'ERR!'; 
         }
-    }
+    };
 
     function kValueDisplayButton() {
         if (kValueMode === 'b32') {  
@@ -40,7 +40,19 @@
         }
 
         kValueDisplay(kValueStringBinary);
-	}
+	};
+
+    function toolsBrushClickHandle() {
+        isInBrushMode.update(n => true);
+    };
+
+    function toolsEraserClickHandle() {
+        isInBrushMode.update(n => false);
+    };
+
+    function toolsOptionsClickHandle() {
+        //
+    };
 
     //$: kValueTextAreaString, console.log('hit');
     //$: kValueMode, kValueDisplay(kValue);
@@ -96,9 +108,9 @@
             <button class="k-buttons-action-paste" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Paste</button>
             <button class="k-buttons-action-copy" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Copy</button>
             <div class="k-buttons-action-tools" style="width: {48 * pixelSize}px; height: {2.5 * pixelSize}px">
-                <button class="k-buttons-action-tools-brush" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
-                <button class="k-buttons-action-tools-eraser" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
-                <button class="k-buttons-action-tools-options" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+                <button on:click={toolsBrushClickHandle} class="k-buttons-action-tools-brush" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+                <button on:click={toolsEraserClickHandle} class="k-buttons-action-tools-eraser" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+                <button on:click={toolsOptionsClickHandle} class="k-buttons-action-tools-options" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
             </div>
         </div>
     </div>

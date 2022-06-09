@@ -1,5 +1,5 @@
 <script>
-	import { kValueStringBin, graphPaddingLeft, graphPaddingTop } from './Stores.js';
+	import { isInBrushMode, kValueStringBin, graphPaddingLeft, graphPaddingTop } from './Stores.js';
 	export let pixelSize;
 
 	/* create 2D array and populate it with '0's */
@@ -12,6 +12,7 @@
 	}
 	
 	const ongoingTouches = [];
+	let isBrushAtive = true;
 	let isMouseDown = false;
 	let isTouchDown = false;
 	let kValueString = '';
@@ -51,7 +52,11 @@
 		kValueStringBin.update(n => kValueString);
 	}
 
-	function touchPaint(pageX, pageY) {
+	isInBrushMode.subscribe(value => {
+		isBrushAtive = value;
+    });
+
+	function canvasPaint(pageX, pageY) {
 		if (window.matchMedia("(orientation: portrait)").matches) {
 			arrayPix = Math.floor((pixelOffsetX - pageX) / pixelSize);
 			arrayCol = Math.floor((pixelOffsetY - pageY) / pixelSize);
@@ -64,17 +69,26 @@
 		//console.log('arrayCol: ' + arrayCol + ' arrayPix: ' + arrayPix);
 		
 		if (arrayCol > 105 || arrayPix > 16 || arrayPix < 0 || arrayCol < 0) {
+			console.log(`pixel C/P: ${arrayCol}/${arrayPix} is out of bounds`);
+			//console.log('pixel C/P: ' + arrayCol + '/' + arrayPix + ' is out of bounds');
+
 			/* add some effect for when out of bounds */
 			isTouchDown = false;
 			isMouseDown = false;
 			return;
 		} else {
-			/* maybe improve this? visually? */
-			pixelID = 'pixel-' + arrayCol + '-' + arrayPix;
+			pixelID = `pixel-${arrayCol}-${arrayPix}`;
+			//pixelID = 'pixel-' + arrayCol + '-' + arrayPix;
 		}
 
-		document.getElementById(pixelID).style.backgroundColor = "#ff0000";
-		kValueArray[arrayCol][arrayPix] = '1';
+		if (isBrushAtive) {
+			document.getElementById(pixelID).style.backgroundColor = "#ff0000";
+			kValueArray[arrayCol][arrayPix] = '1';
+		} else {
+			document.getElementById(pixelID).style.backgroundColor = "#999999";
+			kValueArray[arrayCol][arrayPix] = '0';
+		}
+		
 	}
 
 
@@ -85,7 +99,7 @@
 		
 		const touches = e.changedTouches;
 		for (let i = 0; i < touches.length; i++) {
-			touchPaint(touches[i].pageX, touches[i].pageY);
+			canvasPaint(touches[i].pageX, touches[i].pageY);
 		}
 	}
 
@@ -95,7 +109,7 @@
 		if (isTouchDown === true) {
 			const touches = e.changedTouches;
 			for (let i = 0; i < touches.length; i++) {
-				touchPaint(touches[i].pageX, touches[i].pageY);
+				canvasPaint(touches[i].pageX, touches[i].pageY);
 			}
 		}
 	}
@@ -116,14 +130,14 @@
 		e.preventDefault();
 		isMouseDown = true;
 
-		touchPaint(e.pageX, e.pageY);
+		canvasPaint(e.pageX, e.pageY);
 	}
 
 	function handleCanvasMouseMove(e) {
 		e.preventDefault();
 
 		if (isMouseDown === true) {
-			touchPaint(e.pageX, e.pageY);
+			canvasPaint(e.pageX, e.pageY);
 		}	
 	}
 
@@ -148,10 +162,9 @@
 
 <!--constants in braces represent the amount of pixels, as defined here-->
 <div 
-	on:dragstart={handleCanvasDragStart}
 	on:touchstart={handleCanvasTouchStart} on:touchmove={handleCanvasTouchMove} on:touchcancel={handleCanvasTouchCancel} on:touchend={handleCanvasTouchEnd}
 	on:mousedown={handleCanvasMouseDown} on:mousemove={handleCanvasMouseMove} on:mouseleave={handleCanvasMouseLeave} on:mouseup={handleCanvasMouseUp}
-	id="matrix" class="matrix" style="width: {106 * pixelSize}px; height: {17 * pixelSize}px">
+	on:dragstart={handleCanvasDragStart} id="matrix" class="matrix" style="width: {106 * pixelSize}px; height: {17 * pixelSize}px">
 	{#each Array(106) as _, indexCol (indexCol)}
 		<div class="matrix-column" style="width: {pixelSize}px; height: {17 * pixelSize}px">
 			{#each Array(17) as _, indexPix (indexPix)}

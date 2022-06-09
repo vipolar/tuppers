@@ -1,6 +1,6 @@
 <script>
-    import CanvasButtons from './CanvasButtons.svelte';
     import { graphPaddingLeft, graphPaddingTop } from './Stores.js';
+    import CanvasButtons from './CanvasButtons.svelte';
     import { onMount } from 'svelte';
 
     let pixelSize = 0;
