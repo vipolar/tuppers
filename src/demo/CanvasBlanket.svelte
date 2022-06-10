@@ -1,78 +1,106 @@
 <script>
     import CanvasButtons from './CanvasButtons.svelte';
-    import { onMount } from 'svelte';
+    import { stabilizeFunction } from './Tools.js';
+    import { isInCanvasMode } from './Stores.js';
 
-    let pixelSize = 0;
-    let tempPWidth = 0;
-    let tempPHeight = 0;
-    let windowWidth = 0;
-    let windowHeight = 0;
-    let windowRotateDeg = 0;
+    let isPixelSizeLocked = false;
+    let isLoaderDisplayed = false;
+    let isPageLoaded = false;
+
+    /* DOM accessible globals */
     let windowTranslateX = 0;
     let windowTranslateY = 0;
-    let loaderDisplay = false;
+    let windowRotateDeg = 0;
+    let pixelSize = 0;
 
-	const setPixelSize = () => {
-        /* display loader */
-        loaderDisplay = true;
+    function getPixelSize(w, h, min, max) {
+        /* makes sense init?! */
+        if (isPixelSizeLocked)
+            return max;
 
+        /* returns largest acceptable pixel size */
+        let pSize = w > h ? h : w;
+        pSize = pSize <= max ? pSize : max;
+        pSize = pSize >= min ? pSize : min;
+
+        return pSize;
+    };
+
+	function setPixelSize() {
         /* get client screen size */
-        windowWidth = window.innerWidth;
-        windowHeight = window.innerHeight;
+        let windowWidth = window.innerWidth;
+        let windowHeight = window.innerHeight;
 
-        const balancePixelSize = () => {
-            pixelSize = tempPWidth > tempPHeight ? tempPHeight : tempPWidth;
-            pixelSize = pixelSize <= 16 ? pixelSize : 16;
-            pixelSize = pixelSize >= 4 ? pixelSize : 4;
-            /* 16 px = W:1696, H272 */
-        };
+        /* go default on 'em! */
+        windowTranslateX = 0;
+        windowTranslateY = 0;
+        windowRotateDeg = 0;
 
         if (window.matchMedia("(orientation: portrait)").matches) {
             /* calculate, balance, and set the size of a pixel */
-            tempPHeight = Math.floor(windowHeight / 116);
-            tempPWidth =  Math.floor(windowWidth / 34);
-            balancePixelSize();
+            pixelSize = getPixelSize(Math.floor(windowWidth / 34), Math.floor(windowHeight / 116), 4, 16);
 
             /* adjust placement according to graph to window ratio */
-            windowTranslateX = (windowHeight - (windowHeight - (pixelSize * 116)) / 2) * -1;
-            windowTranslateY = (windowWidth - (pixelSize * 34)) / 2;
+            let wipHeight = pixelSize * 116;
+            let wipWidth = pixelSize * 34;
+
+            /* bad influence! */
             windowRotateDeg = -90;
+
+            /* rotate means translate!!! */
+            if (windowHeight < wipHeight) {
+                windowTranslateX = wipHeight * -1;
+            } else {
+                windowTranslateX = (windowHeight - (windowHeight - wipHeight) / 2) * -1;
+            }
+
+            /* isPixelSizeLocked? */
+            if (windowWidth > wipWidth) { /* definitely not! */
+                windowTranslateY = (windowWidth - wipWidth) / 2;
+            }
         } else if (window.matchMedia("(orientation: landscape)").matches) {
             /* calculate, balance, and set the size of a pixel */
-            tempPHeight = Math.floor(windowHeight / 34);
-            tempPWidth =  Math.floor(windowWidth / 116);
-            balancePixelSize();
+            pixelSize = getPixelSize(Math.floor(windowWidth / 116), Math.floor(windowHeight / 34), 4, 16);
 
             /* adjust placement according to graph to window ratio */
-            windowTranslateX = (windowWidth - (pixelSize * 116)) / 2;
-            windowTranslateY = (windowHeight - (pixelSize * 34)) / 2; 
-            windowRotateDeg = 0;
+            let wipWidth = pixelSize * 116;
+            let wipHeight = pixelSize * 34;
+            
+            if (!isPixelSizeLocked) {
+                windowTranslateX = (windowWidth - wipWidth) / 2;
+                windowTranslateY = (windowHeight - wipHeight) / 2;
+            }
         }
 
-        /* remove display loader (serves no purpose other than being pretty) */
-        setTimeout( () => {loaderDisplay = false}, Math.random() * 1200 | 600);
-	};
-	
-	onMount(() => {		
-		window.addEventListener('resize', setPixelSize);
-		
-		return () => {
-			window.removeEventListener('resize', setPixelSize);
-		}
-	});
+        if (isLoaderDisplayed) { /* hide the pretty display loader */
+            setTimeout( () => {isLoaderDisplayed = false}, Math.random() * 1200 | 600);
+        }
 
-    /* run once on page load */
-    setPixelSize();
+        console.log(`screen loade: W = ${windowWidth}, H = ${windowHeight}, P = ${pixelSize}`);
+	};
+
+    /* set 330ms delay on function, reset if it is called again before executing */
+    const stabilizedSetPixelSize = stabilizeFunction(setPixelSize, 330);
+
+    isInCanvasMode.subscribe(value => {
+        if (!isPageLoaded) /* add event listener on page load and forget */
+            window.addEventListener('resize', stabilizedSetPixelSize);
+
+        isPixelSizeLocked = value;
+        isLoaderDisplayed = true;
+        isPageLoaded = true;
+        setPixelSize();
+    });
+    
 </script>
 
-<div class="butons-container" style="width: {116 * pixelSize}px; height: {34 * pixelSize}px; transform: rotate({windowRotateDeg}deg) translate({windowTranslateX}px, {windowTranslateY}px) ;">
+<div class="butons-container" style="width: {116 * pixelSize}px; height: {34 * pixelSize}px; transform: rotate({windowRotateDeg}deg) translate({windowTranslateX}px, {windowTranslateY}px);">
     <CanvasButtons {pixelSize}></CanvasButtons>
-    <h1 class="butons-container-debug" style="font-size: {pixelSize / 10}em">{windowWidth} {windowHeight} {pixelSize}</h1>
 </div>
 
-{#if loaderDisplay}
+{#if isLoaderDisplayed}
     <div class="blanket-loading">
-        <div class="blanket-loading-mosaic" style="--cell-size: {64 * (pixelSize / 10)}px">
+        <div class="blanket-loading-mosaic" style="--cell-size: {64 * (pixelSize / 10)}px;">
             <h1 class="blanket-loading-text">Loading...</h1>
 
             <div class="cell d-0"></div>
@@ -101,15 +129,6 @@
 		transform-origin: top left;
         position: relative; 
         display: block;
-    }
-
-    .butons-container-debug {
-        position: absolute;
-        color: orangered; 
-        font-weight: 500;
-        display: block;
-        right: 2%;
-        top: 2%;
     }
 
     .blanket-loading {

@@ -13,15 +13,12 @@
 
 	export let pixelSize;
     const ongoingTouches = [];
+	let isPointerDown = false;
     let isValueUpToDate = true;
-    let displayCanvas = 'block'
-    let isPointerDown = false;
+    let isInCanvasMode = true;
+	let isInDebugMode = true;
     let isBrushAtive = true;
 	let kValueString = '';
-    let pixelCol = 0;
-    let pixelRow = 0;
-    let pixelElement;
-    let pixelID;
 
     /* create final string of k's binary value */
     $: if (isPointerDown === true) {
@@ -47,10 +44,10 @@
     });
 
     function matrixFillPixel(x, y) {
-        pixelCol = x;
-        pixelRow = 16 - y; /* 16 to reverse */
-        pixelID = `pixel-${pixelCol}-${pixelRow}`;
-        pixelElement = document.getElementById(pixelID);
+        let pixelCol = x;
+        let pixelRow = 16 - y; /* 16 to reverse */
+        let pixelID = `pixel-${pixelCol}-${pixelRow}`;
+        let pixelElement = document.getElementById(pixelID);
 
         if (isBrushAtive) {
 			pixelElement.style.backgroundColor = "#ff0000";
@@ -70,12 +67,12 @@
         isPointerDown = true;
         
         /* calculate the PseudoPixel coordinates */
-        pixelCol = Math.floor(e.layerX / pixelSize);
-        pixelRow = Math.floor(e.layerY / pixelSize);
+        let pixelCol = Math.floor(e.layerX / pixelSize);
+        let pixelRow = Math.floor(e.layerY / pixelSize);
         
         log(`start drawing at: ${pixelCol}, ${pixelRow}.`);
         matrixFillPixel(pixelCol, pixelRow);  
-    }
+    };
 
     function handleCanvasPointerMove(e) {
         if (!isPointerDown)
@@ -96,8 +93,8 @@
             if (pixelArray.length > 0) {
                 log(`drawing line from: ${pixelArray[0]}.`);
                 for (let i = 0; i < pixelArray.length; i++) {
-                    pixelCol = pixelArray[i][0];
-                    pixelRow = pixelArray[i][1];
+                    let pixelCol = pixelArray[i][0];
+                    let pixelRow = pixelArray[i][1];
 
                     if (pixelCol > 105 || pixelRow > 16 || pixelRow < 0 || pixelCol < 0) {
                         log(`canceled: ${pixelCol}, ${pixelRow} out of bounds!`);
@@ -113,7 +110,7 @@
             /* swap in the new touch record */
             ongoingTouches.splice(index, 1, copyCanvasTouch(e));
         }
-    }
+    };
 
     function handleCanvasPointerUp(e) {
         log(`pointerup: id = ${e.pointerId}`);
@@ -131,7 +128,7 @@
             ongoingTouches.splice(index, 1);
             isPointerDown = false;
         }
-    }
+    };
 
     function handleCanvasPointerLeave(e) {
         log(`pointerleave: id = ${e.pointerId}`);
@@ -165,18 +162,18 @@
             /* remove it, we're done */
             ongoingTouches.splice(index, 1);
         }
-    }
+    };
 
     function handleCanvasDragStart(e) {
         isPointerDown = false;
 		e.preventDefault();
-	}
+	};
 
-    /* */
+    /* bop it twist it pull it log it */
     function log(msg) {
         const container = document.getElementById('log');
         container.textContent = `${ msg } \n${ container.textContent }`;
-    }
+    };
 </script>
 
 
@@ -190,15 +187,18 @@
 		</div>
 	{/each}
 
-    <!--canvas overlay cuts down on many hurdles otherwise encountered with painting on matrix-->
-    <canvas id="canvas" class="canvas" width="{106 * pixelSize}" height="{17 * pixelSize}" style="display: {displayCanvas};"
-        on:pointerdown={handleCanvasPointerDown} on:pointermove={handleCanvasPointerMove} on:pointerup={handleCanvasPointerUp}
-        on:pointerleave={handleCanvasPointerLeave} on:pointercancel={handleCanvasPointerCancel} on:dragstart={handleCanvasDragStart}>
-            <b><i>Your browser does not support canvas element.</i></b>
-    </canvas>
+	{#if isInCanvasMode}
+		<!--canvas overlay cuts down on many hurdles otherwise encountered with painting on matrix-->
+		<canvas id="canvas" class="matrix-canvas" width="{106 * pixelSize}" height="{17 * pixelSize}"
+			on:pointerdown={handleCanvasPointerDown} on:pointermove={handleCanvasPointerMove} on:pointerup={handleCanvasPointerUp}
+			on:pointerleave={handleCanvasPointerLeave} on:pointercancel={handleCanvasPointerCancel} on:dragstart={handleCanvasDragStart}>
+				<b><i>Your browser does not support canvas element.</i></b>
+		</canvas>
+	{/if}
 
-    <!--comprehensive debugging system and other jokes to tell yourself-->
-    <pre id="log" class="matrix-log" style="display: block; bottom: 0; left: 0;"></pre>
+    {#if isInDebugMode}<!--comprehensive debugging system and other jokes to tell yourself-->
+    	<pre id="log" class="matrix-log" style="bottom: 0; left: 0; height: {8 * pixelSize}px;"></pre>
+	{/if}
 </div>
 
 <style>
@@ -215,6 +215,15 @@
 		display: flex;
 	}
 
+	.matrix-canvas {
+        background: transparent;
+        position: absolute;
+        touch-action: none;
+        display: block;
+        left: 0;
+        top: 0;
+    }
+
     .matrix-column {
         flex-direction: column-reverse;
         display: inherit;
@@ -225,15 +234,6 @@
 		background-color: var(--matrix-pixel-background-color);	
 		float: left;		
 	}
-
-    .canvas {
-        background: transparent;
-        position: absolute;
-        touch-action: none;
-        display: block;
-        left: 0;
-        top: 0;
-    }
 
     .matrix-log {        
         border: 1px solid #cccccc;
