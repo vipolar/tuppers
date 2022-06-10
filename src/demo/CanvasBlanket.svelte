@@ -1,5 +1,4 @@
 <script>
-    import { graphPaddingLeft, graphPaddingTop } from './Stores.js';
     import CanvasButtons from './CanvasButtons.svelte';
     import { onMount } from 'svelte';
 
@@ -23,8 +22,9 @@
 
         const balancePixelSize = () => {
             pixelSize = tempPWidth > tempPHeight ? tempPHeight : tempPWidth;
-            pixelSize = pixelSize <= 10 ? pixelSize : 10;
+            pixelSize = pixelSize <= 16 ? pixelSize : 16;
             pixelSize = pixelSize >= 4 ? pixelSize : 4;
+            /* 16 px = W:1696, H272 */
         };
 
         if (window.matchMedia("(orientation: portrait)").matches) {
@@ -37,10 +37,6 @@
             windowTranslateX = (windowHeight - (windowHeight - (pixelSize * 116)) / 2) * -1;
             windowTranslateY = (windowWidth - (pixelSize * 34)) / 2;
             windowRotateDeg = -90;
-
-            /* export padding values for matrix to access */
-            graphPaddingLeft.update(n => windowTranslateY);
-            graphPaddingTop.update(n => windowTranslateX);
         } else if (window.matchMedia("(orientation: landscape)").matches) {
             /* calculate, balance, and set the size of a pixel */
             tempPHeight = Math.floor(windowHeight / 34);
@@ -51,10 +47,6 @@
             windowTranslateX = (windowWidth - (pixelSize * 116)) / 2;
             windowTranslateY = (windowHeight - (pixelSize * 34)) / 2; 
             windowRotateDeg = 0;
-
-            /* export padding values for matrix to access */
-            graphPaddingLeft.update(n => windowTranslateX);
-            graphPaddingTop.update(n => windowTranslateY);
         }
 
         /* remove display loader (serves no purpose other than being pretty) */
@@ -73,7 +65,7 @@
     setPixelSize();
 </script>
 
-<div class="butons-container" style="width: {116 * pixelSize}px; height: {34 * pixelSize}px; transform: rotate({windowRotateDeg}deg) translate({windowTranslateX}px, {windowTranslateY}px);">
+<div class="butons-container" style="width: {116 * pixelSize}px; height: {34 * pixelSize}px; transform: rotate({windowRotateDeg}deg) translate({windowTranslateX}px, {windowTranslateY}px) ;">
     <CanvasButtons {pixelSize}></CanvasButtons>
     <h1 class="butons-container-debug" style="font-size: {pixelSize / 10}em">{windowWidth} {windowHeight} {pixelSize}</h1>
 </div>
