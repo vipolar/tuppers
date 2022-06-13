@@ -46,8 +46,8 @@
             {/each}
         </div>
 
-        <div class="matrix-container" style="width: {106 * pixelSize}px; height: {17 * pixelSize}px">
-            <CanvasMatrix {pixelSize}></CanvasMatrix>
+        <div class="child-component-container" style="width: {106 * pixelSize}px; height: {17 * pixelSize}px">
+            <CanvasMatrix {pixelSize} on:click></CanvasMatrix>
         </div>
 
         <div class="decore-inner-right" style="width: {2 * pixelSize}px; height: {17 * pixelSize}px">
@@ -118,7 +118,7 @@
         display: inherit;
     }
 
-	.matrix-container {
+	.child-component-container {
 		position: relative;
 		display: inherit;
 		z-index: 2;

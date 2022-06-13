@@ -1,0 +1,234 @@
+<script>
+    import { kValueBinaryToBase, kValueBaseToBinary } from './Tools.js';
+    import CanvasContainer from './CanvasContainer.svelte'
+    import { kValuePatterns } from './Patterns.js';
+    import { kValueStringBin } from './Stores.js';
+    export let pixelSize;
+
+    let kValuePatternSelected = 0;
+    let kValueTextAreaString = '';
+    let kValueBinaryString = '';
+    let kValueBase = 'dec';
+    
+    kValueStringBin.subscribe(value => {
+        kValueBinaryString = value;
+        kValueTextAreaString = kValueBinaryToBase(kValueBinaryString, kValueBase);
+    });
+
+    function kValueDisplayButton() {
+        if (kValueBase === 'b64') {  
+            kValueBase = 'dec';
+        } else if (kValueBase === 'dec') {
+            kValueBase = 'bin';
+        } else if (kValueBase === 'bin') {
+            kValueBase = 'b64';
+        } else { /* default */
+            kValueBase = 'dec';
+        }
+
+        kValueTextAreaString = kValueBinaryToBase(kValueBinaryString, kValueBase);
+	};
+    
+    function buttonsClickCopy() {
+        /* Get the text field */
+        const textarea = document.getElementById("textarea");
+
+        /* Select the text field */
+        textarea.select(); /* For mobile */
+        textarea.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(textarea.value);
+    };
+
+    function buttonsClickPaste() {
+        if (typeof navigator.clipboard.readText === "function") {
+            let kValueTemp;
+            navigator.clipboard.readText().then(clipText => kValueTemp = clipText);
+            kValueTemp = kValueBaseToBinary(kValueTemp, kValueBase);
+            kValueStringBin.update(n => kValueTemp);
+            kValuePatternSelected = 0;
+        } else {
+            alert('browser clipboard access refused, please paste manually');
+        }
+    };
+
+    function buttonsClickComment() {
+        alert('to be added soon');
+    };
+
+    function buttonsClickOptions(e) {
+        if (!e.target.firstChild.style)
+            return; /* handles an annoyance */
+
+        if (e.target.firstChild.style.display != "block") {
+            e.target.firstChild.style.display = "block";
+            e.target.style.borderRadius = "7px";
+            e.target.style.transition = "0.25s";
+            e.target.style.flexGrow = "0.35";
+        } else {
+            e.target.firstChild.style.display = "none"
+            e.target.style.borderRadius = "100%";
+            e.target.style.flexGrow = "0";
+        }
+    };
+
+    function buttonsClickOptionsTutorial(e) {
+        alert("click on canvas and paint!");
+    };
+
+    function buttonsClickOptionsSelect(e) {
+        let kValueTemp = kValuePatterns[kValuePatternSelected].value
+        kValueStringBin.update(n => kValueTemp);
+    };
+
+    function buttonsClickOptionsClear(e) {
+        let kValueTemp = '0';
+        kValueStringBin.update(n => kValueTemp);
+        kValuePatternSelected = 0;
+    };
+
+    /* manual input handler, god save us all! */
+    function kValueChangeHandler() {
+        let kValueTemp = kValueBaseToBinary(kValueTextAreaString, kValueBase);
+        kValueStringBin.update(n => kValueTemp);
+        kValuePatternSelected = 0;
+    };
+</script>
+
+<!--constants in braces represent the amount of pixels, as defined by the canvas matrix-->
+<div class="buttons" style="width: {116 * pixelSize}px; height: {33 * pixelSize}px; padding-top: {pixelSize}px">
+    <div class="child-component-container" style="width: {116 * pixelSize}px; height: {27 * pixelSize}px">
+        <CanvasContainer {pixelSize} on:click></CanvasContainer>
+    </div>
+    <div class="k-buttons" style="width: {96 * pixelSize}px; height: {6 * pixelSize}px">
+        <div  class="k-buttons-value" style="width: {96 * pixelSize}px; height: {2.5 * pixelSize}px">
+            <button on:click={kValueDisplayButton} type="button" style="font-size: {2 * pixelSize - 4}px; width: {8 * pixelSize}px; height: {2.5 * pixelSize}px"><i>k<sub>{kValueBase}</sub></i></button>
+            <textarea bind:value={kValueTextAreaString} on:input={kValueChangeHandler} id="textarea" style="line-height: {2.5 * pixelSize - 1}px; font-size: {2 * pixelSize - 6}px; width: {88 * pixelSize}px; height: {2.5 * pixelSize}px"></textarea>
+        </div>
+         <div class="k-buttons-action" style="width: {96 * pixelSize}px; height: {2.5 * pixelSize}px">
+            <button on:click={buttonsClickComment} class="k-buttons-action-comment" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Comment</button>          
+            <button on:click={buttonsClickPaste} class="k-buttons-action-paste" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Paste</button>
+            <button on:click={buttonsClickCopy} class="k-buttons-action-copy" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Copy</button>
+            <div class="k-buttons-action-options" style="width: {50 * pixelSize}px; height: {2.5 * pixelSize}px">
+                <button on:click={buttonsClickOptions} class="k-buttons-action-options-tutorial" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px">
+                    <button on:click={buttonsClickOptionsTutorial} class="k-buttons-action-options-tutorial-button" type="button" style="font-size: {2 * pixelSize - 6}px; width: {13.5 * pixelSize}px; height: {2.5 * pixelSize}px">Tutorial</button>
+                </button>
+                <button on:click={buttonsClickOptions} on:change={buttonsClickOptionsSelect} class="k-buttons-action-options-select" type="button" style="font-size: {2 * pixelSize - 6}px; width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px">
+                    <select bind:value={kValuePatternSelected} id="kvalueselector" class="k-buttons-action-options-select-selector" style="font-size: {2 * pixelSize - 6}px; width: {13.5 * pixelSize}px; height: {2.5 * pixelSize}px">
+                        {#each kValuePatterns as kValuePattern}
+                            <option value={kValuePattern.id}>
+                                {kValuePattern.text}
+                            </option>
+                        {/each}
+                    </select>
+                </button>
+                <button on:click={buttonsClickOptions} class="k-buttons-action-options-clear" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px">
+                    <button on:click={buttonsClickOptionsClear} class="k-buttons-action-options-clear-confirm" type="button" style="font-size: {2 * pixelSize - 6}px; width: {13.5 * pixelSize}px; height: {2.5 * pixelSize}px">Clear!</button>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .buttons {
+        position: relative;
+        display: block;
+    }
+
+    .child-component-container {
+        position: relative;
+        display: block;
+    }
+
+    .k-buttons {
+        position: relative;
+        margin-right: auto;
+        margin-left: auto;
+        display: block;
+    }
+
+    .k-buttons-value {
+        margin-bottom: 3px;
+        display: flex;
+    }
+
+    .k-buttons-value button {
+        border-bottom-right-radius: 0;
+        border-top-right-radius: 0;
+    }
+
+    .k-buttons-value textarea {
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding-left: 3px;
+        border-left: none;
+        overflow: hidden;
+        resize: none;
+    }
+
+    .k-buttons-action {
+        flex-direction: row-reverse;
+        display: flex;
+    }
+
+    .k-buttons-action > * {
+        margin-left: 5px;
+    }
+
+    .k-buttons-action-options {
+        flex-direction: row;
+        display: flex;
+    }
+
+    .k-buttons-action-options > * {
+        background-repeat: no-repeat;
+        background-size: contain;
+        border-radius: 100%;
+        contain: content;
+        margin-left: 5px;
+    }
+
+    .k-buttons-action-options-tutorial {
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBVcGxvYWRlZCB0byBTVkdSZXBvIGh0dHBzOi8vd3d3LnN2Z3JlcG8uY29tIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9Il94MzFfIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgMTI4IDEyOCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMTI4IDEyODsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8cGF0aCBpZD0iX3gzMV9fMV8iIGQ9Ik05Ny4yLDUxaC02LjRsLTYsMTAuMWMwLDAtNi4xLTkuOS02LjYtOS45cy02LjUsOS45LTYuNSw5LjlMNjUuNiw1MWgtMi45Yy00LjgsMC05LjcsMS45LTEzLjQsNS42TDM5LjIsNjYuNwoJbC05LjQtMjAuNGMtMS41LTMuMy00LjItNS43LTcuNi02LjlzLTctMS4xLTEwLjQsMC40Yy01LjYsMi41LTgsOS4yLTUuMywxNC43bDE1LjMsMzIuNmwtMS43LDEuN2MtMi41LDIuNy0yLjUsNi44LDAuMSw5LjMKCWMyLDIsNC45LDIuNCw3LjQsMS4zbDAuOCwxLjdsMCwwYzEuNiwzLjIsNC45LDUuMiw4LjQsNS4yYzAuNCwwLDAuOCwwLDEuMi0wLjFsMi41LDUuNmMwLjMsMC43LDAuOSwwLjksMS41LDAuOQoJYzAuMywwLDAuNSwwLDAuNy0wLjFjOC4yLTMuOCwxMS44LTEzLjcsOC0yMS44bDAsMGwwLDBsLTUuMy0xMS4zbDguOS04LjljMC40LTAuNCwwLjgtMC41LDEuMy0wLjVjMS4xLDAsMS45LDAuOCwxLjksMS43djUxLjFoNDEuNQoJVjczLjdjMC0xLjEsMC44LTEuOSwxLjktMS45czEuOSwwLjgsMS45LDEuOXY0Mi42YzAsMy43LDIuOSw2LjYsNi42LDYuNmMzLjcsMCw2LjYtMi45LDYuNi02LjZWNzBDMTE2LjEsNTkuNSwxMDcuNiw1MSw5Ny4yLDUxegoJIE0yNC40LDg0LjZMMTIuNiw1OS41YzIuMSwwLjUsNC4yLDAuNCw2LjItMC41YzMuOC0xLjksNS42LTYuNCwzLjctMTAuMmMtMS41LTMuMi01LjQtNC42LTguNi0zLjJjLTAuOCwwLjQtMS4yLDEuMy0wLjgsMi4zCgljMC40LDAuOCwxLjMsMS4yLDIuMywwLjhjMS42LTAuOCwzLjUsMCw0LjIsMS42YzEuMSwyLjEsMC4xLDQuOC0yLjEsNS44Yy0xLjUsMC43LTMuMSwwLjgtNC41LDAuMWMtMS41LTAuNS0yLjctMS42LTMuMy0zLjEKCWMtMS45LTMuOC0wLjEtOC41LDMuNy0xMC40YzIuNC0xLjIsNS4yLTEuMyw3LjctMC40YzIuNSwwLjksNC41LDIuOCw1LjcsNS4zYzMuMSw2LjUsMC4zLDE0LjMtNi40LDE3LjRjLTAuOCwwLjQtMS4yLDEuMy0wLjgsMi4zCglsNy42LDE1LjhDMjYuMSw4My40LDI1LjIsODMuOSwyNC40LDg0LjZ6IE0zMS4zLDk5LjdMMzEuMyw5OS43bC0xLjEtMi40bDIuNC0yLjRsMy44LDguMUMzNC4zLDEwMi45LDMyLjIsMTAxLjcsMzEuMyw5OS43egoJIE00Ny42LDkyLjFMNDcuNiw5Mi4xYzIuOCw2LjEsMC43LDEzLjEtNC45LDE2LjZsLTgtMTdjMC44LTIuNCwwLjMtNS0xLjYtNi45Yy0wLjctMC43LTEuNS0xLjItMi40LTEuNWwtNy40LTE2LjIKCWM0LTIuNCw2LjYtNi40LDcuNi0xMC43TDQ3LjYsOTIuMUw0Ny42LDkyLjF6Ii8+CjxjaXJjbGUgY3g9Ijc5IiBjeT0iMzEuMiIgcj0iMTUuNCIvPgo8L3N2Zz4K);
+    }
+
+    .k-buttons-action-options-tutorial-button {
+        position: absolute;
+        border-radius: 0;
+        display: none;
+        outline: none;
+        border: none;
+        top: -2px;
+        right: 0;
+    }
+
+    .k-buttons-action-options-select {
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjRweCIgaGVpZ2h0PSIyNHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xMi42NzE5IDIuNzU5NjFMMTQuNTE2MyA2LjUwNEwxMy43NSA2LjUwNDk1TDEzLjY0OTMgNi41MDgzNEwxMy41NDc1IDYuNTE1MThMMTMuNDQ2NiA2LjUyNTQyTDEzLjI4OTggNi41NTIzMUMxMi4yNTgyIDYuNzY2OTQgMTEuNSA3LjY3OTQ1IDExLjUgOC43NTQ5NUMxMS41IDkuOTIwMjQgMTIuMzg1OCAxMC44Nzg2IDEzLjUyMDkgMTAuOTkzNEwxMy42NzcxIDExLjAwMzhMMTMuNjQ5MyAxMS4wMDM0TDEzLjU0NzUgMTEuMDEwMkwxMy40NDY2IDExLjAyMDVMMTMuMjg5OCAxMS4wNDc0QzEyLjMxMjUgMTEuMjUwNyAxMS41ODA2IDEyLjA4MDQgMTEuNTA2MiAxMy4wODE2TDExLjUgMTMuMjVMMTEuNTA1MiAxMy40MDRDMTEuNTgwOCAxNC41MjE2IDEyLjQ3MjQgMTUuNDE1NCAxMy41ODkgMTUuNDk0M0wxMy43NSAxNS41TDE0IDE1LjUwMUwxMy43NSAxNS41MDE1TDEzLjY0OTMgMTUuNTA0OUwxMy41NDc1IDE1LjUxMTdMMTMuNDQ2NiAxNS41MjE5TDEzLjI4OTggMTUuNTQ4OEMxMi4zMTI1IDE1Ljc1MjIgMTEuNTgwNiAxNi41ODE4IDExLjUwNjIgMTcuNTgzMUwxMS41IDE3Ljc1MTVMMTEuNTA1MiAxNy45MDU1QzExLjUyNDEgMTguMTg0OCAxMS41OTM5IDE4LjQ1MDEgMTEuNzA1NSAxOC42OTIzTDYuNjI1NjQgMjEuMzY4MkM2LjA3NTE3IDIxLjY1ODEgNS40MzEzNSAyMS4xOTA0IDUuNTM3MDEgMjAuNTc3Mkw2LjU2ODQgMTQuNTkyMUwyLjIxNjAyIDEwLjM1NjNDMS43NzAxNSA5LjkyMjM0IDIuMDE2MDYgOS4xNjU0OSAyLjYzMTg0IDkuMDc2NTFMOC42NDI3NSA4LjIwNzkxTDExLjMyNjMgMi43NTk2MUMxMS42MDEyIDIuMjAxNDcgMTIuMzk3IDIuMjAxNDcgMTIuNjcxOSAyLjc1OTYxWk0yMS4yNSAxNy4wMDE1QzIxLjY2NDIgMTcuMDAxNSAyMiAxNy4zMzczIDIyIDE3Ljc1MTVDMjIgMTguMTMxMiAyMS43MTc4IDE4LjQ0NSAyMS4zNTE4IDE4LjQ5NDZMMjEuMjUgMTguNTAxNUgxMy43NUMxMy4zMzU4IDE4LjUwMTUgMTMgMTguMTY1NyAxMyAxNy43NTE1QzEzIDE3LjM3MTggMTMuMjgyMiAxNy4wNTggMTMuNjQ4MiAxNy4wMDgzTDEzLjc1IDE3LjAwMTVIMjEuMjVaTTIxLjI1IDEyLjVDMjEuNjY0MiAxMi41IDIyIDEyLjgzNTggMjIgMTMuMjVDMjIgMTMuNjI5NyAyMS43MTc4IDEzLjk0MzUgMjEuMzUxOCAxMy45OTMyTDIxLjI1IDE0SDEzLjc1QzEzLjMzNTggMTQgMTMgMTMuNjY0MiAxMyAxMy4yNUMxMyAxMi44NzAzIDEzLjI4MjIgMTIuNTU2NSAxMy42NDgyIDEyLjUwNjhMMTMuNzUgMTIuNUgyMS4yNVpNMjEuMjUgOC4wMDQ5NUMyMS42NjQyIDguMDA0OTUgMjIgOC4zNDA3NCAyMiA4Ljc1NDk1QzIyIDkuMTM0NjUgMjEuNzE3OCA5LjQ0ODQ1IDIxLjM1MTggOS40OTgxMUwyMS4yNSA5LjUwNDk1SDEzLjc1QzEzLjMzNTggOS41MDQ5NSAxMyA5LjE2OTE3IDEzIDguNzU0OTVDMTMgOC4zNzUyNiAxMy4yODIyIDguMDYxNDYgMTMuNjQ4MiA4LjAxMThMMTMuNzUgOC4wMDQ5NUgyMS4yNVoiIGZpbGw9IiMwMDAwMDAiLz4KPC9zdmc+Cg==);
+    }
+
+    .k-buttons-action-options-select-selector {
+        position: absolute;
+        border-radius: 0;
+        display: none;
+        outline: none;
+        border: none;
+        top: -2px;
+        right: 0;
+    }
+
+    .k-buttons-action-options-clear {
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE5LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDUxMiA1MTIiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTI7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxnPg0KCQk8cGF0aCBkPSJNNDk1LjI3NiwxMzMuOTZMMzc3LjAzMiwxNS43MTVjLTE5LjYwNS0xOS42MDgtNTEuMzQtMTkuNjA5LTcwLjk0NiwwTDQwLjM3LDI4MS40MjgNCgkJCWMtMTkuNTU3LDE5LjU2LTE5LjU1Nyw1MS4zODYsMC4wMDEsNzAuOTQ2bDYxLjE1Myw2MS4xNTNjOS40NzUsOS40NzYsMjIuMDc0LDE0LjY5MywzNS40NzMsMTQuNjkzaDExNC4xODgNCgkJCWMxMy40LDAsMjUuOTk4LTUuMjE5LDM1LjQ3My0xNC42OTNsMjUuNjc4LTI1LjY3OHYtMC4wMDFsMTgyLjk0MS0xODIuOTQyQzUxNC44MzcsMTg1LjM0Nyw1MTQuODM3LDE1My41Miw0OTUuMjc2LDEzMy45NnoNCgkJCSBNMjYzLjAwOSwzODkuODc4Yy0zLjE1OCwzLjE1OC03LjM1OCw0Ljg5Ny0xMS44MjQsNC44OTdIMTM2Ljk5N2MtNC40NjcsMC04LjY2Ni0xLjczOS0xMS44MjQtNC44OTdsLTYxLjE1Mi02MS4xNTINCgkJCWMtNi41MjEtNi41MjEtNi41MjEtMTcuMTI5LTAuMDAxLTIzLjY1bDcwLjk0OC03MC45NDhsMTQxLjg5NSwxNDEuODk1TDI2My4wMDksMzg5Ljg3OHogTTQ3MS42MjksMTgxLjI1OGwtMzIuMTEzLDMyLjExMw0KCQkJTDI5Ny42MjIsNzEuNDc1bDMyLjExMy0zMi4xMTNjNi41MjItNi41MjEsMTcuMTI5LTYuNTE5LDIzLjY1LDBsMTE4LjI0NCwxMTguMjQ1DQoJCQlDNDc4LjE0OCwxNjQuMTI4LDQ3OC4xNDgsMTc0LjczNyw0NzEuNjI5LDE4MS4yNTh6Ii8+DQoJPC9nPg0KPC9nPg0KPGc+DQoJPGc+DQoJCTxwYXRoIGQ9Ik00OTUuMjc4LDQ3Ny41NDZIMTYuNzIyQzcuNDg3LDQ3Ny41NDYsMCw0ODUuMDM0LDAsNDk0LjI2OXM3LjQ4NywxNi43MjIsMTYuNzIyLDE2LjcyMmg0NzguNTU1DQoJCQljOS4yMzUsMCwxNi43MjItNy40ODcsMTYuNzIyLTE2LjcyMlM1MDQuNTEzLDQ3Ny41NDYsNDk1LjI3OCw0NzcuNTQ2eiIvPg0KCTwvZz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjwvc3ZnPg0K);
+    }
+
+    .k-buttons-action-options-clear-confirm {
+        position: absolute;
+        border-radius: 0;
+        display: none;
+        outline: none;
+        border: none;
+        top: -2px;
+        right: 0;
+    }
+</style>

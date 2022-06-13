@@ -1,23 +1,17 @@
 <script>
-    import { getPixelsOnTheLine, findTouchIndexById, copyCanvasTouch } from './Tools.js'
-    import { isInBrushMode, kValueStringBin } from './Stores.js';
+    import { BrushMode, CanvasMode, kValueStringBin } from './Stores.js';
+    import { create2DMatrix, getPixelsOnTheLine, findTouchIndexById, copyCanvasTouch } from './Tools.js'
+    import { onMount } from 'svelte';
+    export let pixelSize;
 
     /* create 2D array and populate it with '0's */
-	let kValueArray = new Array(106);
-	for (let i = 0; i < kValueArray.length; i++) {
-		kValueArray[i] = new Array(17);
-		for (let j = 0; j < kValueArray[i].length; j++) {
-			kValueArray[i][j] = '0';
-		}
-    };
-
-	export let pixelSize;
+	let kValueArray = create2DMatrix(106, 17, '0');
+	
     const ongoingTouches = [];
-	let isPointerDown = false;
+    let isInCanvasMode = false;
     let isValueUpToDate = true;
-    let isInCanvasMode = true;
-	let isInDebugMode = true;
-    let isBrushAtive = true;
+	let isPointerDown = false;
+    let isInBrushMode = true;
 	let kValueString = '';
 
     /* create final string of k's binary value */
@@ -37,10 +31,41 @@
             isValueUpToDate = true;
         }
     }
+    
+    onMount(() => {	/* paint whatever was there in the first place */
+		kValueStringBin.subscribe(value => {
+            kValueString = value;
+            let pixelCol = 0;
+            let pixelRow = 0;
+            let pixelID = '';
+
+            for (let i = 0, j = 0, k = 0; i < value.length; i++, j++, k++) {
+                if (j === 17) {
+                    pixelCol++;
+                    j = 0;
+                    k = 0;
+                }
+                
+                pixelRow = k;
+                pixelID = `pixel-${pixelCol}-${pixelRow}`;
+                if (value[i] === '1') {
+                    document.getElementById(pixelID).style.backgroundColor = "#ff0000";
+                    kValueArray[pixelCol][pixelRow] = '1';
+                } else {
+                    document.getElementById(pixelID).style.backgroundColor = "#999999";
+                    kValueArray[pixelCol][pixelRow] = '0';
+                }
+            }
+        });
+	});
 
     /* actually painting, can you imagine?! */
-    isInBrushMode.subscribe(value => {
-		isBrushAtive = value;
+    CanvasMode.subscribe(value => {
+        isInCanvasMode = value;
+    });
+
+    BrushMode.subscribe(value => {
+        isInBrushMode = value;
     });
 
     function matrixFillPixel(x, y) {
@@ -49,20 +74,18 @@
         let pixelID = `pixel-${pixelCol}-${pixelRow}`;
         let pixelElement = document.getElementById(pixelID);
 
-        if (isBrushAtive) {
+        if (isInBrushMode) {
 			pixelElement.style.backgroundColor = "#ff0000";
 			kValueArray[pixelCol][pixelRow] = '1';
 		} else {
 			pixelElement.style.backgroundColor = "#999999";
 			kValueArray[pixelCol][pixelRow] = '0';
 		}
-
-        pixelElement.style.backgroundColor = "#ff0000";
     };
     
     /* wake up babe, new events just dropped! */
     function handleCanvasPointerDown(e) {
-        log(`pointerdown: id = ${e.pointerId}.`);
+        //console.log(`pointerdown: id = ${e.pointerId}.`);
         ongoingTouches.push(copyCanvasTouch(e));
         isPointerDown = true;
         
@@ -70,7 +93,7 @@
         let pixelCol = Math.floor(e.layerX / pixelSize);
         let pixelRow = Math.floor(e.layerY / pixelSize);
         
-        log(`start drawing at: ${pixelCol}, ${pixelRow}.`);
+        //console.log(`start drawing at: ${pixelCol}, ${pixelRow}.`);
         matrixFillPixel(pixelCol, pixelRow);  
     };
 
@@ -82,29 +105,29 @@
         const index = findTouchIndexById(ongoingTouches, e.pointerId);
 
         if (index < 0) {
-            log(`can't figure out which touch to continue`);
+            //console.log(`can't figure out which touch to continue`);
         } else {
-            log(`continuing ongoing touch: index = ${index}.`);
+            //console.log(`continuing ongoing touch: index = ${index}.`);
 
             /* get an array of all PseudoPixels on the traversed line */
             let pixelArray = getPixelsOnTheLine(ongoingTouches[index].layerX, ongoingTouches[index].layerY, e.layerX, e.layerY, pixelSize);
             
             /* fill the line */
             if (pixelArray.length > 0) {
-                log(`drawing line from: ${pixelArray[0]}.`);
+                //console.log(`drawing line from: ${pixelArray[0]}.`);
                 for (let i = 0; i < pixelArray.length; i++) {
                     let pixelCol = pixelArray[i][0];
                     let pixelRow = pixelArray[i][1];
 
                     if (pixelCol > 105 || pixelRow > 16 || pixelRow < 0 || pixelCol < 0) {
-                        log(`canceled: ${pixelCol}, ${pixelRow} out of bounds!`);
+                        //console.log(`canceled: ${pixelCol}, ${pixelRow} out of bounds!`);
                         isPointerDown = false;
                         break;
                     }
 
                     matrixFillPixel(pixelCol, pixelRow);
                 }
-                log(`drawing line to: ${pixelArray[pixelArray.length - 1]}.`);
+                //console.log(`drawing line to: ${pixelArray[pixelArray.length - 1]}.`);
             }
 
             /* swap in the new touch record */
@@ -113,16 +136,16 @@
     };
 
     function handleCanvasPointerUp(e) {
-        log(`pointerup: id = ${e.pointerId}`);
+        //console.log(`pointerup: id = ${e.pointerId}`);
         isPointerDown = false;
 
         /* find the touchID that is being ended here */
         const index = findTouchIndexById(ongoingTouches, e.pointerId);
         
         if (index < 0) {
-            log(`can't figure out which touch to end`);
+            //console.log(`can't figure out which touch to end`);
         } else {
-            log(`ending ongoing touch: index =  ${index}.`);
+            //console.log(`ending ongoing touch: index =  ${index}.`);
 
             /* remove it, we're done */
             ongoingTouches.splice(index, 1);
@@ -131,16 +154,16 @@
     };
 
     function handleCanvasPointerLeave(e) {
-        log(`pointerleave: id = ${e.pointerId}`);
+        //console.log(`pointerleave: id = ${e.pointerId}`);
         isPointerDown = false;
 
         /* find the touchID that is being ended here */
         const index = findTouchIndexById(ongoingTouches, e.pointerId);
 
         if (index < 0) {
-            log(`can't figure out which touch to end`);
+            //console.log(`can't figure out which touch to end`);
         } else {
-            log(`ending ongoing touch: index =  ${index}.`);
+            //console.log(`ending ongoing touch: index =  ${index}.`);
 
             /* remove it, we're done */
             ongoingTouches.splice(index, 1);
@@ -148,16 +171,16 @@
     }
 
     function handleCanvasPointerCancel(e) {
-        log(`pointercancel: id = ${e.pointerId}`);
+        //console.log(`pointercancel: id = ${e.pointerId}`);
         isPointerDown = false;
 
         /* find the touchID that is being ended here */
         const index = findTouchIndexById(ongoingTouches, e.pointerId);
 
         if (index < 0) {
-            log(`can't figure out which touch to end`);
+            //console.log(`can't figure out which touch to end`);
         } else {
-            log(`ending touch: index =  ${index}.`);
+            //console.log(`ending touch: index =  ${index}.`);
 
             /* remove it, we're done */
             ongoingTouches.splice(index, 1);
@@ -167,13 +190,7 @@
     function handleCanvasDragStart(e) {
         isPointerDown = false;
 		e.preventDefault();
-	};
-
-    /* bop it twist it pull it log it */
-    function log(msg) {
-        const container = document.getElementById('log');
-        container.textContent = `${ msg } \n${ container.textContent }`;
-    };
+	};    
 </script>
 
 
@@ -188,17 +205,16 @@
 	{/each}
 
 	{#if isInCanvasMode}
-		<!--canvas overlay cuts down on many hurdles otherwise encountered with painting on matrix-->
-		<canvas id="canvas" class="matrix-canvas" width="{106 * pixelSize}" height="{17 * pixelSize}"
-			on:pointerdown={handleCanvasPointerDown} on:pointermove={handleCanvasPointerMove} on:pointerup={handleCanvasPointerUp}
-			on:pointerleave={handleCanvasPointerLeave} on:pointercancel={handleCanvasPointerCancel} on:dragstart={handleCanvasDragStart}>
-				<b><i>Your browser does not support canvas element.</i></b>
-		</canvas>
-	{/if}
-
-    {#if isInDebugMode}<!--comprehensive debugging system and other jokes to tell yourself-->
-    	<pre id="log" class="matrix-log" style="bottom: 0; left: 0; height: {8 * pixelSize}px;"></pre>
-	{/if}
+        <!--canvas overlay cuts down on many hurdles otherwise encountered with painting on matrix-->
+        <canvas id="canvas" class="matrix-canvas" width="{106 * pixelSize}" height="{17 * pixelSize}" style="touch-action: none;"
+            on:pointerdown={handleCanvasPointerDown} on:pointermove={handleCanvasPointerMove} on:pointerup={handleCanvasPointerUp}
+            on:pointerleave={handleCanvasPointerLeave} on:pointercancel={handleCanvasPointerCancel} on:dragstart={handleCanvasDragStart}>
+                <b><i>Your browser does not support canvas element.</i></b>
+        </canvas>
+    {:else}
+        <!--dummy overlay to enter true canvas mode on click-->
+        <div on:click class="matrix-canvas" style="width: {106 * pixelSize}px; height: {17 * pixelSize}px; touch-action: auto;"></div>
+    {/if}
 </div>
 
 <style>
@@ -215,15 +231,6 @@
 		display: flex;
 	}
 
-	.matrix-canvas {
-        background: transparent;
-        position: absolute;
-        touch-action: none;
-        display: block;
-        left: 0;
-        top: 0;
-    }
-
     .matrix-column {
         flex-direction: column-reverse;
         display: inherit;
@@ -235,14 +242,11 @@
 		float: left;		
 	}
 
-    .matrix-log {        
-        border: 1px solid #cccccc;
+    .matrix-canvas {
         background: transparent;
         position: absolute;
-        overflow: scroll;
         display: block;
-        height: 200px;
-        width: 300px;
-        margin: 0;
+        left: 0;
+        top: 0;
     }
 </style>

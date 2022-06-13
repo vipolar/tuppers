@@ -10,8 +10,8 @@
     <div class="container-right-gradient" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px"></div>
     <div class="container-bot-gradient" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px"></div>
 
-    <div class="decore-container" style="width: {116 * pixelSize}px; height: {27 * pixelSize}px">
-        <CanvasDecore {pixelSize}></CanvasDecore>
+    <div class="child-component-container" style="width: {116 * pixelSize}px; height: {27 * pixelSize}px">
+        <CanvasDecore {pixelSize} on:click></CanvasDecore>
     </div>
 
     <!--font-size adjustments might be harmful, need testing on mobile devices-->
@@ -63,7 +63,7 @@
         left: 0;
 	}
 
-    .decore-container {
+    .child-component-container {
         flex-flow: inherit;
 		display: flex;
     }
