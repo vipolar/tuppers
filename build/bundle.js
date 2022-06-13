@@ -36,6 +36,12 @@ var app = (function () {
     function detach(node) {
         node.parentNode.removeChild(node);
     }
+    function destroy_each(iterations, detaching) {
+        for (let i = 0; i < iterations.length; i += 1) {
+            if (iterations[i])
+                iterations[i].d(detaching);
+        }
+    }
     function element(name) {
         return document.createElement(name);
     }
@@ -44,9 +50,6 @@ var app = (function () {
     }
     function space() {
         return text(' ');
-    }
-    function empty() {
-        return text('');
     }
     function listen(node, event, handler, options) {
         node.addEventListener(event, handler, options);
@@ -72,6 +75,20 @@ var app = (function () {
             node.style.setProperty(key, value, important ? 'important' : '');
         }
     }
+    function select_option(select, value) {
+        for (let i = 0; i < select.options.length; i += 1) {
+            const option = select.options[i];
+            if (option.__value === value) {
+                option.selected = true;
+                return;
+            }
+        }
+        select.selectedIndex = -1; // no option should be selected
+    }
+    function select_value(select) {
+        const selected_option = select.querySelector(':checked') || select.options[0];
+        return selected_option && selected_option.__value;
+    }
     function custom_event(type, detail, { bubbles = false, cancelable = false } = {}) {
         const e = document.createEvent('CustomEvent');
         e.initCustomEvent(type, bubbles, cancelable, detail);
@@ -81,6 +98,24 @@ var app = (function () {
     let current_component;
     function set_current_component(component) {
         current_component = component;
+    }
+    function get_current_component() {
+        if (!current_component)
+            throw new Error('Function called outside component initialization');
+        return current_component;
+    }
+    function onMount(fn) {
+        get_current_component().$$.on_mount.push(fn);
+    }
+    // TODO figure out if we still want to support
+    // shorthand events, or if we want to implement
+    // a real bubbling mechanism
+    function bubble(component, event) {
+        const callbacks = component.$$.callbacks[event.type];
+        if (callbacks) {
+            // @ts-ignore
+            callbacks.slice().forEach(fn => fn.call(this, event));
+        }
     }
 
     const dirty_components = [];
@@ -166,6 +201,19 @@ var app = (function () {
     }
     const outroing = new Set();
     let outros;
+    function group_outros() {
+        outros = {
+            r: 0,
+            c: [],
+            p: outros // parent group
+        };
+    }
+    function check_outros() {
+        if (!outros.r) {
+            run_all(outros.c);
+        }
+        outros = outros.p;
+    }
     function transition_in(block, local) {
         if (block && block.i) {
             outroing.delete(block);
@@ -489,3029 +537,6 @@ var app = (function () {
         }
         $capture_state() { }
         $inject_state() { }
-    }
-
-    function stabilizeFunction(func, delay) {
-        let timer;
-
-        return function () {
-            const context = this;
-            const args = arguments;
-            clearTimeout(timer);
-            timer = setTimeout(() => func.apply(context, args), delay);
-        };
-    }
-    function findTouchIndexById(arrayToSearh, idToFind) {
-        for (let i = 0; i < arrayToSearh.length; i++) {
-            const id = arrayToSearh[i].pointerId;
-            if (id == idToFind) {
-                return i;
-            }
-        }
-        /* not found */
-        return -1;
-    }
-
-    function copyCanvasTouch({ pointerId, layerX, layerY }) {
-        return { pointerId, layerX, layerY };
-    }
-
-    function getPixelsOnTheLine(x1, y1, x2, y2, pixelSize) {
-        // Array to be returned in the end
-        const pixelArray = [];
-        let arrayLast = 0;
-        // PseudoPixel coordinates
-        let pixelCoordinates;
-        let pixelX = 20;
-        let pixelY = 20;
-        // Iterators, counters required by algorithm
-        let x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
-        // Calculate line deltas
-        dx = x2 - x1;
-        dy = y2 - y1;
-        // Create a positive copy of deltas (makes iterating easier)
-        dx1 = Math.abs(dx);
-        dy1 = Math.abs(dy);
-        // Calculate error intervals for both axis
-        px = 2 * dy1 - dx1;
-        py = 2 * dx1 - dy1;
-        // The line is X-axis dominant
-        if (dy1 <= dx1) {
-            // Line is drawn left to right
-            if (dx >= 0) {
-                x = x1; y = y1; xe = x2;
-            } else { 
-                // Line is drawn right to left (swap ends)
-                x = x2; y = y2; xe = x1;
-            }
-            // Rasterize the line
-            for (i = 0; x < xe; i++) {
-                x = x + 1;
-                // Deal with octants...
-                if (px < 0) {
-                    px = px + 2 * dy1;
-                } else {
-                    if ((dx < 0 && dy < 0) || (dx > 0 && dy > 0)) {
-                        y = y + 1;
-                    } else {
-                        y = y - 1;
-                    }
-                    px = px + 2 * (dy1 - dx1);
-                }
-                // Draw pixel from line span at
-                // currently rasterized position
-                pixelX = Math.floor(x / pixelSize);
-                pixelY = Math.floor(y / pixelSize);
-                pixelCoordinates = [pixelX, pixelY];
-                arrayLast = pixelArray.length - 1;
-                if (pixelArray.length > 0) {
-                    if (pixelX != pixelArray[arrayLast][0] || pixelY != pixelArray[arrayLast][1])
-                        pixelArray.push(pixelCoordinates);
-                } else {
-                    pixelArray.push(pixelCoordinates);
-                }
-            }
-        } else {
-            // The line is Y-axis dominant
-            // Line is drawn bottom to top
-            if (dy >= 0) {
-                x = x1; y = y1; ye = y2;
-            } else {
-                // Line is drawn top to bottom
-                x = x2; y = y2; ye = y1;
-            }
-             // Rasterize the line
-            for (i = 0; y < ye; i++) {
-                y = y + 1;
-                // Deal with octants...
-                if (py <= 0) {
-                    py = py + 2 * dx1;
-                } else {
-                    if ((dx < 0 && dy<0) || (dx > 0 && dy > 0)) {
-                        x = x + 1;
-                    } else {
-                        x = x - 1;
-                    }
-                    py = py + 2 * (dx1 - dy1);
-                }
-                // Draw pixel from line span at
-                // currently rasterized position
-                pixelX = Math.floor(x / pixelSize);
-                pixelY = Math.floor(y / pixelSize);
-                pixelCoordinates = [pixelX, pixelY];
-                arrayLast = pixelArray.length - 1;
-                if (pixelArray.length > 0) {
-                    if (pixelX != pixelArray[arrayLast][0] || pixelY != pixelArray[arrayLast][1])
-                        pixelArray.push(pixelCoordinates);
-                } else {
-                    pixelArray.push(pixelCoordinates);
-                }
-            }
-        }
-        return pixelArray;
-    }
-
-    const subscriber_queue = [];
-    /**
-     * Create a `Writable` store that allows both updating and reading by subscription.
-     * @param {*=}value initial value
-     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
-     */
-    function writable(value, start = noop) {
-        let stop;
-        const subscribers = new Set();
-        function set(new_value) {
-            if (safe_not_equal(value, new_value)) {
-                value = new_value;
-                if (stop) { // store is ready
-                    const run_queue = !subscriber_queue.length;
-                    for (const subscriber of subscribers) {
-                        subscriber[1]();
-                        subscriber_queue.push(subscriber, value);
-                    }
-                    if (run_queue) {
-                        for (let i = 0; i < subscriber_queue.length; i += 2) {
-                            subscriber_queue[i][0](subscriber_queue[i + 1]);
-                        }
-                        subscriber_queue.length = 0;
-                    }
-                }
-            }
-        }
-        function update(fn) {
-            set(fn(value));
-        }
-        function subscribe(run, invalidate = noop) {
-            const subscriber = [run, invalidate];
-            subscribers.add(subscriber);
-            if (subscribers.size === 1) {
-                stop = start(set) || noop;
-            }
-            run(value);
-            return () => {
-                subscribers.delete(subscriber);
-                if (subscribers.size === 0) {
-                    stop();
-                    stop = null;
-                }
-            };
-        }
-        return { set, update, subscribe };
-    }
-
-    const kValueStringBin = writable('00110010101000100001010101011111000010010010100000000000000000000000000000001000000000000000101000000000000010001000000000000000000000001111111111111111110000000000000000100000111100000000000000001000000000000011100000000000000000100000000000001110000000000000000000000000000000011000000000000001001000000000000010010000000000000011000000000000000000000000000000001100000000000000100100000000000001001000000000000011111100000000000000000000000000011111110000000111000000011100110000000000000110000000000000000011111111111111110100000000000000001011111010000000000000000101011000001100101001000001000111010001100010000000000000000111111111111111100000000000000000000000011001000000000000101001000000000001001010000000000010001000100000000000000001000000000000000000000000000000011111000000000000000000000000000001100100000000000000111000000000000000000000000001111111100000000010000000000000000100101000000000000000100000000000010010100000000000100000000000000001111111100000000000000000000000000000001000000000000000010000000000000000000000000000000111000000000000000010000000000000011100000000000000001000000000000001100000000000000000000000000000000111000000000000001010000000000000011100000000000000000000000000000001110000000000000010100000000000000111110000000000000000000000000000111100000000000110000110000000000000000000000000011111111000000000100000000000000001010110000000000000010000000000000100011000000000001000000000000000011111111000000000000000000000000001000000000000000001100000000000000000000000000000000001111100000000000000000000000000000110010000000000000011100000000000000000000000000110000110001000000011110000001100000000000000000000000000000000001100100000000000010100100000000000100101000001100001000100001100111000000011100100001111111000001000000000000000011111111111111111');
-    const isInCanvasMode = writable(false);
-    const isInBrushMode = writable(true);
-
-    /* src/demo/CanvasMatrix.svelte generated by Svelte v3.48.0 */
-    const file$4 = "src/demo/CanvasMatrix.svelte";
-
-    function get_each_context$1(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[16] = list[i];
-    	child_ctx[18] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_1$1(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[16] = list[i];
-    	child_ctx[20] = i;
-    	return child_ctx;
-    }
-
-    // (184:3) {#each Array(17) as _, indexPix (indexPix)}
-    function create_each_block_1$1(key_1, ctx) {
-    	let div;
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-    			attr_dev(div, "id", "pixel-" + /*indexCol*/ ctx[18] + "-" + /*indexPix*/ ctx[20]);
-    			attr_dev(div, "class", "matrix-pixel svelte-15bbodk");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$4, 184, 4, 6154);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_1$1.name,
-    		type: "each",
-    		source: "(184:3) {#each Array(17) as _, indexPix (indexPix)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (182:1) {#each Array(106) as _, indexCol (indexCol)}
-    function create_each_block$1(key_1, ctx) {
-    	let div;
-    	let each_blocks = [];
-    	let each_1_lookup = new Map();
-    	let each_value_1 = Array(17);
-    	validate_each_argument(each_value_1);
-    	const get_key = ctx => /*indexPix*/ ctx[20];
-    	validate_each_keys(ctx, each_value_1, get_each_context_1$1, get_key);
-
-    	for (let i = 0; i < each_value_1.length; i += 1) {
-    		let child_ctx = get_each_context_1$1(ctx, each_value_1, i);
-    		let key = get_key(child_ctx);
-    		each_1_lookup.set(key, each_blocks[i] = create_each_block_1$1(key, child_ctx));
-    	}
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			attr_dev(div, "class", "matrix-column svelte-15bbodk");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$4, 182, 2, 6018);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div, null);
-    			}
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*Array, pixelSize*/ 1) {
-    				each_value_1 = Array(17);
-    				validate_each_argument(each_value_1);
-    				validate_each_keys(ctx, each_value_1, get_each_context_1$1, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div, destroy_block, create_each_block_1$1, null, get_each_context_1$1);
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
-    			}
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block$1.name,
-    		type: "each",
-    		source: "(182:1) {#each Array(106) as _, indexCol (indexCol)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (190:1) {#if isInCanvasMode}
-    function create_if_block_1(ctx) {
-    	let canvas;
-    	let b;
-    	let i;
-    	let canvas_width_value;
-    	let canvas_height_value;
-    	let mounted;
-    	let dispose;
-
-    	const block = {
-    		c: function create() {
-    			canvas = element("canvas");
-    			b = element("b");
-    			i = element("i");
-    			i.textContent = "Your browser does not support canvas element.";
-    			add_location(i, file$4, 194, 7, 6774);
-    			add_location(b, file$4, 194, 4, 6771);
-    			attr_dev(canvas, "id", "canvas");
-    			attr_dev(canvas, "class", "matrix-canvas svelte-15bbodk");
-    			attr_dev(canvas, "width", canvas_width_value = 106 * /*pixelSize*/ ctx[0]);
-    			attr_dev(canvas, "height", canvas_height_value = 17 * /*pixelSize*/ ctx[0]);
-    			add_location(canvas, file$4, 191, 2, 6422);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, canvas, anchor);
-    			append_dev(canvas, b);
-    			append_dev(b, i);
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(canvas, "pointerdown", /*handleCanvasPointerDown*/ ctx[3], false, false, false),
-    					listen_dev(canvas, "pointermove", /*handleCanvasPointerMove*/ ctx[4], false, false, false),
-    					listen_dev(canvas, "pointerup", /*handleCanvasPointerUp*/ ctx[5], false, false, false),
-    					listen_dev(canvas, "pointerleave", /*handleCanvasPointerLeave*/ ctx[6], false, false, false),
-    					listen_dev(canvas, "pointercancel", /*handleCanvasPointerCancel*/ ctx[7], false, false, false),
-    					listen_dev(canvas, "dragstart", /*handleCanvasDragStart*/ ctx[8], false, false, false)
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*pixelSize*/ 1 && canvas_width_value !== (canvas_width_value = 106 * /*pixelSize*/ ctx[0])) {
-    				attr_dev(canvas, "width", canvas_width_value);
-    			}
-
-    			if (dirty & /*pixelSize*/ 1 && canvas_height_value !== (canvas_height_value = 17 * /*pixelSize*/ ctx[0])) {
-    				attr_dev(canvas, "height", canvas_height_value);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(canvas);
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_1.name,
-    		type: "if",
-    		source: "(190:1) {#if isInCanvasMode}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (199:4) {#if isInDebugMode}
-    function create_if_block$1(ctx) {
-    	let pre;
-
-    	const block = {
-    		c: function create() {
-    			pre = element("pre");
-    			attr_dev(pre, "id", "log");
-    			attr_dev(pre, "class", "matrix-log svelte-15bbodk");
-    			set_style(pre, "bottom", "0");
-    			set_style(pre, "left", "0");
-    			set_style(pre, "height", 8 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(pre, file$4, 199, 5, 6950);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, pre, anchor);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(pre, "height", 8 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(pre);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block$1.name,
-    		type: "if",
-    		source: "(199:4) {#if isInDebugMode}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$5(ctx) {
-    	let div;
-    	let each_blocks = [];
-    	let each_1_lookup = new Map();
-    	let t0;
-    	let t1;
-    	let each_value = Array(106);
-    	validate_each_argument(each_value);
-    	const get_key = ctx => /*indexCol*/ ctx[18];
-    	validate_each_keys(ctx, each_value, get_each_context$1, get_key);
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		let child_ctx = get_each_context$1(ctx, each_value, i);
-    		let key = get_key(child_ctx);
-    		each_1_lookup.set(key, each_blocks[i] = create_each_block$1(key, child_ctx));
-    	}
-
-    	let if_block0 = /*isInCanvasMode*/ ctx[1] && create_if_block_1(ctx);
-    	let if_block1 = /*isInDebugMode*/ ctx[2] && create_if_block$1(ctx);
-
-    	const block = {
-    		c: function create() {
-    			div = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t0 = space();
-    			if (if_block0) if_block0.c();
-    			t1 = space();
-    			if (if_block1) if_block1.c();
-    			attr_dev(div, "id", "matrix");
-    			attr_dev(div, "class", "matrix svelte-15bbodk");
-    			set_style(div, "width", 106 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$4, 180, 0, 5874);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div, null);
-    			}
-
-    			append_dev(div, t0);
-    			if (if_block0) if_block0.m(div, null);
-    			append_dev(div, t1);
-    			if (if_block1) if_block1.m(div, null);
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*pixelSize, Array*/ 1) {
-    				each_value = Array(106);
-    				validate_each_argument(each_value);
-    				validate_each_keys(ctx, each_value, get_each_context$1, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, div, destroy_block, create_each_block$1, t0, get_each_context$1);
-    			}
-
-    			if (/*isInCanvasMode*/ ctx[1]) if_block0.p(ctx, dirty);
-    			if (/*isInDebugMode*/ ctx[2]) if_block1.p(ctx, dirty);
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", 106 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		i: noop,
-    		o: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
-    			}
-
-    			if (if_block0) if_block0.d();
-    			if (if_block1) if_block1.d();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$5.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function log(msg) {
-    	const container = document.getElementById('log');
-    	container.textContent = `${msg} \n${container.textContent}`;
-    }
-
-    function instance$5($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('CanvasMatrix', slots, []);
-    	let kValueArray = new Array(106);
-
-    	for (let i = 0; i < kValueArray.length; i++) {
-    		kValueArray[i] = new Array(17);
-
-    		for (let j = 0; j < kValueArray[i].length; j++) {
-    			kValueArray[i][j] = '0';
-    		}
-    	}
-    	let { pixelSize } = $$props;
-    	const ongoingTouches = [];
-    	let isPointerDown = false;
-    	let isValueUpToDate = true;
-    	let isInCanvasMode = true;
-    	let isInDebugMode = true;
-    	let isBrushAtive = true;
-    	let kValueString = '';
-
-    	/* actually painting, can you imagine?! */
-    	isInBrushMode.subscribe(value => {
-    		isBrushAtive = value;
-    	});
-
-    	function matrixFillPixel(x, y) {
-    		let pixelCol = x;
-    		let pixelRow = 16 - y; /* 16 to reverse */
-    		let pixelID = `pixel-${pixelCol}-${pixelRow}`;
-    		let pixelElement = document.getElementById(pixelID);
-
-    		if (isBrushAtive) {
-    			pixelElement.style.backgroundColor = "#ff0000";
-    			$$invalidate(9, kValueArray[pixelCol][pixelRow] = '1', kValueArray);
-    		} else {
-    			pixelElement.style.backgroundColor = "#999999";
-    			$$invalidate(9, kValueArray[pixelCol][pixelRow] = '0', kValueArray);
-    		}
-
-    		pixelElement.style.backgroundColor = "#ff0000";
-    	}
-
-    	/* wake up babe, new events just dropped! */
-    	function handleCanvasPointerDown(e) {
-    		log(`pointerdown: id = ${e.pointerId}.`);
-    		ongoingTouches.push(copyCanvasTouch(e));
-    		$$invalidate(10, isPointerDown = true);
-
-    		/* calculate the PseudoPixel coordinates */
-    		let pixelCol = Math.floor(e.layerX / pixelSize);
-
-    		let pixelRow = Math.floor(e.layerY / pixelSize);
-    		log(`start drawing at: ${pixelCol}, ${pixelRow}.`);
-    		matrixFillPixel(pixelCol, pixelRow);
-    	}
-
-    	function handleCanvasPointerMove(e) {
-    		if (!isPointerDown) return;
-
-    		/* find the touchID that is being continued here */
-    		const index = findTouchIndexById(ongoingTouches, e.pointerId);
-
-    		if (index < 0) {
-    			log(`can't figure out which touch to continue`);
-    		} else {
-    			log(`continuing ongoing touch: index = ${index}.`);
-
-    			/* get an array of all PseudoPixels on the traversed line */
-    			let pixelArray = getPixelsOnTheLine(ongoingTouches[index].layerX, ongoingTouches[index].layerY, e.layerX, e.layerY, pixelSize);
-
-    			/* fill the line */
-    			if (pixelArray.length > 0) {
-    				log(`drawing line from: ${pixelArray[0]}.`);
-
-    				for (let i = 0; i < pixelArray.length; i++) {
-    					let pixelCol = pixelArray[i][0];
-    					let pixelRow = pixelArray[i][1];
-
-    					if (pixelCol > 105 || pixelRow > 16 || pixelRow < 0 || pixelCol < 0) {
-    						log(`canceled: ${pixelCol}, ${pixelRow} out of bounds!`);
-    						$$invalidate(10, isPointerDown = false);
-    						break;
-    					}
-
-    					matrixFillPixel(pixelCol, pixelRow);
-    				}
-
-    				log(`drawing line to: ${pixelArray[pixelArray.length - 1]}.`);
-    			}
-
-    			/* swap in the new touch record */
-    			ongoingTouches.splice(index, 1, copyCanvasTouch(e));
-    		}
-    	}
-
-    	function handleCanvasPointerUp(e) {
-    		log(`pointerup: id = ${e.pointerId}`);
-    		$$invalidate(10, isPointerDown = false);
-
-    		/* find the touchID that is being ended here */
-    		const index = findTouchIndexById(ongoingTouches, e.pointerId);
-
-    		if (index < 0) {
-    			log(`can't figure out which touch to end`);
-    		} else {
-    			log(`ending ongoing touch: index =  ${index}.`);
-
-    			/* remove it, we're done */
-    			ongoingTouches.splice(index, 1);
-
-    			$$invalidate(10, isPointerDown = false);
-    		}
-    	}
-
-    	function handleCanvasPointerLeave(e) {
-    		log(`pointerleave: id = ${e.pointerId}`);
-    		$$invalidate(10, isPointerDown = false);
-
-    		/* find the touchID that is being ended here */
-    		const index = findTouchIndexById(ongoingTouches, e.pointerId);
-
-    		if (index < 0) {
-    			log(`can't figure out which touch to end`);
-    		} else {
-    			log(`ending ongoing touch: index =  ${index}.`);
-
-    			/* remove it, we're done */
-    			ongoingTouches.splice(index, 1);
-    		}
-    	}
-
-    	function handleCanvasPointerCancel(e) {
-    		log(`pointercancel: id = ${e.pointerId}`);
-    		$$invalidate(10, isPointerDown = false);
-
-    		/* find the touchID that is being ended here */
-    		const index = findTouchIndexById(ongoingTouches, e.pointerId);
-
-    		if (index < 0) {
-    			log(`can't figure out which touch to end`);
-    		} else {
-    			log(`ending touch: index =  ${index}.`);
-
-    			/* remove it, we're done */
-    			ongoingTouches.splice(index, 1);
-    		}
-    	}
-
-    	function handleCanvasDragStart(e) {
-    		$$invalidate(10, isPointerDown = false);
-    		e.preventDefault();
-    	}
-    	const writable_props = ['pixelSize'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasMatrix> was created with unknown prop '${key}'`);
-    	});
-
-    	$$self.$$set = $$props => {
-    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
-    	};
-
-    	$$self.$capture_state = () => ({
-    		getPixelsOnTheLine,
-    		findTouchIndexById,
-    		copyCanvasTouch,
-    		isInBrushMode,
-    		kValueStringBin,
-    		kValueArray,
-    		pixelSize,
-    		ongoingTouches,
-    		isPointerDown,
-    		isValueUpToDate,
-    		isInCanvasMode,
-    		isInDebugMode,
-    		isBrushAtive,
-    		kValueString,
-    		matrixFillPixel,
-    		handleCanvasPointerDown,
-    		handleCanvasPointerMove,
-    		handleCanvasPointerUp,
-    		handleCanvasPointerLeave,
-    		handleCanvasPointerCancel,
-    		handleCanvasDragStart,
-    		log
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('kValueArray' in $$props) $$invalidate(9, kValueArray = $$props.kValueArray);
-    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
-    		if ('isPointerDown' in $$props) $$invalidate(10, isPointerDown = $$props.isPointerDown);
-    		if ('isValueUpToDate' in $$props) $$invalidate(11, isValueUpToDate = $$props.isValueUpToDate);
-    		if ('isInCanvasMode' in $$props) $$invalidate(1, isInCanvasMode = $$props.isInCanvasMode);
-    		if ('isInDebugMode' in $$props) $$invalidate(2, isInDebugMode = $$props.isInDebugMode);
-    		if ('isBrushAtive' in $$props) isBrushAtive = $$props.isBrushAtive;
-    		if ('kValueString' in $$props) $$invalidate(12, kValueString = $$props.kValueString);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*isPointerDown, isValueUpToDate, kValueArray, kValueString*/ 7680) {
-    			/* create final string of k's binary value */
-    			if (isPointerDown === true) {
-    				$$invalidate(11, isValueUpToDate = false);
-    			} else {
-    				if (isValueUpToDate === false) {
-    					$$invalidate(12, kValueString = '');
-
-    					for (let i = 0; i < kValueArray.length; i++) {
-    						for (let j = 0; j < kValueArray[i].length; j++) {
-    							$$invalidate(12, kValueString += kValueArray[i][j]);
-    						}
-    					}
-
-    					/* export the final binary string for others to access */
-    					kValueStringBin.update(n => kValueString);
-
-    					$$invalidate(11, isValueUpToDate = true);
-    				}
-    			}
-    		}
-    	};
-
-    	return [
-    		pixelSize,
-    		isInCanvasMode,
-    		isInDebugMode,
-    		handleCanvasPointerDown,
-    		handleCanvasPointerMove,
-    		handleCanvasPointerUp,
-    		handleCanvasPointerLeave,
-    		handleCanvasPointerCancel,
-    		handleCanvasDragStart,
-    		kValueArray,
-    		isPointerDown,
-    		isValueUpToDate,
-    		kValueString
-    	];
-    }
-
-    class CanvasMatrix extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-    		init(this, options, instance$5, create_fragment$5, safe_not_equal, { pixelSize: 0 });
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "CanvasMatrix",
-    			options,
-    			id: create_fragment$5.name
-    		});
-
-    		const { ctx } = this.$$;
-    		const props = options.props || {};
-
-    		if (/*pixelSize*/ ctx[0] === undefined && !('pixelSize' in props)) {
-    			console.warn("<CanvasMatrix> was created without expected prop 'pixelSize'");
-    		}
-    	}
-
-    	get pixelSize() {
-    		throw new Error("<CanvasMatrix>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set pixelSize(value) {
-    		throw new Error("<CanvasMatrix>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-    }
-
-    /* src/demo/CanvasDecore.svelte generated by Svelte v3.48.0 */
-    const file$3 = "src/demo/CanvasDecore.svelte";
-
-    function get_each_context(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_1(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_2(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_3(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_4(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_5(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_6(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_7(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_8(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_9(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_10(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_11(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_12(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_13(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_14(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_15(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    // (11:16) {#each Array(3) as _, index (index)}
-    function create_each_block_15(key_1, ctx) {
-    	let div;
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-    			attr_dev(div, "class", "decore-outer-pixel svelte-1pbyvf5");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 11, 20, 593);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_15.name,
-    		type: "each",
-    		source: "(11:16) {#each Array(3) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (9:8) {#each Array(116) as _, index (index)}
-    function create_each_block_14(key_1, ctx) {
-    	let div;
-    	let each_blocks = [];
-    	let each_1_lookup = new Map();
-    	let t;
-    	let each_value_15 = Array(3);
-    	validate_each_argument(each_value_15);
-    	const get_key = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_15, get_each_context_15, get_key);
-
-    	for (let i = 0; i < each_value_15.length; i += 1) {
-    		let child_ctx = get_each_context_15(ctx, each_value_15, i);
-    		let key = get_key(child_ctx);
-    		each_1_lookup.set(key, each_blocks[i] = create_each_block_15(key, child_ctx));
-    	}
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t = space();
-    			attr_dev(div, "class", "decore-outer-column");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", 3 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 9, 12, 430);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div, null);
-    			}
-
-    			append_dev(div, t);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				each_value_15 = Array(3);
-    				validate_each_argument(each_value_15);
-    				validate_each_keys(ctx, each_value_15, get_each_context_15, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_15, each_1_lookup, div, destroy_block, create_each_block_15, t, get_each_context_15);
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", 3 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
-    			}
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_14.name,
-    		type: "each",
-    		source: "(9:8) {#each Array(116) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (21:16) {#each Array(21) as _, index (index)}
-    function create_each_block_13(key_1, ctx) {
-    	let div;
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-    			attr_dev(div, "class", "decore-outer-pixel svelte-1pbyvf5");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 21, 20, 1074);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_13.name,
-    		type: "each",
-    		source: "(21:16) {#each Array(21) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (19:8) {#each Array(3) as _, index (index)}
-    function create_each_block_12(key_1, ctx) {
-    	let div;
-    	let each_blocks = [];
-    	let each_1_lookup = new Map();
-    	let t;
-    	let each_value_13 = Array(21);
-    	validate_each_argument(each_value_13);
-    	const get_key = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_13, get_each_context_13, get_key);
-
-    	for (let i = 0; i < each_value_13.length; i += 1) {
-    		let child_ctx = get_each_context_13(ctx, each_value_13, i);
-    		let key = get_key(child_ctx);
-    		each_1_lookup.set(key, each_blocks[i] = create_each_block_13(key, child_ctx));
-    	}
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t = space();
-    			attr_dev(div, "class", "decore-outer-column");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", 21 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 19, 12, 909);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div, null);
-    			}
-
-    			append_dev(div, t);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				each_value_13 = Array(21);
-    				validate_each_argument(each_value_13);
-    				validate_each_keys(ctx, each_value_13, get_each_context_13, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_13, each_1_lookup, div, destroy_block, create_each_block_13, t, get_each_context_13);
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", 21 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
-    			}
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_12.name,
-    		type: "each",
-    		source: "(19:8) {#each Array(3) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (32:20) {#each Array(2) as _, index (index)}
-    function create_each_block_11(key_1, ctx) {
-    	let div;
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-    			attr_dev(div, "class", "decore-inner-pixel svelte-1pbyvf5");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 32, 24, 1669);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_11.name,
-    		type: "each",
-    		source: "(32:20) {#each Array(2) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (30:12) {#each Array(110) as _, index (index)}
-    function create_each_block_10(key_1, ctx) {
-    	let div;
-    	let each_blocks = [];
-    	let each_1_lookup = new Map();
-    	let t;
-    	let each_value_11 = Array(2);
-    	validate_each_argument(each_value_11);
-    	const get_key = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_11, get_each_context_11, get_key);
-
-    	for (let i = 0; i < each_value_11.length; i += 1) {
-    		let child_ctx = get_each_context_11(ctx, each_value_11, i);
-    		let key = get_key(child_ctx);
-    		each_1_lookup.set(key, each_blocks[i] = create_each_block_11(key, child_ctx));
-    	}
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t = space();
-    			attr_dev(div, "class", "decore-inner-column");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", 2 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 30, 16, 1498);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div, null);
-    			}
-
-    			append_dev(div, t);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				each_value_11 = Array(2);
-    				validate_each_argument(each_value_11);
-    				validate_each_keys(ctx, each_value_11, get_each_context_11, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_11, each_1_lookup, div, destroy_block, create_each_block_11, t, get_each_context_11);
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", 2 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
-    			}
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_10.name,
-    		type: "each",
-    		source: "(30:12) {#each Array(110) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (42:20) {#each Array(17) as _, index (index)}
-    function create_each_block_9(key_1, ctx) {
-    	let div;
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-    			attr_dev(div, "class", "decore-inner-pixel svelte-1pbyvf5");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 42, 24, 2186);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_9.name,
-    		type: "each",
-    		source: "(42:20) {#each Array(17) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (40:12) {#each Array(2) as _, index (index)}
-    function create_each_block_8(key_1, ctx) {
-    	let div;
-    	let each_blocks = [];
-    	let each_1_lookup = new Map();
-    	let t;
-    	let each_value_9 = Array(17);
-    	validate_each_argument(each_value_9);
-    	const get_key = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_9, get_each_context_9, get_key);
-
-    	for (let i = 0; i < each_value_9.length; i += 1) {
-    		let child_ctx = get_each_context_9(ctx, each_value_9, i);
-    		let key = get_key(child_ctx);
-    		each_1_lookup.set(key, each_blocks[i] = create_each_block_9(key, child_ctx));
-    	}
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t = space();
-    			attr_dev(div, "class", "decore-inner-column");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 40, 16, 2013);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div, null);
-    			}
-
-    			append_dev(div, t);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				each_value_9 = Array(17);
-    				validate_each_argument(each_value_9);
-    				validate_each_keys(ctx, each_value_9, get_each_context_9, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_9, each_1_lookup, div, destroy_block, create_each_block_9, t, get_each_context_9);
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
-    			}
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_8.name,
-    		type: "each",
-    		source: "(40:12) {#each Array(2) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (56:20) {#each Array(17) as _, index (index)}
-    function create_each_block_7(key_1, ctx) {
-    	let div;
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-    			attr_dev(div, "class", "decore-inner-pixel svelte-1pbyvf5");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 56, 24, 2876);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_7.name,
-    		type: "each",
-    		source: "(56:20) {#each Array(17) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (54:12) {#each Array(2) as _, index (index)}
-    function create_each_block_6(key_1, ctx) {
-    	let div;
-    	let each_blocks = [];
-    	let each_1_lookup = new Map();
-    	let t;
-    	let each_value_7 = Array(17);
-    	validate_each_argument(each_value_7);
-    	const get_key = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_7, get_each_context_7, get_key);
-
-    	for (let i = 0; i < each_value_7.length; i += 1) {
-    		let child_ctx = get_each_context_7(ctx, each_value_7, i);
-    		let key = get_key(child_ctx);
-    		each_1_lookup.set(key, each_blocks[i] = create_each_block_7(key, child_ctx));
-    	}
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t = space();
-    			attr_dev(div, "class", "decore-inner-column");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 54, 16, 2703);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div, null);
-    			}
-
-    			append_dev(div, t);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				each_value_7 = Array(17);
-    				validate_each_argument(each_value_7);
-    				validate_each_keys(ctx, each_value_7, get_each_context_7, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_7, each_1_lookup, div, destroy_block, create_each_block_7, t, get_each_context_7);
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
-    			}
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_6.name,
-    		type: "each",
-    		source: "(54:12) {#each Array(2) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (66:20) {#each Array(2) as _, index (index)}
-    function create_each_block_5(key_1, ctx) {
-    	let div;
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-    			attr_dev(div, "class", "decore-inner-pixel svelte-1pbyvf5");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 66, 24, 3393);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_5.name,
-    		type: "each",
-    		source: "(66:20) {#each Array(2) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (64:12) {#each Array(110) as _, index (index)}
-    function create_each_block_4(key_1, ctx) {
-    	let div;
-    	let each_blocks = [];
-    	let each_1_lookup = new Map();
-    	let t;
-    	let each_value_5 = Array(2);
-    	validate_each_argument(each_value_5);
-    	const get_key = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_5, get_each_context_5, get_key);
-
-    	for (let i = 0; i < each_value_5.length; i += 1) {
-    		let child_ctx = get_each_context_5(ctx, each_value_5, i);
-    		let key = get_key(child_ctx);
-    		each_1_lookup.set(key, each_blocks[i] = create_each_block_5(key, child_ctx));
-    	}
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t = space();
-    			attr_dev(div, "class", "decore-inner-column");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", 2 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 64, 16, 3222);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div, null);
-    			}
-
-    			append_dev(div, t);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				each_value_5 = Array(2);
-    				validate_each_argument(each_value_5);
-    				validate_each_keys(ctx, each_value_5, get_each_context_5, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_5, each_1_lookup, div, destroy_block, create_each_block_5, t, get_each_context_5);
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", 2 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
-    			}
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_4.name,
-    		type: "each",
-    		source: "(64:12) {#each Array(110) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (77:16) {#each Array(21) as _, index (index)}
-    function create_each_block_3(key_1, ctx) {
-    	let div;
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-    			attr_dev(div, "class", "decore-outer-pixel svelte-1pbyvf5");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 77, 20, 3902);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_3.name,
-    		type: "each",
-    		source: "(77:16) {#each Array(21) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (75:8) {#each Array(3) as _, index (index)}
-    function create_each_block_2(key_1, ctx) {
-    	let div;
-    	let each_blocks = [];
-    	let each_1_lookup = new Map();
-    	let t;
-    	let each_value_3 = Array(21);
-    	validate_each_argument(each_value_3);
-    	const get_key = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_3, get_each_context_3, get_key);
-
-    	for (let i = 0; i < each_value_3.length; i += 1) {
-    		let child_ctx = get_each_context_3(ctx, each_value_3, i);
-    		let key = get_key(child_ctx);
-    		each_1_lookup.set(key, each_blocks[i] = create_each_block_3(key, child_ctx));
-    	}
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t = space();
-    			attr_dev(div, "class", "decore-outer-column");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", 21 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 75, 12, 3737);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div, null);
-    			}
-
-    			append_dev(div, t);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				each_value_3 = Array(21);
-    				validate_each_argument(each_value_3);
-    				validate_each_keys(ctx, each_value_3, get_each_context_3, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_3, each_1_lookup, div, destroy_block, create_each_block_3, t, get_each_context_3);
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", 21 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
-    			}
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_2.name,
-    		type: "each",
-    		source: "(75:8) {#each Array(3) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (87:16) {#each Array(3) as _, index (index)}
-    function create_each_block_1(key_1, ctx) {
-    	let div;
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-    			attr_dev(div, "class", "decore-outer-pixel svelte-1pbyvf5");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 87, 20, 4383);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_1.name,
-    		type: "each",
-    		source: "(87:16) {#each Array(3) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (85:8) {#each Array(116) as _, index (index)}
-    function create_each_block(key_1, ctx) {
-    	let div;
-    	let each_blocks = [];
-    	let each_1_lookup = new Map();
-    	let t;
-    	let each_value_1 = Array(3);
-    	validate_each_argument(each_value_1);
-    	const get_key = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
-
-    	for (let i = 0; i < each_value_1.length; i += 1) {
-    		let child_ctx = get_each_context_1(ctx, each_value_1, i);
-    		let key = get_key(child_ctx);
-    		each_1_lookup.set(key, each_blocks[i] = create_each_block_1(key, child_ctx));
-    	}
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			t = space();
-    			attr_dev(div, "class", "decore-outer-column");
-    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div, "height", 3 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div, file$3, 85, 12, 4220);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div, null);
-    			}
-
-    			append_dev(div, t);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				each_value_1 = Array(3);
-    				validate_each_argument(each_value_1);
-    				validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div, destroy_block, create_each_block_1, t, get_each_context_1);
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize*/ 1) {
-    				set_style(div, "height", 3 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
-    			}
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block.name,
-    		type: "each",
-    		source: "(85:8) {#each Array(116) as _, index (index)}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$4(ctx) {
-    	let div10;
-    	let div0;
-    	let each_blocks_7 = [];
-    	let each0_lookup = new Map();
-    	let t0;
-    	let div1;
-    	let each_blocks_6 = [];
-    	let each1_lookup = new Map();
-    	let t1;
-    	let div7;
-    	let div2;
-    	let each_blocks_5 = [];
-    	let each2_lookup = new Map();
-    	let t2;
-    	let div3;
-    	let each_blocks_4 = [];
-    	let each3_lookup = new Map();
-    	let t3;
-    	let div4;
-    	let canvasmatrix;
-    	let t4;
-    	let div5;
-    	let each_blocks_3 = [];
-    	let each4_lookup = new Map();
-    	let t5;
-    	let div6;
-    	let each_blocks_2 = [];
-    	let each5_lookup = new Map();
-    	let t6;
-    	let div8;
-    	let each_blocks_1 = [];
-    	let each6_lookup = new Map();
-    	let t7;
-    	let div9;
-    	let each_blocks = [];
-    	let each7_lookup = new Map();
-    	let current;
-    	let each_value_14 = Array(116);
-    	validate_each_argument(each_value_14);
-    	const get_key = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_14, get_each_context_14, get_key);
-
-    	for (let i = 0; i < each_value_14.length; i += 1) {
-    		let child_ctx = get_each_context_14(ctx, each_value_14, i);
-    		let key = get_key(child_ctx);
-    		each0_lookup.set(key, each_blocks_7[i] = create_each_block_14(key, child_ctx));
-    	}
-
-    	let each_value_12 = Array(3);
-    	validate_each_argument(each_value_12);
-    	const get_key_1 = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_12, get_each_context_12, get_key_1);
-
-    	for (let i = 0; i < each_value_12.length; i += 1) {
-    		let child_ctx = get_each_context_12(ctx, each_value_12, i);
-    		let key = get_key_1(child_ctx);
-    		each1_lookup.set(key, each_blocks_6[i] = create_each_block_12(key, child_ctx));
-    	}
-
-    	let each_value_10 = Array(110);
-    	validate_each_argument(each_value_10);
-    	const get_key_2 = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_10, get_each_context_10, get_key_2);
-
-    	for (let i = 0; i < each_value_10.length; i += 1) {
-    		let child_ctx = get_each_context_10(ctx, each_value_10, i);
-    		let key = get_key_2(child_ctx);
-    		each2_lookup.set(key, each_blocks_5[i] = create_each_block_10(key, child_ctx));
-    	}
-
-    	let each_value_8 = Array(2);
-    	validate_each_argument(each_value_8);
-    	const get_key_3 = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_8, get_each_context_8, get_key_3);
-
-    	for (let i = 0; i < each_value_8.length; i += 1) {
-    		let child_ctx = get_each_context_8(ctx, each_value_8, i);
-    		let key = get_key_3(child_ctx);
-    		each3_lookup.set(key, each_blocks_4[i] = create_each_block_8(key, child_ctx));
-    	}
-
-    	canvasmatrix = new CanvasMatrix({
-    			props: { pixelSize: /*pixelSize*/ ctx[0] },
-    			$$inline: true
-    		});
-
-    	let each_value_6 = Array(2);
-    	validate_each_argument(each_value_6);
-    	const get_key_4 = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_6, get_each_context_6, get_key_4);
-
-    	for (let i = 0; i < each_value_6.length; i += 1) {
-    		let child_ctx = get_each_context_6(ctx, each_value_6, i);
-    		let key = get_key_4(child_ctx);
-    		each4_lookup.set(key, each_blocks_3[i] = create_each_block_6(key, child_ctx));
-    	}
-
-    	let each_value_4 = Array(110);
-    	validate_each_argument(each_value_4);
-    	const get_key_5 = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_4, get_each_context_4, get_key_5);
-
-    	for (let i = 0; i < each_value_4.length; i += 1) {
-    		let child_ctx = get_each_context_4(ctx, each_value_4, i);
-    		let key = get_key_5(child_ctx);
-    		each5_lookup.set(key, each_blocks_2[i] = create_each_block_4(key, child_ctx));
-    	}
-
-    	let each_value_2 = Array(3);
-    	validate_each_argument(each_value_2);
-    	const get_key_6 = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value_2, get_each_context_2, get_key_6);
-
-    	for (let i = 0; i < each_value_2.length; i += 1) {
-    		let child_ctx = get_each_context_2(ctx, each_value_2, i);
-    		let key = get_key_6(child_ctx);
-    		each6_lookup.set(key, each_blocks_1[i] = create_each_block_2(key, child_ctx));
-    	}
-
-    	let each_value = Array(116);
-    	validate_each_argument(each_value);
-    	const get_key_7 = ctx => /*index*/ ctx[3];
-    	validate_each_keys(ctx, each_value, get_each_context, get_key_7);
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		let child_ctx = get_each_context(ctx, each_value, i);
-    		let key = get_key_7(child_ctx);
-    		each7_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
-    	}
-
-    	const block = {
-    		c: function create() {
-    			div10 = element("div");
-    			div0 = element("div");
-
-    			for (let i = 0; i < each_blocks_7.length; i += 1) {
-    				each_blocks_7[i].c();
-    			}
-
-    			t0 = space();
-    			div1 = element("div");
-
-    			for (let i = 0; i < each_blocks_6.length; i += 1) {
-    				each_blocks_6[i].c();
-    			}
-
-    			t1 = space();
-    			div7 = element("div");
-    			div2 = element("div");
-
-    			for (let i = 0; i < each_blocks_5.length; i += 1) {
-    				each_blocks_5[i].c();
-    			}
-
-    			t2 = space();
-    			div3 = element("div");
-
-    			for (let i = 0; i < each_blocks_4.length; i += 1) {
-    				each_blocks_4[i].c();
-    			}
-
-    			t3 = space();
-    			div4 = element("div");
-    			create_component(canvasmatrix.$$.fragment);
-    			t4 = space();
-    			div5 = element("div");
-
-    			for (let i = 0; i < each_blocks_3.length; i += 1) {
-    				each_blocks_3[i].c();
-    			}
-
-    			t5 = space();
-    			div6 = element("div");
-
-    			for (let i = 0; i < each_blocks_2.length; i += 1) {
-    				each_blocks_2[i].c();
-    			}
-
-    			t6 = space();
-    			div8 = element("div");
-
-    			for (let i = 0; i < each_blocks_1.length; i += 1) {
-    				each_blocks_1[i].c();
-    			}
-
-    			t7 = space();
-    			div9 = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			attr_dev(div0, "class", "decore-outer-top svelte-1pbyvf5");
-    			set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div0, "height", 3 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div0, file$3, 7, 4, 278);
-    			attr_dev(div1, "class", "decore-outer-left svelte-1pbyvf5");
-    			set_style(div1, "width", 3 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div1, "height", 21 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div1, file$3, 17, 4, 759);
-    			attr_dev(div2, "class", "decore-inner-top svelte-1pbyvf5");
-    			set_style(div2, "width", 110 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div2, "height", 2 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div2, file$3, 28, 8, 1338);
-    			attr_dev(div3, "class", "decore-inner-left svelte-1pbyvf5");
-    			set_style(div3, "width", 2 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div3, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div3, file$3, 38, 8, 1855);
-    			attr_dev(div4, "class", "matrix-container svelte-1pbyvf5");
-    			set_style(div4, "width", 106 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div4, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div4, file$3, 48, 8, 2372);
-    			attr_dev(div5, "class", "decore-inner-right svelte-1pbyvf5");
-    			set_style(div5, "width", 2 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div5, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div5, file$3, 52, 8, 2544);
-    			attr_dev(div6, "class", "decore-inner-bot svelte-1pbyvf5");
-    			set_style(div6, "width", 110 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div6, "height", 2 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div6, file$3, 62, 8, 3062);
-    			attr_dev(div7, "class", "decore-inner svelte-1pbyvf5");
-    			set_style(div7, "width", 110 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div7, "height", 21 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div7, file$3, 27, 4, 1240);
-    			attr_dev(div8, "class", "decore-outer-right svelte-1pbyvf5");
-    			set_style(div8, "width", 3 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div8, "height", 21 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div8, file$3, 73, 4, 3586);
-    			attr_dev(div9, "class", "decore-outer-bot svelte-1pbyvf5");
-    			set_style(div9, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div9, "height", 3 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div9, file$3, 83, 4, 4068);
-    			attr_dev(div10, "class", "decore svelte-1pbyvf5");
-    			set_style(div10, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div10, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div10, file$3, 6, 0, 190);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div10, anchor);
-    			append_dev(div10, div0);
-
-    			for (let i = 0; i < each_blocks_7.length; i += 1) {
-    				each_blocks_7[i].m(div0, null);
-    			}
-
-    			append_dev(div10, t0);
-    			append_dev(div10, div1);
-
-    			for (let i = 0; i < each_blocks_6.length; i += 1) {
-    				each_blocks_6[i].m(div1, null);
-    			}
-
-    			append_dev(div10, t1);
-    			append_dev(div10, div7);
-    			append_dev(div7, div2);
-
-    			for (let i = 0; i < each_blocks_5.length; i += 1) {
-    				each_blocks_5[i].m(div2, null);
-    			}
-
-    			append_dev(div7, t2);
-    			append_dev(div7, div3);
-
-    			for (let i = 0; i < each_blocks_4.length; i += 1) {
-    				each_blocks_4[i].m(div3, null);
-    			}
-
-    			append_dev(div7, t3);
-    			append_dev(div7, div4);
-    			mount_component(canvasmatrix, div4, null);
-    			append_dev(div7, t4);
-    			append_dev(div7, div5);
-
-    			for (let i = 0; i < each_blocks_3.length; i += 1) {
-    				each_blocks_3[i].m(div5, null);
-    			}
-
-    			append_dev(div7, t5);
-    			append_dev(div7, div6);
-
-    			for (let i = 0; i < each_blocks_2.length; i += 1) {
-    				each_blocks_2[i].m(div6, null);
-    			}
-
-    			append_dev(div10, t6);
-    			append_dev(div10, div8);
-
-    			for (let i = 0; i < each_blocks_1.length; i += 1) {
-    				each_blocks_1[i].m(div8, null);
-    			}
-
-    			append_dev(div10, t7);
-    			append_dev(div10, div9);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div9, null);
-    			}
-
-    			current = true;
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*pixelSize, Array*/ 1) {
-    				each_value_14 = Array(116);
-    				validate_each_argument(each_value_14);
-    				validate_each_keys(ctx, each_value_14, get_each_context_14, get_key);
-    				each_blocks_7 = update_keyed_each(each_blocks_7, dirty, get_key, 1, ctx, each_value_14, each0_lookup, div0, destroy_block, create_each_block_14, null, get_each_context_14);
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div0, "height", 3 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize, Array*/ 1) {
-    				each_value_12 = Array(3);
-    				validate_each_argument(each_value_12);
-    				validate_each_keys(ctx, each_value_12, get_each_context_12, get_key_1);
-    				each_blocks_6 = update_keyed_each(each_blocks_6, dirty, get_key_1, 1, ctx, each_value_12, each1_lookup, div1, destroy_block, create_each_block_12, null, get_each_context_12);
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div1, "width", 3 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div1, "height", 21 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize, Array*/ 1) {
-    				each_value_10 = Array(110);
-    				validate_each_argument(each_value_10);
-    				validate_each_keys(ctx, each_value_10, get_each_context_10, get_key_2);
-    				each_blocks_5 = update_keyed_each(each_blocks_5, dirty, get_key_2, 1, ctx, each_value_10, each2_lookup, div2, destroy_block, create_each_block_10, null, get_each_context_10);
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div2, "width", 110 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div2, "height", 2 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize, Array*/ 1) {
-    				each_value_8 = Array(2);
-    				validate_each_argument(each_value_8);
-    				validate_each_keys(ctx, each_value_8, get_each_context_8, get_key_3);
-    				each_blocks_4 = update_keyed_each(each_blocks_4, dirty, get_key_3, 1, ctx, each_value_8, each3_lookup, div3, destroy_block, create_each_block_8, null, get_each_context_8);
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div3, "width", 2 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div3, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			const canvasmatrix_changes = {};
-    			if (dirty & /*pixelSize*/ 1) canvasmatrix_changes.pixelSize = /*pixelSize*/ ctx[0];
-    			canvasmatrix.$set(canvasmatrix_changes);
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div4, "width", 106 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div4, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize, Array*/ 1) {
-    				each_value_6 = Array(2);
-    				validate_each_argument(each_value_6);
-    				validate_each_keys(ctx, each_value_6, get_each_context_6, get_key_4);
-    				each_blocks_3 = update_keyed_each(each_blocks_3, dirty, get_key_4, 1, ctx, each_value_6, each4_lookup, div5, destroy_block, create_each_block_6, null, get_each_context_6);
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div5, "width", 2 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div5, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize, Array*/ 1) {
-    				each_value_4 = Array(110);
-    				validate_each_argument(each_value_4);
-    				validate_each_keys(ctx, each_value_4, get_each_context_4, get_key_5);
-    				each_blocks_2 = update_keyed_each(each_blocks_2, dirty, get_key_5, 1, ctx, each_value_4, each5_lookup, div6, destroy_block, create_each_block_4, null, get_each_context_4);
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div6, "width", 110 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div6, "height", 2 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div7, "width", 110 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div7, "height", 21 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize, Array*/ 1) {
-    				each_value_2 = Array(3);
-    				validate_each_argument(each_value_2);
-    				validate_each_keys(ctx, each_value_2, get_each_context_2, get_key_6);
-    				each_blocks_1 = update_keyed_each(each_blocks_1, dirty, get_key_6, 1, ctx, each_value_2, each6_lookup, div8, destroy_block, create_each_block_2, null, get_each_context_2);
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div8, "width", 3 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div8, "height", 21 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (dirty & /*pixelSize, Array*/ 1) {
-    				each_value = Array(116);
-    				validate_each_argument(each_value);
-    				validate_each_keys(ctx, each_value, get_each_context, get_key_7);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key_7, 1, ctx, each_value, each7_lookup, div9, destroy_block, create_each_block, null, get_each_context);
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div9, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div9, "height", 3 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div10, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div10, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(canvasmatrix.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(canvasmatrix.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div10);
-
-    			for (let i = 0; i < each_blocks_7.length; i += 1) {
-    				each_blocks_7[i].d();
-    			}
-
-    			for (let i = 0; i < each_blocks_6.length; i += 1) {
-    				each_blocks_6[i].d();
-    			}
-
-    			for (let i = 0; i < each_blocks_5.length; i += 1) {
-    				each_blocks_5[i].d();
-    			}
-
-    			for (let i = 0; i < each_blocks_4.length; i += 1) {
-    				each_blocks_4[i].d();
-    			}
-
-    			destroy_component(canvasmatrix);
-
-    			for (let i = 0; i < each_blocks_3.length; i += 1) {
-    				each_blocks_3[i].d();
-    			}
-
-    			for (let i = 0; i < each_blocks_2.length; i += 1) {
-    				each_blocks_2[i].d();
-    			}
-
-    			for (let i = 0; i < each_blocks_1.length; i += 1) {
-    				each_blocks_1[i].d();
-    			}
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
-    			}
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$4.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function instance$4($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('CanvasDecore', slots, []);
-    	let { pixelSize } = $$props;
-    	const writable_props = ['pixelSize'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasDecore> was created with unknown prop '${key}'`);
-    	});
-
-    	$$self.$$set = $$props => {
-    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
-    	};
-
-    	$$self.$capture_state = () => ({ CanvasMatrix, pixelSize });
-
-    	$$self.$inject_state = $$props => {
-    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [pixelSize];
-    }
-
-    class CanvasDecore extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-    		init(this, options, instance$4, create_fragment$4, safe_not_equal, { pixelSize: 0 });
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "CanvasDecore",
-    			options,
-    			id: create_fragment$4.name
-    		});
-
-    		const { ctx } = this.$$;
-    		const props = options.props || {};
-
-    		if (/*pixelSize*/ ctx[0] === undefined && !('pixelSize' in props)) {
-    			console.warn("<CanvasDecore> was created without expected prop 'pixelSize'");
-    		}
-    	}
-
-    	get pixelSize() {
-    		throw new Error("<CanvasDecore>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set pixelSize(value) {
-    		throw new Error("<CanvasDecore>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-    }
-
-    /* src/demo/CanvasContainer.svelte generated by Svelte v3.48.0 */
-    const file$2 = "src/demo/CanvasContainer.svelte";
-
-    function create_fragment$3(ctx) {
-    	let div21;
-    	let div0;
-    	let t0;
-    	let div1;
-    	let t1;
-    	let div2;
-    	let t2;
-    	let div3;
-    	let t3;
-    	let div4;
-    	let canvasdecore;
-    	let t4;
-    	let div12;
-    	let div5;
-    	let t5;
-    	let div6;
-    	let t6;
-    	let div11;
-    	let div7;
-    	let b0;
-    	let t8;
-    	let div10;
-    	let div8;
-    	let b1;
-    	let i0;
-    	let t10;
-    	let div9;
-    	let b2;
-    	let i1;
-    	let t12;
-    	let div20;
-    	let div13;
-    	let t13;
-    	let div14;
-    	let t14;
-    	let div19;
-    	let div15;
-    	let b3;
-    	let t16;
-    	let div18;
-    	let div16;
-    	let b4;
-    	let i2;
-    	let t18;
-    	let div17;
-    	let b5;
-    	let i3;
-    	let current;
-
-    	canvasdecore = new CanvasDecore({
-    			props: { pixelSize: /*pixelSize*/ ctx[0] },
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			div21 = element("div");
-    			div0 = element("div");
-    			t0 = space();
-    			div1 = element("div");
-    			t1 = space();
-    			div2 = element("div");
-    			t2 = space();
-    			div3 = element("div");
-    			t3 = space();
-    			div4 = element("div");
-    			create_component(canvasdecore.$$.fragment);
-    			t4 = space();
-    			div12 = element("div");
-    			div5 = element("div");
-    			t5 = space();
-    			div6 = element("div");
-    			t6 = space();
-    			div11 = element("div");
-    			div7 = element("div");
-    			b0 = element("b");
-    			b0.textContent = "Y";
-    			t8 = space();
-    			div10 = element("div");
-    			div8 = element("div");
-    			b1 = element("b");
-    			i0 = element("i");
-    			i0.textContent = "k";
-    			t10 = space();
-    			div9 = element("div");
-    			b2 = element("b");
-    			i1 = element("i");
-    			i1.textContent = "k+17";
-    			t12 = space();
-    			div20 = element("div");
-    			div13 = element("div");
-    			t13 = space();
-    			div14 = element("div");
-    			t14 = space();
-    			div19 = element("div");
-    			div15 = element("div");
-    			b3 = element("b");
-    			b3.textContent = "X";
-    			t16 = space();
-    			div18 = element("div");
-    			div16 = element("div");
-    			b4 = element("b");
-    			i2 = element("i");
-    			i2.textContent = "0";
-    			t18 = space();
-    			div17 = element("div");
-    			b5 = element("b");
-    			i3 = element("i");
-    			i3.textContent = "106";
-    			attr_dev(div0, "class", "container-top-gradient svelte-o20noi");
-    			set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div0, "height", 5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div0, file$2, 7, 4, 281);
-    			attr_dev(div1, "class", "container-left-gradient svelte-o20noi");
-    			set_style(div1, "width", 5 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div1, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div1, file$2, 8, 4, 390);
-    			attr_dev(div2, "class", "container-right-gradient svelte-o20noi");
-    			set_style(div2, "width", 5 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div2, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div2, file$2, 9, 4, 499);
-    			attr_dev(div3, "class", "container-bot-gradient svelte-o20noi");
-    			set_style(div3, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div3, "height", 5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div3, file$2, 10, 4, 609);
-    			attr_dev(div4, "class", "decore-container svelte-o20noi");
-    			set_style(div4, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div4, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div4, file$2, 12, 4, 719);
-    			attr_dev(div5, "class", "container-axis-y-arrow-body svelte-o20noi");
-    			add_location(div5, file$2, 18, 8, 1061);
-    			attr_dev(div6, "class", "container-axis-y-arrow-head svelte-o20noi");
-    			set_style(div6, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div6, "height", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div6, "top", /*pixelSize*/ ctx[0] / 5 + "px");
-    			add_location(div6, file$2, 19, 2, 1111);
-    			add_location(b0, file$2, 21, 145, 1491);
-    			attr_dev(div7, "class", "container-axis-y-arrow-rest-name svelte-o20noi");
-    			set_style(div7, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
-    			set_style(div7, "right", /*pixelSize*/ ctx[0] * -1.5 + "px");
-    			set_style(div7, "top", /*pixelSize*/ ctx[0] + "px");
-    			add_location(div7, file$2, 21, 12, 1358);
-    			add_location(i0, file$2, 23, 162, 1789);
-    			add_location(b1, file$2, 23, 159, 1786);
-    			attr_dev(div8, "class", "container-axis-y-arrow-rest-dash-first svelte-o20noi");
-    			set_style(div8, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
-    			set_style(div8, "right", /*pixelSize*/ ctx[0] / 2 + "px");
-    			set_style(div8, "bottom", /*pixelSize*/ ctx[0] / 5 + "px");
-    			add_location(div8, file$2, 23, 16, 1643);
-    			add_location(i1, file$2, 24, 159, 1967);
-    			add_location(b2, file$2, 24, 156, 1964);
-    			attr_dev(div9, "class", "container-axis-y-arrow-rest-dash-last svelte-o20noi");
-    			set_style(div9, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
-    			set_style(div9, "right", /*pixelSize*/ ctx[0] / 2 + "px");
-    			set_style(div9, "top", /*pixelSize*/ ctx[0] * -1 + "px");
-    			add_location(div9, file$2, 24, 16, 1824);
-    			attr_dev(div10, "class", "container-axis-y-arrow-rest-dash svelte-o20noi");
-    			set_style(div10, "width", 5 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div10, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div10, file$2, 22, 12, 1519);
-    			attr_dev(div11, "class", "container-axis-y-arrow-rest svelte-o20noi");
-    			set_style(div11, "width", 5 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div11, "height", 22 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div11, file$2, 20, 8, 1243);
-    			attr_dev(div12, "class", "container-axis-y svelte-o20noi");
-    			set_style(div12, "width", 5 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div12, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div12, file$2, 17, 4, 961);
-    			attr_dev(div13, "class", "container-axis-x-arrow-body svelte-o20noi");
-    			add_location(div13, file$2, 31, 8, 2222);
-    			attr_dev(div14, "class", "container-axis-x-arrow-head svelte-o20noi");
-    			set_style(div14, "width", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div14, "height", /*pixelSize*/ ctx[0] + "px");
-    			set_style(div14, "right", /*pixelSize*/ ctx[0] / 5 + "px");
-    			add_location(div14, file$2, 32, 8, 2279);
-    			add_location(b3, file$2, 34, 149, 2666);
-    			attr_dev(div15, "class", "container-axis-x-arrow-rest-name svelte-o20noi");
-    			set_style(div15, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
-    			set_style(div15, "right", /*pixelSize*/ ctx[0] * 1.3 + "px");
-    			set_style(div15, "top", /*pixelSize*/ ctx[0] * -2 + "px");
-    			add_location(div15, file$2, 34, 12, 2529);
-    			add_location(i2, file$2, 36, 134, 2937);
-    			add_location(b4, file$2, 36, 131, 2934);
-    			attr_dev(div16, "class", "container-axis-x-arrow-rest-dash-first svelte-o20noi");
-    			set_style(div16, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
-    			set_style(div16, "left", /*pixelSize*/ ctx[0] / 5 + "px");
-    			add_location(div16, file$2, 36, 16, 2819);
-    			add_location(i3, file$2, 37, 135, 3091);
-    			add_location(b5, file$2, 37, 132, 3088);
-    			attr_dev(div17, "class", "container-axis-x-arrow-rest-dash-last svelte-o20noi");
-    			set_style(div17, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
-    			set_style(div17, "right", /*pixelSize*/ ctx[0] * -1 + "px");
-    			add_location(div17, file$2, 37, 16, 2972);
-    			attr_dev(div18, "class", "container-axis-x-arrow-rest-dash svelte-o20noi");
-    			set_style(div18, "width", 106 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div18, "height", 5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div18, file$2, 35, 12, 2694);
-    			attr_dev(div19, "class", "container-axis-x-arrow-rest svelte-o20noi");
-    			set_style(div19, "width", 111 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div19, "height", 5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div19, file$2, 33, 8, 2413);
-    			attr_dev(div20, "class", "container-axis-x svelte-o20noi");
-    			set_style(div20, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div20, "height", 5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div20, file$2, 30, 4, 2121);
-    			attr_dev(div21, "class", "container svelte-o20noi");
-    			set_style(div21, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			set_style(div21, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div21, file$2, 6, 0, 190);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div21, anchor);
-    			append_dev(div21, div0);
-    			append_dev(div21, t0);
-    			append_dev(div21, div1);
-    			append_dev(div21, t1);
-    			append_dev(div21, div2);
-    			append_dev(div21, t2);
-    			append_dev(div21, div3);
-    			append_dev(div21, t3);
-    			append_dev(div21, div4);
-    			mount_component(canvasdecore, div4, null);
-    			append_dev(div21, t4);
-    			append_dev(div21, div12);
-    			append_dev(div12, div5);
-    			append_dev(div12, t5);
-    			append_dev(div12, div6);
-    			append_dev(div12, t6);
-    			append_dev(div12, div11);
-    			append_dev(div11, div7);
-    			append_dev(div7, b0);
-    			append_dev(div11, t8);
-    			append_dev(div11, div10);
-    			append_dev(div10, div8);
-    			append_dev(div8, b1);
-    			append_dev(b1, i0);
-    			append_dev(div10, t10);
-    			append_dev(div10, div9);
-    			append_dev(div9, b2);
-    			append_dev(b2, i1);
-    			append_dev(div21, t12);
-    			append_dev(div21, div20);
-    			append_dev(div20, div13);
-    			append_dev(div20, t13);
-    			append_dev(div20, div14);
-    			append_dev(div20, t14);
-    			append_dev(div20, div19);
-    			append_dev(div19, div15);
-    			append_dev(div15, b3);
-    			append_dev(div19, t16);
-    			append_dev(div19, div18);
-    			append_dev(div18, div16);
-    			append_dev(div16, b4);
-    			append_dev(b4, i2);
-    			append_dev(div18, t18);
-    			append_dev(div18, div17);
-    			append_dev(div17, b5);
-    			append_dev(b5, i3);
-    			current = true;
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div0, "height", 5 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div1, "width", 5 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div1, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div2, "width", 5 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div2, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div3, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div3, "height", 5 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			const canvasdecore_changes = {};
-    			if (dirty & /*pixelSize*/ 1) canvasdecore_changes.pixelSize = /*pixelSize*/ ctx[0];
-    			canvasdecore.$set(canvasdecore_changes);
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div4, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div4, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div6, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div6, "height", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div6, "top", /*pixelSize*/ ctx[0] / 5 + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div7, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div7, "right", /*pixelSize*/ ctx[0] * -1.5 + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div7, "top", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div8, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div8, "right", /*pixelSize*/ ctx[0] / 2 + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div8, "bottom", /*pixelSize*/ ctx[0] / 5 + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div9, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div9, "right", /*pixelSize*/ ctx[0] / 2 + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div9, "top", /*pixelSize*/ ctx[0] * -1 + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div10, "width", 5 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div10, "height", 17 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div11, "width", 5 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div11, "height", 22 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div12, "width", 5 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div12, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div14, "width", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div14, "height", /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div14, "right", /*pixelSize*/ ctx[0] / 5 + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div15, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div15, "right", /*pixelSize*/ ctx[0] * 1.3 + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div15, "top", /*pixelSize*/ ctx[0] * -2 + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div16, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div16, "left", /*pixelSize*/ ctx[0] / 5 + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div17, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div17, "right", /*pixelSize*/ ctx[0] * -1 + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div18, "width", 106 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div18, "height", 5 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div19, "width", 111 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div19, "height", 5 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div20, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div20, "height", 5 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div21, "width", 116 * /*pixelSize*/ ctx[0] + "px");
-    			}
-
-    			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div21, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			}
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(canvasdecore.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(canvasdecore.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div21);
-    			destroy_component(canvasdecore);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$3.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function instance$3($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('CanvasContainer', slots, []);
-    	let { pixelSize } = $$props;
-    	const writable_props = ['pixelSize'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasContainer> was created with unknown prop '${key}'`);
-    	});
-
-    	$$self.$$set = $$props => {
-    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
-    	};
-
-    	$$self.$capture_state = () => ({ CanvasDecore, pixelSize });
-
-    	$$self.$inject_state = $$props => {
-    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [pixelSize];
-    }
-
-    class CanvasContainer extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { pixelSize: 0 });
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "CanvasContainer",
-    			options,
-    			id: create_fragment$3.name
-    		});
-
-    		const { ctx } = this.$$;
-    		const props = options.props || {};
-
-    		if (/*pixelSize*/ ctx[0] === undefined && !('pixelSize' in props)) {
-    			console.warn("<CanvasContainer> was created without expected prop 'pixelSize'");
-    		}
-    	}
-
-    	get pixelSize() {
-    		throw new Error("<CanvasContainer>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set pixelSize(value) {
-    		throw new Error("<CanvasContainer>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
     }
 
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -6423,8 +3448,3173 @@ var app = (function () {
     })(commonjsGlobal);
     });
 
-    /* src/demo/CanvasButtons.svelte generated by Svelte v3.48.0 */
-    const file$1 = "src/demo/CanvasButtons.svelte";
+    function create2DMatrix(rows, cols, val) {
+        let matrix = new Array(rows);
+
+        for (let i = 0; i < matrix.length; i++) {
+    		matrix[i] = new Array(cols);
+    		for (let j = 0; j < matrix[i].length; j++) {
+    			matrix[i][j] = val;
+    		}
+        }
+        return matrix;
+    }
+
+    function kValueBinaryToBase(value, base) {
+        let valueBigNumber;
+        let valueBigNumberString;
+        bignumber.BigNumber.config({ ALPHABET: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_~' });
+       
+        if (base === 'b64') {
+            valueBigNumber = new bignumber.BigNumber(value, 2).times(17);
+            valueBigNumberString = valueBigNumber.toString(64);
+        } else if (base === 'dec') {
+            valueBigNumber = new bignumber.BigNumber(value, 2).times(17);
+            valueBigNumberString = valueBigNumber.toString(10);
+        } else if (base === 'bin') {
+            valueBigNumberString = value;
+        } else { /* shouldn't be possible */
+            valueBigNumberString = '!ERROR!'; 
+        }
+
+        return valueBigNumberString;
+    }
+    function kValueBaseToBinary(value, base) {
+        let valueBinaryString;
+        bignumber.BigNumber.config({ ALPHABET: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_~' });
+        
+        if (base === 'b64') {
+            valueBinaryString = new bignumber.BigNumber(value, 64).div(17).toString(2).padStart(1802, 0);
+        } else if (base === 'dec') {
+            valueBinaryString = new bignumber.BigNumber(value, 10).div(17).toString(2).padStart(1802, 0);
+        } else if (base === 'bin') {
+            valueBinaryString = value;
+        } else { /* shouldn't be possible */
+            valueBinaryString = '!ERROR!'; 
+        }
+
+        return valueBinaryString;
+    }
+    function stabilizeFunction(func, delay) {
+        let timer;
+
+        return function () {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(context, args), delay);
+        };
+    }
+    function findTouchIndexById(arrayToSearh, idToFind) {
+        for (let i = 0; i < arrayToSearh.length; i++) {
+            const id = arrayToSearh[i].pointerId;
+            if (id == idToFind) {
+                return i;
+            }
+        }
+        /* not found */
+        return -1;
+    }
+
+    function copyCanvasTouch({ pointerId, layerX, layerY }) {
+        return { pointerId, layerX, layerY };
+    }
+
+    function getPixelsOnTheLine(x1, y1, x2, y2, pixelSize) {
+        // Array to be returned in the end
+        const pixelArray = [];
+        let arrayLast = 0;
+        // PseudoPixel coordinates
+        let pixelCoordinates;
+        let pixelX = 20;
+        let pixelY = 20;
+        // Iterators, counters required by algorithm
+        let x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
+        // Calculate line deltas
+        dx = x2 - x1;
+        dy = y2 - y1;
+        // Create a positive copy of deltas (makes iterating easier)
+        dx1 = Math.abs(dx);
+        dy1 = Math.abs(dy);
+        // Calculate error intervals for both axis
+        px = 2 * dy1 - dx1;
+        py = 2 * dx1 - dy1;
+        // The line is X-axis dominant
+        if (dy1 <= dx1) {
+            // Line is drawn left to right
+            if (dx >= 0) {
+                x = x1; y = y1; xe = x2;
+            } else { 
+                // Line is drawn right to left (swap ends)
+                x = x2; y = y2; xe = x1;
+            }
+            // Rasterize the line
+            for (i = 0; x < xe; i++) {
+                x = x + 1;
+                // Deal with octants...
+                if (px < 0) {
+                    px = px + 2 * dy1;
+                } else {
+                    if ((dx < 0 && dy < 0) || (dx > 0 && dy > 0)) {
+                        y = y + 1;
+                    } else {
+                        y = y - 1;
+                    }
+                    px = px + 2 * (dy1 - dx1);
+                }
+                // Draw pixel from line span at
+                // currently rasterized position
+                pixelX = Math.floor(x / pixelSize);
+                pixelY = Math.floor(y / pixelSize);
+                pixelCoordinates = [pixelX, pixelY];
+                arrayLast = pixelArray.length - 1;
+                if (pixelArray.length > 0) {
+                    if (pixelX != pixelArray[arrayLast][0] || pixelY != pixelArray[arrayLast][1])
+                        pixelArray.push(pixelCoordinates);
+                } else {
+                    pixelArray.push(pixelCoordinates);
+                }
+            }
+        } else {
+            // The line is Y-axis dominant
+            // Line is drawn bottom to top
+            if (dy >= 0) {
+                x = x1; y = y1; ye = y2;
+            } else {
+                // Line is drawn top to bottom
+                x = x2; y = y2; ye = y1;
+            }
+             // Rasterize the line
+            for (i = 0; y < ye; i++) {
+                y = y + 1;
+                // Deal with octants...
+                if (py <= 0) {
+                    py = py + 2 * dx1;
+                } else {
+                    if ((dx < 0 && dy<0) || (dx > 0 && dy > 0)) {
+                        x = x + 1;
+                    } else {
+                        x = x - 1;
+                    }
+                    py = py + 2 * (dx1 - dy1);
+                }
+                // Draw pixel from line span at
+                // currently rasterized position
+                pixelX = Math.floor(x / pixelSize);
+                pixelY = Math.floor(y / pixelSize);
+                pixelCoordinates = [pixelX, pixelY];
+                arrayLast = pixelArray.length - 1;
+                if (pixelArray.length > 0) {
+                    if (pixelX != pixelArray[arrayLast][0] || pixelY != pixelArray[arrayLast][1])
+                        pixelArray.push(pixelCoordinates);
+                } else {
+                    pixelArray.push(pixelCoordinates);
+                }
+            }
+        }
+        return pixelArray;
+    }
+
+    const subscriber_queue = [];
+    /**
+     * Create a `Writable` store that allows both updating and reading by subscription.
+     * @param {*=}value initial value
+     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
+     */
+    function writable(value, start = noop) {
+        let stop;
+        const subscribers = new Set();
+        function set(new_value) {
+            if (safe_not_equal(value, new_value)) {
+                value = new_value;
+                if (stop) { // store is ready
+                    const run_queue = !subscriber_queue.length;
+                    for (const subscriber of subscribers) {
+                        subscriber[1]();
+                        subscriber_queue.push(subscriber, value);
+                    }
+                    if (run_queue) {
+                        for (let i = 0; i < subscriber_queue.length; i += 2) {
+                            subscriber_queue[i][0](subscriber_queue[i + 1]);
+                        }
+                        subscriber_queue.length = 0;
+                    }
+                }
+            }
+        }
+        function update(fn) {
+            set(fn(value));
+        }
+        function subscribe(run, invalidate = noop) {
+            const subscriber = [run, invalidate];
+            subscribers.add(subscriber);
+            if (subscribers.size === 1) {
+                stop = start(set) || noop;
+            }
+            run(value);
+            return () => {
+                subscribers.delete(subscriber);
+                if (subscribers.size === 0) {
+                    stop();
+                    stop = null;
+                }
+            };
+        }
+        return { set, update, subscribe };
+    }
+
+    const kValueStringBin = writable('0');
+    const CanvasMode = writable(false);
+    const BrushMode = writable(true);
+
+    /* src/demo/CanvasMatrix.svelte generated by Svelte v3.48.0 */
+    const file$4 = "src/demo/CanvasMatrix.svelte";
+
+    function get_each_context$2(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[16] = list[i];
+    	child_ctx[18] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_1$1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[16] = list[i];
+    	child_ctx[20] = i;
+    	return child_ctx;
+    }
+
+    // (201:3) {#each Array(17) as _, indexPix (indexPix)}
+    function create_each_block_1$1(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "id", "pixel-" + /*indexCol*/ ctx[18] + "-" + /*indexPix*/ ctx[20]);
+    			attr_dev(div, "class", "matrix-pixel svelte-77w6pz");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$4, 201, 4, 6986);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1$1.name,
+    		type: "each",
+    		source: "(201:3) {#each Array(17) as _, indexPix (indexPix)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (199:1) {#each Array(106) as _, indexCol (indexCol)}
+    function create_each_block$2(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let each_value_1 = Array(17);
+    	validate_each_argument(each_value_1);
+    	const get_key = ctx => /*indexPix*/ ctx[20];
+    	validate_each_keys(ctx, each_value_1, get_each_context_1$1, get_key);
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		let child_ctx = get_each_context_1$1(ctx, each_value_1, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_1$1(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(div, "class", "matrix-column svelte-77w6pz");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$4, 199, 2, 6850);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*Array, pixelSize*/ 1) {
+    				each_value_1 = Array(17);
+    				validate_each_argument(each_value_1);
+    				validate_each_keys(ctx, each_value_1, get_each_context_1$1, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div, destroy_block, create_each_block_1$1, null, get_each_context_1$1);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$2.name,
+    		type: "each",
+    		source: "(199:1) {#each Array(106) as _, indexCol (indexCol)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (214:4) {:else}
+    function create_else_block$1(ctx) {
+    	let div;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "matrix-canvas svelte-77w6pz");
+    			set_style(div, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "touch-action", "auto");
+    			add_location(div, file$4, 215, 8, 7835);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			if (!mounted) {
+    				dispose = listen_dev(div, "click", /*click_handler*/ ctx[12], false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block$1.name,
+    		type: "else",
+    		source: "(214:4) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (207:1) {#if isInCanvasMode}
+    function create_if_block$1(ctx) {
+    	let canvas;
+    	let b;
+    	let i;
+    	let canvas_width_value;
+    	let canvas_height_value;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			canvas = element("canvas");
+    			b = element("b");
+    			i = element("i");
+    			i.textContent = "Your browser does not support canvas element.";
+    			add_location(i, file$4, 211, 19, 7676);
+    			add_location(b, file$4, 211, 16, 7673);
+    			attr_dev(canvas, "id", "canvas");
+    			attr_dev(canvas, "class", "matrix-canvas svelte-77w6pz");
+    			attr_dev(canvas, "width", canvas_width_value = 106 * /*pixelSize*/ ctx[0]);
+    			attr_dev(canvas, "height", canvas_height_value = 17 * /*pixelSize*/ ctx[0]);
+    			set_style(canvas, "touch-action", "none");
+    			add_location(canvas, file$4, 208, 8, 7266);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, canvas, anchor);
+    			append_dev(canvas, b);
+    			append_dev(b, i);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(canvas, "pointerdown", /*handleCanvasPointerDown*/ ctx[2], false, false, false),
+    					listen_dev(canvas, "pointermove", /*handleCanvasPointerMove*/ ctx[3], false, false, false),
+    					listen_dev(canvas, "pointerup", /*handleCanvasPointerUp*/ ctx[4], false, false, false),
+    					listen_dev(canvas, "pointerleave", /*handleCanvasPointerLeave*/ ctx[5], false, false, false),
+    					listen_dev(canvas, "pointercancel", /*handleCanvasPointerCancel*/ ctx[6], false, false, false),
+    					listen_dev(canvas, "dragstart", /*handleCanvasDragStart*/ ctx[7], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*pixelSize*/ 1 && canvas_width_value !== (canvas_width_value = 106 * /*pixelSize*/ ctx[0])) {
+    				attr_dev(canvas, "width", canvas_width_value);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1 && canvas_height_value !== (canvas_height_value = 17 * /*pixelSize*/ ctx[0])) {
+    				attr_dev(canvas, "height", canvas_height_value);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(canvas);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$1.name,
+    		type: "if",
+    		source: "(207:1) {#if isInCanvasMode}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$5(ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value = Array(106);
+    	validate_each_argument(each_value);
+    	const get_key = ctx => /*indexCol*/ ctx[18];
+    	validate_each_keys(ctx, each_value, get_each_context$2, get_key);
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		let child_ctx = get_each_context$2(ctx, each_value, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block$2(key, child_ctx));
+    	}
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*isInCanvasMode*/ ctx[1]) return create_if_block$1;
+    		return create_else_block$1;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			if_block.c();
+    			attr_dev(div, "id", "matrix");
+    			attr_dev(div, "class", "matrix svelte-77w6pz");
+    			set_style(div, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$4, 197, 0, 6706);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    			if_block.m(div, null);
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value = Array(106);
+    				validate_each_argument(each_value);
+    				validate_each_keys(ctx, each_value, get_each_context$2, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, div, destroy_block, create_each_block$2, t, get_each_context$2);
+    			}
+
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(div, null);
+    				}
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		i: noop,
+    		o: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+
+    			if_block.d();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$5.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$5($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('CanvasMatrix', slots, []);
+    	let { pixelSize } = $$props;
+
+    	/* create 2D array and populate it with '0's */
+    	let kValueArray = create2DMatrix(106, 17, '0');
+
+    	const ongoingTouches = [];
+    	let isInCanvasMode = false;
+    	let isValueUpToDate = true;
+    	let isPointerDown = false;
+    	let isInBrushMode = true;
+    	let kValueString = '';
+
+    	onMount(() => {
+    		/* paint whatever was there in the first place */
+    		kValueStringBin.subscribe(value => {
+    			$$invalidate(11, kValueString = value);
+    			let pixelCol = 0;
+    			let pixelRow = 0;
+    			let pixelID = '';
+
+    			for (let i = 0, j = 0, k = 0; i < value.length; (i++, j++, k++)) {
+    				if (j === 17) {
+    					pixelCol++;
+    					j = 0;
+    					k = 0;
+    				}
+
+    				pixelRow = k;
+    				pixelID = `pixel-${pixelCol}-${pixelRow}`;
+
+    				if (value[i] === '1') {
+    					document.getElementById(pixelID).style.backgroundColor = "#ff0000";
+    					$$invalidate(8, kValueArray[pixelCol][pixelRow] = '1', kValueArray);
+    				} else {
+    					document.getElementById(pixelID).style.backgroundColor = "#999999";
+    					$$invalidate(8, kValueArray[pixelCol][pixelRow] = '0', kValueArray);
+    				}
+    			}
+    		});
+    	});
+
+    	/* actually painting, can you imagine?! */
+    	CanvasMode.subscribe(value => {
+    		$$invalidate(1, isInCanvasMode = value);
+    	});
+
+    	BrushMode.subscribe(value => {
+    		isInBrushMode = value;
+    	});
+
+    	function matrixFillPixel(x, y) {
+    		let pixelCol = x;
+    		let pixelRow = 16 - y; /* 16 to reverse */
+    		let pixelID = `pixel-${pixelCol}-${pixelRow}`;
+    		let pixelElement = document.getElementById(pixelID);
+
+    		if (isInBrushMode) {
+    			pixelElement.style.backgroundColor = "#ff0000";
+    			$$invalidate(8, kValueArray[pixelCol][pixelRow] = '1', kValueArray);
+    		} else {
+    			pixelElement.style.backgroundColor = "#999999";
+    			$$invalidate(8, kValueArray[pixelCol][pixelRow] = '0', kValueArray);
+    		}
+    	}
+
+    	/* wake up babe, new events just dropped! */
+    	function handleCanvasPointerDown(e) {
+    		//console.log(`pointerdown: id = ${e.pointerId}.`);
+    		ongoingTouches.push(copyCanvasTouch(e));
+
+    		$$invalidate(10, isPointerDown = true);
+
+    		/* calculate the PseudoPixel coordinates */
+    		let pixelCol = Math.floor(e.layerX / pixelSize);
+
+    		let pixelRow = Math.floor(e.layerY / pixelSize);
+
+    		//console.log(`start drawing at: ${pixelCol}, ${pixelRow}.`);
+    		matrixFillPixel(pixelCol, pixelRow);
+    	}
+
+    	function handleCanvasPointerMove(e) {
+    		if (!isPointerDown) return;
+
+    		/* find the touchID that is being continued here */
+    		const index = findTouchIndexById(ongoingTouches, e.pointerId);
+
+    		if (index < 0) ; else {
+    			//console.log(`continuing ongoing touch: index = ${index}.`);
+    			/* get an array of all PseudoPixels on the traversed line */
+    			let pixelArray = getPixelsOnTheLine(ongoingTouches[index].layerX, ongoingTouches[index].layerY, e.layerX, e.layerY, pixelSize); //console.log(`can't figure out which touch to continue`);
+
+    			/* fill the line */
+    			if (pixelArray.length > 0) {
+    				//console.log(`drawing line from: ${pixelArray[0]}.`);
+    				for (let i = 0; i < pixelArray.length; i++) {
+    					let pixelCol = pixelArray[i][0];
+    					let pixelRow = pixelArray[i][1];
+
+    					if (pixelCol > 105 || pixelRow > 16 || pixelRow < 0 || pixelCol < 0) {
+    						//console.log(`canceled: ${pixelCol}, ${pixelRow} out of bounds!`);
+    						$$invalidate(10, isPointerDown = false);
+
+    						break;
+    					}
+
+    					matrixFillPixel(pixelCol, pixelRow);
+    				}
+    			} //console.log(`drawing line to: ${pixelArray[pixelArray.length - 1]}.`);
+
+    			/* swap in the new touch record */
+    			ongoingTouches.splice(index, 1, copyCanvasTouch(e));
+    		}
+    	}
+
+    	function handleCanvasPointerUp(e) {
+    		//console.log(`pointerup: id = ${e.pointerId}`);
+    		$$invalidate(10, isPointerDown = false);
+
+    		/* find the touchID that is being ended here */
+    		const index = findTouchIndexById(ongoingTouches, e.pointerId);
+
+    		if (index < 0) ; else {
+    			//console.log(`ending ongoing touch: index =  ${index}.`);
+    			/* remove it, we're done */
+    			ongoingTouches.splice(index, 1); //console.log(`can't figure out which touch to end`);
+
+    			$$invalidate(10, isPointerDown = false);
+    		}
+    	}
+
+    	function handleCanvasPointerLeave(e) {
+    		//console.log(`pointerleave: id = ${e.pointerId}`);
+    		$$invalidate(10, isPointerDown = false);
+
+    		/* find the touchID that is being ended here */
+    		const index = findTouchIndexById(ongoingTouches, e.pointerId);
+
+    		if (index < 0) ; else {
+    			//console.log(`ending ongoing touch: index =  ${index}.`);
+    			/* remove it, we're done */
+    			ongoingTouches.splice(index, 1); //console.log(`can't figure out which touch to end`);
+    		}
+    	}
+
+    	function handleCanvasPointerCancel(e) {
+    		//console.log(`pointercancel: id = ${e.pointerId}`);
+    		$$invalidate(10, isPointerDown = false);
+
+    		/* find the touchID that is being ended here */
+    		const index = findTouchIndexById(ongoingTouches, e.pointerId);
+
+    		if (index < 0) ; else {
+    			//console.log(`ending touch: index =  ${index}.`);
+    			/* remove it, we're done */
+    			ongoingTouches.splice(index, 1); //console.log(`can't figure out which touch to end`);
+    		}
+    	}
+
+    	function handleCanvasDragStart(e) {
+    		$$invalidate(10, isPointerDown = false);
+    		e.preventDefault();
+    	}
+    	const writable_props = ['pixelSize'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasMatrix> was created with unknown prop '${key}'`);
+    	});
+
+    	function click_handler(event) {
+    		bubble.call(this, $$self, event);
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		BrushMode,
+    		CanvasMode,
+    		kValueStringBin,
+    		create2DMatrix,
+    		getPixelsOnTheLine,
+    		findTouchIndexById,
+    		copyCanvasTouch,
+    		onMount,
+    		pixelSize,
+    		kValueArray,
+    		ongoingTouches,
+    		isInCanvasMode,
+    		isValueUpToDate,
+    		isPointerDown,
+    		isInBrushMode,
+    		kValueString,
+    		matrixFillPixel,
+    		handleCanvasPointerDown,
+    		handleCanvasPointerMove,
+    		handleCanvasPointerUp,
+    		handleCanvasPointerLeave,
+    		handleCanvasPointerCancel,
+    		handleCanvasDragStart
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    		if ('kValueArray' in $$props) $$invalidate(8, kValueArray = $$props.kValueArray);
+    		if ('isInCanvasMode' in $$props) $$invalidate(1, isInCanvasMode = $$props.isInCanvasMode);
+    		if ('isValueUpToDate' in $$props) $$invalidate(9, isValueUpToDate = $$props.isValueUpToDate);
+    		if ('isPointerDown' in $$props) $$invalidate(10, isPointerDown = $$props.isPointerDown);
+    		if ('isInBrushMode' in $$props) isInBrushMode = $$props.isInBrushMode;
+    		if ('kValueString' in $$props) $$invalidate(11, kValueString = $$props.kValueString);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*isPointerDown, isValueUpToDate, kValueArray, kValueString*/ 3840) {
+    			/* create final string of k's binary value */
+    			if (isPointerDown === true) {
+    				$$invalidate(9, isValueUpToDate = false);
+    			} else {
+    				if (isValueUpToDate === false) {
+    					$$invalidate(11, kValueString = '');
+
+    					for (let i = 0; i < kValueArray.length; i++) {
+    						for (let j = 0; j < kValueArray[i].length; j++) {
+    							$$invalidate(11, kValueString += kValueArray[i][j]);
+    						}
+    					}
+
+    					/* export the final binary string for others to access */
+    					kValueStringBin.update(n => kValueString);
+
+    					$$invalidate(9, isValueUpToDate = true);
+    				}
+    			}
+    		}
+    	};
+
+    	return [
+    		pixelSize,
+    		isInCanvasMode,
+    		handleCanvasPointerDown,
+    		handleCanvasPointerMove,
+    		handleCanvasPointerUp,
+    		handleCanvasPointerLeave,
+    		handleCanvasPointerCancel,
+    		handleCanvasDragStart,
+    		kValueArray,
+    		isValueUpToDate,
+    		isPointerDown,
+    		kValueString,
+    		click_handler
+    	];
+    }
+
+    class CanvasMatrix extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$5, create_fragment$5, safe_not_equal, { pixelSize: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "CanvasMatrix",
+    			options,
+    			id: create_fragment$5.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*pixelSize*/ ctx[0] === undefined && !('pixelSize' in props)) {
+    			console.warn("<CanvasMatrix> was created without expected prop 'pixelSize'");
+    		}
+    	}
+
+    	get pixelSize() {
+    		throw new Error("<CanvasMatrix>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set pixelSize(value) {
+    		throw new Error("<CanvasMatrix>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src/demo/CanvasDecore.svelte generated by Svelte v3.48.0 */
+    const file$3 = "src/demo/CanvasDecore.svelte";
+
+    function get_each_context$1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_2(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_3(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_4(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_5(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_6(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_7(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_8(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_9(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_10(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_11(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_12(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_13(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_14(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_15(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    // (11:16) {#each Array(3) as _, index (index)}
+    function create_each_block_15(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-outer-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 11, 20, 593);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_15.name,
+    		type: "each",
+    		source: "(11:16) {#each Array(3) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (9:8) {#each Array(116) as _, index (index)}
+    function create_each_block_14(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_15 = Array(3);
+    	validate_each_argument(each_value_15);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_15, get_each_context_15, get_key);
+
+    	for (let i = 0; i < each_value_15.length; i += 1) {
+    		let child_ctx = get_each_context_15(ctx, each_value_15, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_15(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-outer-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 9, 12, 430);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_15 = Array(3);
+    				validate_each_argument(each_value_15);
+    				validate_each_keys(ctx, each_value_15, get_each_context_15, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_15, each_1_lookup, div, destroy_block, create_each_block_15, t, get_each_context_15);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_14.name,
+    		type: "each",
+    		source: "(9:8) {#each Array(116) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (21:16) {#each Array(21) as _, index (index)}
+    function create_each_block_13(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-outer-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 21, 20, 1074);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_13.name,
+    		type: "each",
+    		source: "(21:16) {#each Array(21) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (19:8) {#each Array(3) as _, index (index)}
+    function create_each_block_12(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_13 = Array(21);
+    	validate_each_argument(each_value_13);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_13, get_each_context_13, get_key);
+
+    	for (let i = 0; i < each_value_13.length; i += 1) {
+    		let child_ctx = get_each_context_13(ctx, each_value_13, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_13(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-outer-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 19, 12, 909);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_13 = Array(21);
+    				validate_each_argument(each_value_13);
+    				validate_each_keys(ctx, each_value_13, get_each_context_13, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_13, each_1_lookup, div, destroy_block, create_each_block_13, t, get_each_context_13);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_12.name,
+    		type: "each",
+    		source: "(19:8) {#each Array(3) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (32:20) {#each Array(2) as _, index (index)}
+    function create_each_block_11(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-inner-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 32, 24, 1669);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_11.name,
+    		type: "each",
+    		source: "(32:20) {#each Array(2) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (30:12) {#each Array(110) as _, index (index)}
+    function create_each_block_10(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_11 = Array(2);
+    	validate_each_argument(each_value_11);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_11, get_each_context_11, get_key);
+
+    	for (let i = 0; i < each_value_11.length; i += 1) {
+    		let child_ctx = get_each_context_11(ctx, each_value_11, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_11(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-inner-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 30, 16, 1498);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_11 = Array(2);
+    				validate_each_argument(each_value_11);
+    				validate_each_keys(ctx, each_value_11, get_each_context_11, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_11, each_1_lookup, div, destroy_block, create_each_block_11, t, get_each_context_11);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_10.name,
+    		type: "each",
+    		source: "(30:12) {#each Array(110) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (42:20) {#each Array(17) as _, index (index)}
+    function create_each_block_9(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-inner-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 42, 24, 2186);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_9.name,
+    		type: "each",
+    		source: "(42:20) {#each Array(17) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (40:12) {#each Array(2) as _, index (index)}
+    function create_each_block_8(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_9 = Array(17);
+    	validate_each_argument(each_value_9);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_9, get_each_context_9, get_key);
+
+    	for (let i = 0; i < each_value_9.length; i += 1) {
+    		let child_ctx = get_each_context_9(ctx, each_value_9, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_9(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-inner-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 40, 16, 2013);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_9 = Array(17);
+    				validate_each_argument(each_value_9);
+    				validate_each_keys(ctx, each_value_9, get_each_context_9, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_9, each_1_lookup, div, destroy_block, create_each_block_9, t, get_each_context_9);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_8.name,
+    		type: "each",
+    		source: "(40:12) {#each Array(2) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (56:20) {#each Array(17) as _, index (index)}
+    function create_each_block_7(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-inner-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 56, 24, 2894);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_7.name,
+    		type: "each",
+    		source: "(56:20) {#each Array(17) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (54:12) {#each Array(2) as _, index (index)}
+    function create_each_block_6(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_7 = Array(17);
+    	validate_each_argument(each_value_7);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_7, get_each_context_7, get_key);
+
+    	for (let i = 0; i < each_value_7.length; i += 1) {
+    		let child_ctx = get_each_context_7(ctx, each_value_7, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_7(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-inner-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 54, 16, 2721);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_7 = Array(17);
+    				validate_each_argument(each_value_7);
+    				validate_each_keys(ctx, each_value_7, get_each_context_7, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_7, each_1_lookup, div, destroy_block, create_each_block_7, t, get_each_context_7);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_6.name,
+    		type: "each",
+    		source: "(54:12) {#each Array(2) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (66:20) {#each Array(2) as _, index (index)}
+    function create_each_block_5(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-inner-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 66, 24, 3411);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_5.name,
+    		type: "each",
+    		source: "(66:20) {#each Array(2) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (64:12) {#each Array(110) as _, index (index)}
+    function create_each_block_4(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_5 = Array(2);
+    	validate_each_argument(each_value_5);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_5, get_each_context_5, get_key);
+
+    	for (let i = 0; i < each_value_5.length; i += 1) {
+    		let child_ctx = get_each_context_5(ctx, each_value_5, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_5(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-inner-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 64, 16, 3240);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_5 = Array(2);
+    				validate_each_argument(each_value_5);
+    				validate_each_keys(ctx, each_value_5, get_each_context_5, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_5, each_1_lookup, div, destroy_block, create_each_block_5, t, get_each_context_5);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_4.name,
+    		type: "each",
+    		source: "(64:12) {#each Array(110) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (77:16) {#each Array(21) as _, index (index)}
+    function create_each_block_3(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-outer-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 77, 20, 3920);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_3.name,
+    		type: "each",
+    		source: "(77:16) {#each Array(21) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (75:8) {#each Array(3) as _, index (index)}
+    function create_each_block_2(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_3 = Array(21);
+    	validate_each_argument(each_value_3);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_3, get_each_context_3, get_key);
+
+    	for (let i = 0; i < each_value_3.length; i += 1) {
+    		let child_ctx = get_each_context_3(ctx, each_value_3, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_3(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-outer-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 75, 12, 3755);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_3 = Array(21);
+    				validate_each_argument(each_value_3);
+    				validate_each_keys(ctx, each_value_3, get_each_context_3, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_3, each_1_lookup, div, destroy_block, create_each_block_3, t, get_each_context_3);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_2.name,
+    		type: "each",
+    		source: "(75:8) {#each Array(3) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (87:16) {#each Array(3) as _, index (index)}
+    function create_each_block_1(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-outer-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 87, 20, 4401);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(87:16) {#each Array(3) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (85:8) {#each Array(116) as _, index (index)}
+    function create_each_block$1(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_1 = Array(3);
+    	validate_each_argument(each_value_1);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		let child_ctx = get_each_context_1(ctx, each_value_1, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_1(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-outer-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 85, 12, 4238);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_1 = Array(3);
+    				validate_each_argument(each_value_1);
+    				validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div, destroy_block, create_each_block_1, t, get_each_context_1);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$1.name,
+    		type: "each",
+    		source: "(85:8) {#each Array(116) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$4(ctx) {
+    	let div10;
+    	let div0;
+    	let each_blocks_7 = [];
+    	let each0_lookup = new Map();
+    	let t0;
+    	let div1;
+    	let each_blocks_6 = [];
+    	let each1_lookup = new Map();
+    	let t1;
+    	let div7;
+    	let div2;
+    	let each_blocks_5 = [];
+    	let each2_lookup = new Map();
+    	let t2;
+    	let div3;
+    	let each_blocks_4 = [];
+    	let each3_lookup = new Map();
+    	let t3;
+    	let div4;
+    	let canvasmatrix;
+    	let t4;
+    	let div5;
+    	let each_blocks_3 = [];
+    	let each4_lookup = new Map();
+    	let t5;
+    	let div6;
+    	let each_blocks_2 = [];
+    	let each5_lookup = new Map();
+    	let t6;
+    	let div8;
+    	let each_blocks_1 = [];
+    	let each6_lookup = new Map();
+    	let t7;
+    	let div9;
+    	let each_blocks = [];
+    	let each7_lookup = new Map();
+    	let current;
+    	let each_value_14 = Array(116);
+    	validate_each_argument(each_value_14);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_14, get_each_context_14, get_key);
+
+    	for (let i = 0; i < each_value_14.length; i += 1) {
+    		let child_ctx = get_each_context_14(ctx, each_value_14, i);
+    		let key = get_key(child_ctx);
+    		each0_lookup.set(key, each_blocks_7[i] = create_each_block_14(key, child_ctx));
+    	}
+
+    	let each_value_12 = Array(3);
+    	validate_each_argument(each_value_12);
+    	const get_key_1 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_12, get_each_context_12, get_key_1);
+
+    	for (let i = 0; i < each_value_12.length; i += 1) {
+    		let child_ctx = get_each_context_12(ctx, each_value_12, i);
+    		let key = get_key_1(child_ctx);
+    		each1_lookup.set(key, each_blocks_6[i] = create_each_block_12(key, child_ctx));
+    	}
+
+    	let each_value_10 = Array(110);
+    	validate_each_argument(each_value_10);
+    	const get_key_2 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_10, get_each_context_10, get_key_2);
+
+    	for (let i = 0; i < each_value_10.length; i += 1) {
+    		let child_ctx = get_each_context_10(ctx, each_value_10, i);
+    		let key = get_key_2(child_ctx);
+    		each2_lookup.set(key, each_blocks_5[i] = create_each_block_10(key, child_ctx));
+    	}
+
+    	let each_value_8 = Array(2);
+    	validate_each_argument(each_value_8);
+    	const get_key_3 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_8, get_each_context_8, get_key_3);
+
+    	for (let i = 0; i < each_value_8.length; i += 1) {
+    		let child_ctx = get_each_context_8(ctx, each_value_8, i);
+    		let key = get_key_3(child_ctx);
+    		each3_lookup.set(key, each_blocks_4[i] = create_each_block_8(key, child_ctx));
+    	}
+
+    	canvasmatrix = new CanvasMatrix({
+    			props: { pixelSize: /*pixelSize*/ ctx[0] },
+    			$$inline: true
+    		});
+
+    	canvasmatrix.$on("click", /*click_handler*/ ctx[1]);
+    	let each_value_6 = Array(2);
+    	validate_each_argument(each_value_6);
+    	const get_key_4 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_6, get_each_context_6, get_key_4);
+
+    	for (let i = 0; i < each_value_6.length; i += 1) {
+    		let child_ctx = get_each_context_6(ctx, each_value_6, i);
+    		let key = get_key_4(child_ctx);
+    		each4_lookup.set(key, each_blocks_3[i] = create_each_block_6(key, child_ctx));
+    	}
+
+    	let each_value_4 = Array(110);
+    	validate_each_argument(each_value_4);
+    	const get_key_5 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_4, get_each_context_4, get_key_5);
+
+    	for (let i = 0; i < each_value_4.length; i += 1) {
+    		let child_ctx = get_each_context_4(ctx, each_value_4, i);
+    		let key = get_key_5(child_ctx);
+    		each5_lookup.set(key, each_blocks_2[i] = create_each_block_4(key, child_ctx));
+    	}
+
+    	let each_value_2 = Array(3);
+    	validate_each_argument(each_value_2);
+    	const get_key_6 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_2, get_each_context_2, get_key_6);
+
+    	for (let i = 0; i < each_value_2.length; i += 1) {
+    		let child_ctx = get_each_context_2(ctx, each_value_2, i);
+    		let key = get_key_6(child_ctx);
+    		each6_lookup.set(key, each_blocks_1[i] = create_each_block_2(key, child_ctx));
+    	}
+
+    	let each_value = Array(116);
+    	validate_each_argument(each_value);
+    	const get_key_7 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value, get_each_context$1, get_key_7);
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		let child_ctx = get_each_context$1(ctx, each_value, i);
+    		let key = get_key_7(child_ctx);
+    		each7_lookup.set(key, each_blocks[i] = create_each_block$1(key, child_ctx));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			div10 = element("div");
+    			div0 = element("div");
+
+    			for (let i = 0; i < each_blocks_7.length; i += 1) {
+    				each_blocks_7[i].c();
+    			}
+
+    			t0 = space();
+    			div1 = element("div");
+
+    			for (let i = 0; i < each_blocks_6.length; i += 1) {
+    				each_blocks_6[i].c();
+    			}
+
+    			t1 = space();
+    			div7 = element("div");
+    			div2 = element("div");
+
+    			for (let i = 0; i < each_blocks_5.length; i += 1) {
+    				each_blocks_5[i].c();
+    			}
+
+    			t2 = space();
+    			div3 = element("div");
+
+    			for (let i = 0; i < each_blocks_4.length; i += 1) {
+    				each_blocks_4[i].c();
+    			}
+
+    			t3 = space();
+    			div4 = element("div");
+    			create_component(canvasmatrix.$$.fragment);
+    			t4 = space();
+    			div5 = element("div");
+
+    			for (let i = 0; i < each_blocks_3.length; i += 1) {
+    				each_blocks_3[i].c();
+    			}
+
+    			t5 = space();
+    			div6 = element("div");
+
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				each_blocks_2[i].c();
+    			}
+
+    			t6 = space();
+    			div8 = element("div");
+
+    			for (let i = 0; i < each_blocks_1.length; i += 1) {
+    				each_blocks_1[i].c();
+    			}
+
+    			t7 = space();
+    			div9 = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(div0, "class", "decore-outer-top svelte-18izcba");
+    			set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div0, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div0, file$3, 7, 4, 278);
+    			attr_dev(div1, "class", "decore-outer-left svelte-18izcba");
+    			set_style(div1, "width", 3 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div1, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div1, file$3, 17, 4, 759);
+    			attr_dev(div2, "class", "decore-inner-top svelte-18izcba");
+    			set_style(div2, "width", 110 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div2, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div2, file$3, 28, 8, 1338);
+    			attr_dev(div3, "class", "decore-inner-left svelte-18izcba");
+    			set_style(div3, "width", 2 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div3, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div3, file$3, 38, 8, 1855);
+    			attr_dev(div4, "class", "child-component-container svelte-18izcba");
+    			set_style(div4, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div4, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div4, file$3, 48, 8, 2372);
+    			attr_dev(div5, "class", "decore-inner-right svelte-18izcba");
+    			set_style(div5, "width", 2 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div5, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div5, file$3, 52, 8, 2562);
+    			attr_dev(div6, "class", "decore-inner-bot svelte-18izcba");
+    			set_style(div6, "width", 110 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div6, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div6, file$3, 62, 8, 3080);
+    			attr_dev(div7, "class", "decore-inner svelte-18izcba");
+    			set_style(div7, "width", 110 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div7, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div7, file$3, 27, 4, 1240);
+    			attr_dev(div8, "class", "decore-outer-right svelte-18izcba");
+    			set_style(div8, "width", 3 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div8, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div8, file$3, 73, 4, 3604);
+    			attr_dev(div9, "class", "decore-outer-bot svelte-18izcba");
+    			set_style(div9, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div9, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div9, file$3, 83, 4, 4086);
+    			attr_dev(div10, "class", "decore svelte-18izcba");
+    			set_style(div10, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div10, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div10, file$3, 6, 0, 190);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div10, anchor);
+    			append_dev(div10, div0);
+
+    			for (let i = 0; i < each_blocks_7.length; i += 1) {
+    				each_blocks_7[i].m(div0, null);
+    			}
+
+    			append_dev(div10, t0);
+    			append_dev(div10, div1);
+
+    			for (let i = 0; i < each_blocks_6.length; i += 1) {
+    				each_blocks_6[i].m(div1, null);
+    			}
+
+    			append_dev(div10, t1);
+    			append_dev(div10, div7);
+    			append_dev(div7, div2);
+
+    			for (let i = 0; i < each_blocks_5.length; i += 1) {
+    				each_blocks_5[i].m(div2, null);
+    			}
+
+    			append_dev(div7, t2);
+    			append_dev(div7, div3);
+
+    			for (let i = 0; i < each_blocks_4.length; i += 1) {
+    				each_blocks_4[i].m(div3, null);
+    			}
+
+    			append_dev(div7, t3);
+    			append_dev(div7, div4);
+    			mount_component(canvasmatrix, div4, null);
+    			append_dev(div7, t4);
+    			append_dev(div7, div5);
+
+    			for (let i = 0; i < each_blocks_3.length; i += 1) {
+    				each_blocks_3[i].m(div5, null);
+    			}
+
+    			append_dev(div7, t5);
+    			append_dev(div7, div6);
+
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				each_blocks_2[i].m(div6, null);
+    			}
+
+    			append_dev(div10, t6);
+    			append_dev(div10, div8);
+
+    			for (let i = 0; i < each_blocks_1.length; i += 1) {
+    				each_blocks_1[i].m(div8, null);
+    			}
+
+    			append_dev(div10, t7);
+    			append_dev(div10, div9);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div9, null);
+    			}
+
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_14 = Array(116);
+    				validate_each_argument(each_value_14);
+    				validate_each_keys(ctx, each_value_14, get_each_context_14, get_key);
+    				each_blocks_7 = update_keyed_each(each_blocks_7, dirty, get_key, 1, ctx, each_value_14, each0_lookup, div0, destroy_block, create_each_block_14, null, get_each_context_14);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div0, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_12 = Array(3);
+    				validate_each_argument(each_value_12);
+    				validate_each_keys(ctx, each_value_12, get_each_context_12, get_key_1);
+    				each_blocks_6 = update_keyed_each(each_blocks_6, dirty, get_key_1, 1, ctx, each_value_12, each1_lookup, div1, destroy_block, create_each_block_12, null, get_each_context_12);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div1, "width", 3 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div1, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_10 = Array(110);
+    				validate_each_argument(each_value_10);
+    				validate_each_keys(ctx, each_value_10, get_each_context_10, get_key_2);
+    				each_blocks_5 = update_keyed_each(each_blocks_5, dirty, get_key_2, 1, ctx, each_value_10, each2_lookup, div2, destroy_block, create_each_block_10, null, get_each_context_10);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div2, "width", 110 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div2, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_8 = Array(2);
+    				validate_each_argument(each_value_8);
+    				validate_each_keys(ctx, each_value_8, get_each_context_8, get_key_3);
+    				each_blocks_4 = update_keyed_each(each_blocks_4, dirty, get_key_3, 1, ctx, each_value_8, each3_lookup, div3, destroy_block, create_each_block_8, null, get_each_context_8);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div3, "width", 2 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div3, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			const canvasmatrix_changes = {};
+    			if (dirty & /*pixelSize*/ 1) canvasmatrix_changes.pixelSize = /*pixelSize*/ ctx[0];
+    			canvasmatrix.$set(canvasmatrix_changes);
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div4, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div4, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_6 = Array(2);
+    				validate_each_argument(each_value_6);
+    				validate_each_keys(ctx, each_value_6, get_each_context_6, get_key_4);
+    				each_blocks_3 = update_keyed_each(each_blocks_3, dirty, get_key_4, 1, ctx, each_value_6, each4_lookup, div5, destroy_block, create_each_block_6, null, get_each_context_6);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div5, "width", 2 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div5, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_4 = Array(110);
+    				validate_each_argument(each_value_4);
+    				validate_each_keys(ctx, each_value_4, get_each_context_4, get_key_5);
+    				each_blocks_2 = update_keyed_each(each_blocks_2, dirty, get_key_5, 1, ctx, each_value_4, each5_lookup, div6, destroy_block, create_each_block_4, null, get_each_context_4);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div6, "width", 110 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div6, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div7, "width", 110 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div7, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_2 = Array(3);
+    				validate_each_argument(each_value_2);
+    				validate_each_keys(ctx, each_value_2, get_each_context_2, get_key_6);
+    				each_blocks_1 = update_keyed_each(each_blocks_1, dirty, get_key_6, 1, ctx, each_value_2, each6_lookup, div8, destroy_block, create_each_block_2, null, get_each_context_2);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div8, "width", 3 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div8, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value = Array(116);
+    				validate_each_argument(each_value);
+    				validate_each_keys(ctx, each_value, get_each_context$1, get_key_7);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key_7, 1, ctx, each_value, each7_lookup, div9, destroy_block, create_each_block$1, null, get_each_context$1);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div9, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div9, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div10, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div10, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(canvasmatrix.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(canvasmatrix.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div10);
+
+    			for (let i = 0; i < each_blocks_7.length; i += 1) {
+    				each_blocks_7[i].d();
+    			}
+
+    			for (let i = 0; i < each_blocks_6.length; i += 1) {
+    				each_blocks_6[i].d();
+    			}
+
+    			for (let i = 0; i < each_blocks_5.length; i += 1) {
+    				each_blocks_5[i].d();
+    			}
+
+    			for (let i = 0; i < each_blocks_4.length; i += 1) {
+    				each_blocks_4[i].d();
+    			}
+
+    			destroy_component(canvasmatrix);
+
+    			for (let i = 0; i < each_blocks_3.length; i += 1) {
+    				each_blocks_3[i].d();
+    			}
+
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				each_blocks_2[i].d();
+    			}
+
+    			for (let i = 0; i < each_blocks_1.length; i += 1) {
+    				each_blocks_1[i].d();
+    			}
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$4.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$4($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('CanvasDecore', slots, []);
+    	let { pixelSize } = $$props;
+    	const writable_props = ['pixelSize'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasDecore> was created with unknown prop '${key}'`);
+    	});
+
+    	function click_handler(event) {
+    		bubble.call(this, $$self, event);
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    	};
+
+    	$$self.$capture_state = () => ({ CanvasMatrix, pixelSize });
+
+    	$$self.$inject_state = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [pixelSize, click_handler];
+    }
+
+    class CanvasDecore extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$4, create_fragment$4, safe_not_equal, { pixelSize: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "CanvasDecore",
+    			options,
+    			id: create_fragment$4.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*pixelSize*/ ctx[0] === undefined && !('pixelSize' in props)) {
+    			console.warn("<CanvasDecore> was created without expected prop 'pixelSize'");
+    		}
+    	}
+
+    	get pixelSize() {
+    		throw new Error("<CanvasDecore>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set pixelSize(value) {
+    		throw new Error("<CanvasDecore>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src/demo/CanvasContainer.svelte generated by Svelte v3.48.0 */
+    const file$2 = "src/demo/CanvasContainer.svelte";
+
+    function create_fragment$3(ctx) {
+    	let div21;
+    	let div0;
+    	let t0;
+    	let div1;
+    	let t1;
+    	let div2;
+    	let t2;
+    	let div3;
+    	let t3;
+    	let div4;
+    	let canvasdecore;
+    	let t4;
+    	let div12;
+    	let div5;
+    	let t5;
+    	let div6;
+    	let t6;
+    	let div11;
+    	let div7;
+    	let b0;
+    	let t8;
+    	let div10;
+    	let div8;
+    	let b1;
+    	let i0;
+    	let t10;
+    	let div9;
+    	let b2;
+    	let i1;
+    	let t12;
+    	let div20;
+    	let div13;
+    	let t13;
+    	let div14;
+    	let t14;
+    	let div19;
+    	let div15;
+    	let b3;
+    	let t16;
+    	let div18;
+    	let div16;
+    	let b4;
+    	let i2;
+    	let t18;
+    	let div17;
+    	let b5;
+    	let i3;
+    	let current;
+
+    	canvasdecore = new CanvasDecore({
+    			props: { pixelSize: /*pixelSize*/ ctx[0] },
+    			$$inline: true
+    		});
+
+    	canvasdecore.$on("click", /*click_handler*/ ctx[1]);
+
+    	const block = {
+    		c: function create() {
+    			div21 = element("div");
+    			div0 = element("div");
+    			t0 = space();
+    			div1 = element("div");
+    			t1 = space();
+    			div2 = element("div");
+    			t2 = space();
+    			div3 = element("div");
+    			t3 = space();
+    			div4 = element("div");
+    			create_component(canvasdecore.$$.fragment);
+    			t4 = space();
+    			div12 = element("div");
+    			div5 = element("div");
+    			t5 = space();
+    			div6 = element("div");
+    			t6 = space();
+    			div11 = element("div");
+    			div7 = element("div");
+    			b0 = element("b");
+    			b0.textContent = "Y";
+    			t8 = space();
+    			div10 = element("div");
+    			div8 = element("div");
+    			b1 = element("b");
+    			i0 = element("i");
+    			i0.textContent = "k";
+    			t10 = space();
+    			div9 = element("div");
+    			b2 = element("b");
+    			i1 = element("i");
+    			i1.textContent = "k+17";
+    			t12 = space();
+    			div20 = element("div");
+    			div13 = element("div");
+    			t13 = space();
+    			div14 = element("div");
+    			t14 = space();
+    			div19 = element("div");
+    			div15 = element("div");
+    			b3 = element("b");
+    			b3.textContent = "X";
+    			t16 = space();
+    			div18 = element("div");
+    			div16 = element("div");
+    			b4 = element("b");
+    			i2 = element("i");
+    			i2.textContent = "0";
+    			t18 = space();
+    			div17 = element("div");
+    			b5 = element("b");
+    			i3 = element("i");
+    			i3.textContent = "106";
+    			attr_dev(div0, "class", "container-top-gradient svelte-ky55ju");
+    			set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div0, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div0, file$2, 7, 4, 281);
+    			attr_dev(div1, "class", "container-left-gradient svelte-ky55ju");
+    			set_style(div1, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div1, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div1, file$2, 8, 4, 390);
+    			attr_dev(div2, "class", "container-right-gradient svelte-ky55ju");
+    			set_style(div2, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div2, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div2, file$2, 9, 4, 499);
+    			attr_dev(div3, "class", "container-bot-gradient svelte-ky55ju");
+    			set_style(div3, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div3, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div3, file$2, 10, 4, 609);
+    			attr_dev(div4, "class", "child-component-container svelte-ky55ju");
+    			set_style(div4, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div4, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div4, file$2, 12, 4, 719);
+    			attr_dev(div5, "class", "container-axis-y-arrow-body svelte-ky55ju");
+    			add_location(div5, file$2, 18, 8, 1079);
+    			attr_dev(div6, "class", "container-axis-y-arrow-head svelte-ky55ju");
+    			set_style(div6, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div6, "height", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div6, "top", /*pixelSize*/ ctx[0] / 5 + "px");
+    			add_location(div6, file$2, 19, 2, 1129);
+    			add_location(b0, file$2, 21, 145, 1509);
+    			attr_dev(div7, "class", "container-axis-y-arrow-rest-name svelte-ky55ju");
+    			set_style(div7, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			set_style(div7, "right", /*pixelSize*/ ctx[0] * -1.5 + "px");
+    			set_style(div7, "top", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div7, file$2, 21, 12, 1376);
+    			add_location(i0, file$2, 23, 162, 1807);
+    			add_location(b1, file$2, 23, 159, 1804);
+    			attr_dev(div8, "class", "container-axis-y-arrow-rest-dash-first svelte-ky55ju");
+    			set_style(div8, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			set_style(div8, "right", /*pixelSize*/ ctx[0] / 2 + "px");
+    			set_style(div8, "bottom", /*pixelSize*/ ctx[0] / 5 + "px");
+    			add_location(div8, file$2, 23, 16, 1661);
+    			add_location(i1, file$2, 24, 159, 1985);
+    			add_location(b2, file$2, 24, 156, 1982);
+    			attr_dev(div9, "class", "container-axis-y-arrow-rest-dash-last svelte-ky55ju");
+    			set_style(div9, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			set_style(div9, "right", /*pixelSize*/ ctx[0] / 2 + "px");
+    			set_style(div9, "top", /*pixelSize*/ ctx[0] * -1 + "px");
+    			add_location(div9, file$2, 24, 16, 1842);
+    			attr_dev(div10, "class", "container-axis-y-arrow-rest-dash svelte-ky55ju");
+    			set_style(div10, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div10, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div10, file$2, 22, 12, 1537);
+    			attr_dev(div11, "class", "container-axis-y-arrow-rest svelte-ky55ju");
+    			set_style(div11, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div11, "height", 22 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div11, file$2, 20, 8, 1261);
+    			attr_dev(div12, "class", "container-axis-y svelte-ky55ju");
+    			set_style(div12, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div12, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div12, file$2, 17, 4, 979);
+    			attr_dev(div13, "class", "container-axis-x-arrow-body svelte-ky55ju");
+    			add_location(div13, file$2, 31, 8, 2240);
+    			attr_dev(div14, "class", "container-axis-x-arrow-head svelte-ky55ju");
+    			set_style(div14, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div14, "height", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div14, "right", /*pixelSize*/ ctx[0] / 5 + "px");
+    			add_location(div14, file$2, 32, 8, 2297);
+    			add_location(b3, file$2, 34, 149, 2684);
+    			attr_dev(div15, "class", "container-axis-x-arrow-rest-name svelte-ky55ju");
+    			set_style(div15, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			set_style(div15, "right", /*pixelSize*/ ctx[0] * 1.3 + "px");
+    			set_style(div15, "top", /*pixelSize*/ ctx[0] * -2 + "px");
+    			add_location(div15, file$2, 34, 12, 2547);
+    			add_location(i2, file$2, 36, 134, 2955);
+    			add_location(b4, file$2, 36, 131, 2952);
+    			attr_dev(div16, "class", "container-axis-x-arrow-rest-dash-first svelte-ky55ju");
+    			set_style(div16, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			set_style(div16, "left", /*pixelSize*/ ctx[0] / 5 + "px");
+    			add_location(div16, file$2, 36, 16, 2837);
+    			add_location(i3, file$2, 37, 135, 3109);
+    			add_location(b5, file$2, 37, 132, 3106);
+    			attr_dev(div17, "class", "container-axis-x-arrow-rest-dash-last svelte-ky55ju");
+    			set_style(div17, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			set_style(div17, "right", /*pixelSize*/ ctx[0] * -1 + "px");
+    			add_location(div17, file$2, 37, 16, 2990);
+    			attr_dev(div18, "class", "container-axis-x-arrow-rest-dash svelte-ky55ju");
+    			set_style(div18, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div18, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div18, file$2, 35, 12, 2712);
+    			attr_dev(div19, "class", "container-axis-x-arrow-rest svelte-ky55ju");
+    			set_style(div19, "width", 111 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div19, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div19, file$2, 33, 8, 2431);
+    			attr_dev(div20, "class", "container-axis-x svelte-ky55ju");
+    			set_style(div20, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div20, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div20, file$2, 30, 4, 2139);
+    			attr_dev(div21, "class", "container svelte-ky55ju");
+    			set_style(div21, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div21, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div21, file$2, 6, 0, 190);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div21, anchor);
+    			append_dev(div21, div0);
+    			append_dev(div21, t0);
+    			append_dev(div21, div1);
+    			append_dev(div21, t1);
+    			append_dev(div21, div2);
+    			append_dev(div21, t2);
+    			append_dev(div21, div3);
+    			append_dev(div21, t3);
+    			append_dev(div21, div4);
+    			mount_component(canvasdecore, div4, null);
+    			append_dev(div21, t4);
+    			append_dev(div21, div12);
+    			append_dev(div12, div5);
+    			append_dev(div12, t5);
+    			append_dev(div12, div6);
+    			append_dev(div12, t6);
+    			append_dev(div12, div11);
+    			append_dev(div11, div7);
+    			append_dev(div7, b0);
+    			append_dev(div11, t8);
+    			append_dev(div11, div10);
+    			append_dev(div10, div8);
+    			append_dev(div8, b1);
+    			append_dev(b1, i0);
+    			append_dev(div10, t10);
+    			append_dev(div10, div9);
+    			append_dev(div9, b2);
+    			append_dev(b2, i1);
+    			append_dev(div21, t12);
+    			append_dev(div21, div20);
+    			append_dev(div20, div13);
+    			append_dev(div20, t13);
+    			append_dev(div20, div14);
+    			append_dev(div20, t14);
+    			append_dev(div20, div19);
+    			append_dev(div19, div15);
+    			append_dev(div15, b3);
+    			append_dev(div19, t16);
+    			append_dev(div19, div18);
+    			append_dev(div18, div16);
+    			append_dev(div16, b4);
+    			append_dev(b4, i2);
+    			append_dev(div18, t18);
+    			append_dev(div18, div17);
+    			append_dev(div17, b5);
+    			append_dev(b5, i3);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div0, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div1, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div1, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div2, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div2, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div3, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div3, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			const canvasdecore_changes = {};
+    			if (dirty & /*pixelSize*/ 1) canvasdecore_changes.pixelSize = /*pixelSize*/ ctx[0];
+    			canvasdecore.$set(canvasdecore_changes);
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div4, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div4, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div6, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div6, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div6, "top", /*pixelSize*/ ctx[0] / 5 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div7, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div7, "right", /*pixelSize*/ ctx[0] * -1.5 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div7, "top", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div8, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div8, "right", /*pixelSize*/ ctx[0] / 2 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div8, "bottom", /*pixelSize*/ ctx[0] / 5 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div9, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div9, "right", /*pixelSize*/ ctx[0] / 2 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div9, "top", /*pixelSize*/ ctx[0] * -1 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div10, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div10, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div11, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div11, "height", 22 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div12, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div12, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div14, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div14, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div14, "right", /*pixelSize*/ ctx[0] / 5 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div15, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div15, "right", /*pixelSize*/ ctx[0] * 1.3 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div15, "top", /*pixelSize*/ ctx[0] * -2 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div16, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div16, "left", /*pixelSize*/ ctx[0] / 5 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div17, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div17, "right", /*pixelSize*/ ctx[0] * -1 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div18, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div18, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div19, "width", 111 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div19, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div20, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div20, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div21, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div21, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(canvasdecore.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(canvasdecore.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div21);
+    			destroy_component(canvasdecore);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$3.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$3($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('CanvasContainer', slots, []);
+    	let { pixelSize } = $$props;
+    	const writable_props = ['pixelSize'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasContainer> was created with unknown prop '${key}'`);
+    	});
+
+    	function click_handler(event) {
+    		bubble.call(this, $$self, event);
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    	};
+
+    	$$self.$capture_state = () => ({ CanvasDecore, pixelSize });
+
+    	$$self.$inject_state = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [pixelSize, click_handler];
+    }
+
+    class CanvasContainer extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { pixelSize: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "CanvasContainer",
+    			options,
+    			id: create_fragment$3.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*pixelSize*/ ctx[0] === undefined && !('pixelSize' in props)) {
+    			console.warn("<CanvasContainer> was created without expected prop 'pixelSize'");
+    		}
+    	}
+
+    	get pixelSize() {
+    		throw new Error("<CanvasContainer>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set pixelSize(value) {
+    		throw new Error("<CanvasContainer>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    let kValuePatterns = [
+        { id: 0, text: 'Custom', value: '0' },
+        { id: 1, text: 'Tuppers default', value: '00110010101000100001010101011111000010010010100000000000000000000000000000001000000000000000101000000000000010001000000000000000000000001111111111111111110000000000000000100000111100000000000000001000000000000011100000000000000000100000000000001110000000000000000000000000000000011000000000000001001000000000000010010000000000000011000000000000000000000000000000001100000000000000100100000000000001001000000000000011111100000000000000000000000000011111110000000111000000011100110000000000000110000000000000000011111111111111110100000000000000001011111010000000000000000101011000001100101001000001000111010001100010000000000000000111111111111111100000000000000000000000011001000000000000101001000000000001001010000000000010001000100000000000000001000000000000000000000000000000011111000000000000000000000000000001100100000000000000111000000000000000000000000001111111100000000010000000000000000100101000000000000000100000000000010010100000000000100000000000000001111111100000000000000000000000000000001000000000000000010000000000000000000000000000000111000000000000000010000000000000011100000000000000001000000000000001100000000000000000000000000000000111000000000000001010000000000000011100000000000000000000000000000001110000000000000010100000000000000111110000000000000000000000000000111100000000000110000110000000000000000000000000011111111000000000100000000000000001010110000000000000010000000000000100011000000000001000000000000000011111111000000000000000000000000001000000000000000001100000000000000000000000000000000001111100000000000000000000000000000110010000000000000011100000000000000000000000000110000110001000000011110000001100000000000000000000000000000000001100100000000000010100100000000000100101000001100001000100001100111000000011100100001111111000001000000000000000011111111111111111' },
+        { id: 2, text: 'Tuppers mirrored', value: '11111111111111111000000000000000010000011111110000100111000000011100110000100010000110000010100100000000000100101000000000000100110000000000000000000000000000000000110000001111000000010001100001100000000000000000000000000111000000000000001001100000000000000000000000000000111110000000000000000000000000000000000110000000000000000010000000000000000000000000011111111000000000000000010000000000011000100000000000001000000000000001101010000000000000000100000000011111111000000000000000000000000001100001100000000000111100000000000000000000000000001111100000000000000101000000000000001110000000000000000000000000000000111000000000000001010000000000000011100000000000000000000000000000000110000000000000010000000000000000111000000000000001000000000000000011100000000000000000000000000000001000000000000000010000000000000000000000000000000111111110000000000000000100000000000101001000000000000100000000000000010100100000000000000001000000000111111110000000000000000000000000011100000000000000100110000000000000000000000000000011111000000000000000000000000000000010000000000000000100010001000000000001010010000000000010010100000000000010011000000000000000000000000111111111111111100000000000000001000110001011100010000010010100110000011010100000000000000001011111010000000000000000101111111111111111000000000000000001100000000000001100111000000011100000001111111000000000000000000000000000111111000000000000010010000000000000100100000000000000110000000000000000000000000000000011000000000000001001000000000000010010000000000000011000000000000000000000000000000001110000000000000100000000000000000111000000000000010000000000000000111100000100000000000000001111111111111111110000000000000000000000010001000000000000010100000000000000010000000000000000000000000000000101001001000011111010101010000100010101001100' },
+        { id: 3, text: 'Hello there', value: '11111111111111111100000000000000011000000000000000110000000000000001111111100011111111111111000111111111111110001111111111111100011111111111111000111111111111110001111111100000000000000011000000000000000110000000000000001111111111111111111111111111111111111100000001111111110000000001111111000000000001111110000000000011111100011001000111111000110010001111110000100000011111100001000000111111100010000011111111100100001111111111111111111111111111111111111111110000000000000001100000000000000011000000000000000111111111111111111111111111111111111000000000000000110000000000000001100000000000000011111111111111111111111111111111111111000000011111111100000000011111110000000000011111100000100000111111000111110001111110001111100011111100011111000111111000001000001111110000000000011111110000000001111111110000000111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110011111100000000000001111000000000000001110000000000000011100011111100111111000111111001111111111111111111111111111111111111111000000000000000110000000000000001100000000000000011111111000011111111111111100011111111111111000111111111111110001111111111111000011111100000000000111111000000000001111110000000000111111111111111111111111111111111111111111100000001111111110000000001111111000000000001111110000000000011111100011001000111111000110010001111110000100000011111100001000000111111100010000011111111100100001111111111111111111111111111111111111111110000000000011111100000000000111111000000000001111111111100000011111111111111000111111111111110001111111111111100011111111111111111111111110000000111111111000000000111111100000000000111111000000000001111110001100100011111100011001000111111000010000001111110000100000011111110001000001111111110010000111111111111111111111111' }
+    ];
+
+    /* src/demo/CanvasButtonsBar.svelte generated by Svelte v3.48.0 */
+    const file$1 = "src/demo/CanvasButtonsBar.svelte";
+
+    function get_each_context(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[13] = list[i];
+    	return child_ctx;
+    }
+
+    // (117:24) {#each kValuePatterns as kValuePattern}
+    function create_each_block(ctx) {
+    	let option;
+    	let t0_value = /*kValuePattern*/ ctx[13].text + "";
+    	let t0;
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			option = element("option");
+    			t0 = text(t0_value);
+    			t1 = space();
+    			option.__value = /*kValuePattern*/ ctx[13].id;
+    			option.value = option.__value;
+    			add_location(option, file$1, 117, 28, 6066);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, option, anchor);
+    			append_dev(option, t0);
+    			append_dev(option, t1);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(option);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(117:24) {#each kValuePatterns as kValuePattern}",
+    		ctx
+    	});
+
+    	return block;
+    }
 
     function create_fragment$2(ctx) {
     	let div5;
@@ -6452,11 +6642,16 @@ var app = (function () {
     	let t9;
     	let t10;
     	let div2;
+    	let button5;
     	let button4;
     	let t11;
-    	let button5;
     	let t12;
     	let button6;
+    	let select;
+    	let t13;
+    	let button8;
+    	let button7;
+    	let t14;
     	let current;
     	let mounted;
     	let dispose;
@@ -6465,6 +6660,15 @@ var app = (function () {
     			props: { pixelSize: /*pixelSize*/ ctx[0] },
     			$$inline: true
     		});
+
+    	canvascontainer.$on("click", /*click_handler*/ ctx[9]);
+    	let each_value = kValuePatterns;
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    	}
 
     	const block = {
     		c: function create() {
@@ -6478,7 +6682,7 @@ var app = (function () {
     			i = element("i");
     			t1 = text("k");
     			sub = element("sub");
-    			t2 = text(/*kValueMode*/ ctx[2]);
+    			t2 = text(/*kValueBase*/ ctx[3]);
     			t3 = space();
     			textarea = element("textarea");
     			t4 = space();
@@ -6493,84 +6697,114 @@ var app = (function () {
     			t9 = text("Copy");
     			t10 = space();
     			div2 = element("div");
-    			button4 = element("button");
-    			t11 = space();
     			button5 = element("button");
+    			button4 = element("button");
+    			t11 = text("Tutorial");
     			t12 = space();
     			button6 = element("button");
-    			attr_dev(div0, "class", "container-container svelte-10d17w0");
+    			select = element("select");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t13 = space();
+    			button8 = element("button");
+    			button7 = element("button");
+    			t14 = text("Clear!");
+    			attr_dev(div0, "class", "child-component-container svelte-b4cm5k");
     			set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
     			set_style(div0, "height", 27 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div0, file$1, 97, 4, 2840);
-    			add_location(sub, file$1, 102, 165, 3360);
-    			add_location(i, file$1, 102, 161, 3356);
+    			add_location(div0, file$1, 98, 4, 3364);
+    			add_location(sub, file$1, 103, 165, 3899);
+    			add_location(i, file$1, 103, 161, 3895);
     			attr_dev(button0, "type", "button");
     			set_style(button0, "font-size", 2 * /*pixelSize*/ ctx[0] - 4 + "px");
     			set_style(button0, "width", 8 * /*pixelSize*/ ctx[0] + "px");
     			set_style(button0, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
-    			attr_dev(button0, "class", "svelte-10d17w0");
-    			add_location(button0, file$1, 102, 12, 3207);
-    			attr_dev(textarea, "id", "textar");
+    			attr_dev(button0, "class", "svelte-b4cm5k");
+    			add_location(button0, file$1, 103, 12, 3746);
+    			attr_dev(textarea, "id", "textarea");
     			set_style(textarea, "line-height", 2.5 * /*pixelSize*/ ctx[0] - 1 + "px");
     			set_style(textarea, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
     			set_style(textarea, "width", 88 * /*pixelSize*/ ctx[0] + "px");
     			set_style(textarea, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
-    			attr_dev(textarea, "class", "svelte-10d17w0");
-    			add_location(textarea, file$1, 103, 12, 3409);
-    			attr_dev(div1, "class", "k-buttons-value svelte-10d17w0");
+    			attr_dev(textarea, "class", "svelte-b4cm5k");
+    			add_location(textarea, file$1, 104, 12, 3948);
+    			attr_dev(div1, "class", "k-buttons-value svelte-b4cm5k");
     			set_style(div1, "width", 96 * /*pixelSize*/ ctx[0] + "px");
     			set_style(div1, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div1, file$1, 101, 8, 3101);
-    			attr_dev(button1, "class", "k-buttons-action-comment svelte-10d17w0");
+    			add_location(div1, file$1, 102, 8, 3640);
+    			attr_dev(button1, "class", "k-buttons-action-comment svelte-b4cm5k");
     			attr_dev(button1, "type", "button");
     			set_style(button1, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
     			set_style(button1, "width", 12 * /*pixelSize*/ ctx[0] + "px");
     			set_style(button1, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(button1, file$1, 106, 12, 3742);
-    			attr_dev(button2, "class", "k-buttons-action-paste svelte-10d17w0");
+    			add_location(button1, file$1, 107, 12, 4314);
+    			attr_dev(button2, "class", "k-buttons-action-paste svelte-b4cm5k");
     			attr_dev(button2, "type", "button");
     			set_style(button2, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
     			set_style(button2, "width", 12 * /*pixelSize*/ ctx[0] + "px");
     			set_style(button2, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(button2, file$1, 107, 12, 3933);
-    			attr_dev(button3, "class", "k-buttons-action-copy svelte-10d17w0");
+    			add_location(button2, file$1, 108, 12, 4536);
+    			attr_dev(button3, "class", "k-buttons-action-copy svelte-b4cm5k");
     			attr_dev(button3, "type", "button");
     			set_style(button3, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
     			set_style(button3, "width", 12 * /*pixelSize*/ ctx[0] + "px");
     			set_style(button3, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(button3, file$1, 108, 12, 4110);
-    			attr_dev(button4, "class", "k-buttons-action-tools-brush svelte-10d17w0");
+    			add_location(button3, file$1, 109, 12, 4742);
+    			attr_dev(button4, "class", "k-buttons-action-options-tutorial-button svelte-b4cm5k");
     			attr_dev(button4, "type", "button");
-    			set_style(button4, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(button4, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			set_style(button4, "width", 13.5 * /*pixelSize*/ ctx[0] + "px");
     			set_style(button4, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(button4, file$1, 110, 16, 4401);
-    			attr_dev(button5, "class", "k-buttons-action-tools-eraser svelte-10d17w0");
+    			add_location(button4, file$1, 112, 20, 5243);
+    			attr_dev(button5, "class", "k-buttons-action-options-tutorial svelte-b4cm5k");
     			attr_dev(button5, "type", "button");
     			set_style(button5, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
     			set_style(button5, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(button5, file$1, 111, 16, 4583);
-    			attr_dev(button6, "class", "k-buttons-action-tools-options svelte-10d17w0");
+    			add_location(button5, file$1, 111, 16, 5063);
+    			attr_dev(select, "id", "kvalueselector");
+    			attr_dev(select, "class", "k-buttons-action-options-select-selector svelte-b4cm5k");
+    			set_style(select, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			set_style(select, "width", 13.5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(select, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			if (/*kValuePatternSelected*/ ctx[1] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[11].call(select));
+    			add_location(select, file$1, 115, 20, 5762);
+    			attr_dev(button6, "class", "k-buttons-action-options-select svelte-b4cm5k");
     			attr_dev(button6, "type", "button");
+    			set_style(button6, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
     			set_style(button6, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
     			set_style(button6, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(button6, file$1, 112, 16, 4767);
-    			attr_dev(div2, "class", "k-buttons-action-tools svelte-10d17w0");
-    			set_style(div2, "width", 48 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(button6, file$1, 114, 16, 5512);
+    			attr_dev(button7, "class", "k-buttons-action-options-clear-confirm svelte-b4cm5k");
+    			attr_dev(button7, "type", "button");
+    			set_style(button7, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			set_style(button7, "width", 13.5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(button7, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(button7, file$1, 124, 20, 6472);
+    			attr_dev(button8, "class", "k-buttons-action-options-clear svelte-b4cm5k");
+    			attr_dev(button8, "type", "button");
+    			set_style(button8, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(button8, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(button8, file$1, 123, 16, 6295);
+    			attr_dev(div2, "class", "k-buttons-action-options svelte-b4cm5k");
+    			set_style(div2, "width", 50 * /*pixelSize*/ ctx[0] + "px");
     			set_style(div2, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div2, file$1, 109, 12, 4285);
-    			attr_dev(div3, "class", "k-buttons-action svelte-10d17w0");
+    			add_location(div2, file$1, 110, 12, 4945);
+    			attr_dev(div3, "class", "k-buttons-action svelte-b4cm5k");
     			set_style(div3, "width", 96 * /*pixelSize*/ ctx[0] + "px");
     			set_style(div3, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div3, file$1, 105, 9, 3636);
-    			attr_dev(div4, "class", "k-buttons svelte-10d17w0");
+    			add_location(div3, file$1, 106, 9, 4208);
+    			attr_dev(div4, "class", "k-buttons svelte-b4cm5k");
     			set_style(div4, "width", 96 * /*pixelSize*/ ctx[0] + "px");
     			set_style(div4, "height", 6 * /*pixelSize*/ ctx[0] + "px");
-    			add_location(div4, file$1, 100, 4, 3008);
-    			attr_dev(div5, "class", "buttons svelte-10d17w0");
+    			add_location(div4, file$1, 101, 4, 3547);
+    			attr_dev(div5, "class", "buttons svelte-b4cm5k");
     			set_style(div5, "width", 116 * /*pixelSize*/ ctx[0] + "px");
     			set_style(div5, "height", 33 * /*pixelSize*/ ctx[0] + "px");
     			set_style(div5, "padding-top", /*pixelSize*/ ctx[0] + "px");
-    			add_location(div5, file$1, 96, 0, 2723);
+    			add_location(div5, file$1, 97, 0, 3247);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -6589,7 +6823,7 @@ var app = (function () {
     			append_dev(sub, t2);
     			append_dev(div1, t3);
     			append_dev(div1, textarea);
-    			set_input_value(textarea, /*kValueTextAreaString*/ ctx[1]);
+    			set_input_value(textarea, /*kValueTextAreaString*/ ctx[2]);
     			append_dev(div4, t4);
     			append_dev(div4, div3);
     			append_dev(div3, button1);
@@ -6602,20 +6836,39 @@ var app = (function () {
     			append_dev(button3, t9);
     			append_dev(div3, t10);
     			append_dev(div3, div2);
-    			append_dev(div2, button4);
-    			append_dev(div2, t11);
     			append_dev(div2, button5);
+    			append_dev(button5, button4);
+    			append_dev(button4, t11);
     			append_dev(div2, t12);
     			append_dev(div2, button6);
+    			append_dev(button6, select);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(select, null);
+    			}
+
+    			select_option(select, /*kValuePatternSelected*/ ctx[1]);
+    			append_dev(div2, t13);
+    			append_dev(div2, button8);
+    			append_dev(button8, button7);
+    			append_dev(button7, t14);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(button0, "click", /*kValueDisplayButton*/ ctx[3], false, false, false),
-    					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[6]),
-    					listen_dev(button4, "click", /*toolsBrushClickHandle*/ ctx[4], false, false, false),
-    					listen_dev(button5, "click", /*toolsEraserClickHandle*/ ctx[5], false, false, false),
-    					listen_dev(button6, "click", toolsOptionsClickHandle, false, false, false)
+    					listen_dev(button0, "click", /*kValueDisplayButton*/ ctx[4], false, false, false),
+    					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[10]),
+    					listen_dev(textarea, "input", /*kValueChangeHandler*/ ctx[8], false, false, false),
+    					listen_dev(button1, "click", buttonsClickComment, false, false, false),
+    					listen_dev(button2, "click", /*buttonsClickPaste*/ ctx[5], false, false, false),
+    					listen_dev(button3, "click", buttonsClickCopy, false, false, false),
+    					listen_dev(button4, "click", buttonsClickOptionsTutorial, false, false, false),
+    					listen_dev(button5, "click", buttonsClickOptions, false, false, false),
+    					listen_dev(select, "change", /*select_change_handler*/ ctx[11]),
+    					listen_dev(button6, "click", buttonsClickOptions, false, false, false),
+    					listen_dev(button6, "change", /*buttonsClickOptionsSelect*/ ctx[6], false, false, false),
+    					listen_dev(button7, "click", /*buttonsClickOptionsClear*/ ctx[7], false, false, false),
+    					listen_dev(button8, "click", buttonsClickOptions, false, false, false)
     				];
 
     				mounted = true;
@@ -6634,7 +6887,7 @@ var app = (function () {
     				set_style(div0, "height", 27 * /*pixelSize*/ ctx[0] + "px");
     			}
 
-    			if (!current || dirty & /*kValueMode*/ 4) set_data_dev(t2, /*kValueMode*/ ctx[2]);
+    			if (!current || dirty & /*kValueBase*/ 8) set_data_dev(t2, /*kValueBase*/ ctx[3]);
 
     			if (!current || dirty & /*pixelSize*/ 1) {
     				set_style(button0, "font-size", 2 * /*pixelSize*/ ctx[0] - 4 + "px");
@@ -6664,8 +6917,8 @@ var app = (function () {
     				set_style(textarea, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
     			}
 
-    			if (dirty & /*kValueTextAreaString*/ 2) {
-    				set_input_value(textarea, /*kValueTextAreaString*/ ctx[1]);
+    			if (dirty & /*kValueTextAreaString*/ 4) {
+    				set_input_value(textarea, /*kValueTextAreaString*/ ctx[2]);
     			}
 
     			if (!current || dirty & /*pixelSize*/ 1) {
@@ -6713,7 +6966,11 @@ var app = (function () {
     			}
 
     			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(button4, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    				set_style(button4, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button4, "width", 13.5 * /*pixelSize*/ ctx[0] + "px");
     			}
 
     			if (!current || dirty & /*pixelSize*/ 1) {
@@ -6728,6 +6985,50 @@ var app = (function () {
     				set_style(button5, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
     			}
 
+    			if (dirty & /*kValuePatterns*/ 0) {
+    				each_value = kValuePatterns;
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(select, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(select, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(select, "width", 13.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(select, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*kValuePatternSelected, kValuePatterns*/ 2) {
+    				select_option(select, /*kValuePatternSelected*/ ctx[1]);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button6, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			}
+
     			if (!current || dirty & /*pixelSize*/ 1) {
     				set_style(button6, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
     			}
@@ -6737,7 +7038,27 @@ var app = (function () {
     			}
 
     			if (!current || dirty & /*pixelSize*/ 1) {
-    				set_style(div2, "width", 48 * /*pixelSize*/ ctx[0] + "px");
+    				set_style(button7, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button7, "width", 13.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button7, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button8, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button8, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div2, "width", 50 * /*pixelSize*/ ctx[0] + "px");
     			}
 
     			if (!current || dirty & /*pixelSize*/ 1) {
@@ -6784,6 +7105,7 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div5);
     			destroy_component(canvascontainer);
+    			destroy_each(each_blocks, detaching);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -6800,70 +7122,116 @@ var app = (function () {
     	return block;
     }
 
-    function toolsOptionsClickHandle() {
-    	
-    } //
+    function buttonsClickCopy() {
+    	/* Get the text field */
+    	const textarea = document.getElementById("textarea");
+
+    	/* Select the text field */
+    	textarea.select(); /* For mobile */
+
+    	textarea.setSelectionRange(0, 99999);
+    	navigator.clipboard.writeText(textarea.value);
+    }
+
+    function buttonsClickComment() {
+    	alert('to be added soon');
+    }
+
+    function buttonsClickOptions(e) {
+    	if (!e.target.firstChild.style) return; /* handles an annoyance */
+
+    	if (e.target.firstChild.style.display != "block") {
+    		e.target.firstChild.style.display = "block";
+    		e.target.style.borderRadius = "7px";
+    		e.target.style.transition = "0.25s";
+    		e.target.style.flexGrow = "0.35";
+    	} else {
+    		e.target.firstChild.style.display = "none";
+    		e.target.style.borderRadius = "100%";
+    		e.target.style.flexGrow = "0";
+    	}
+    }
+
+    function buttonsClickOptionsTutorial(e) {
+    	alert("click on canvas and paint!");
+    }
 
     function instance$2($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('CanvasButtons', slots, []);
+    	validate_slots('CanvasButtonsBar', slots, []);
     	let { pixelSize } = $$props;
+    	let kValuePatternSelected = 0;
     	let kValueTextAreaString = '';
-    	let kValueStringBinary = '';
-    	let kValueMode = 'dec';
-    	let kValueBigNumber;
+    	let kValueBinaryString = '';
+    	let kValueBase = 'dec';
 
     	kValueStringBin.subscribe(value => {
-    		kValueStringBinary = value;
-    		kValueDisplay(kValueStringBinary);
+    		kValueBinaryString = value;
+    		$$invalidate(2, kValueTextAreaString = kValueBinaryToBase(kValueBinaryString, kValueBase));
     	});
 
-    	function kValueDisplay(value) {
-    		if (kValueMode === 'b32') {
-    			kValueBigNumber = new bignumber.BigNumber(value, 2).times(17);
-    			$$invalidate(1, kValueTextAreaString = kValueBigNumber.toString(32));
-    		} else if (kValueMode === 'dec') {
-    			kValueBigNumber = new bignumber.BigNumber(value, 2).times(17);
-    			$$invalidate(1, kValueTextAreaString = kValueBigNumber.toString(10));
-    		} else if (kValueMode === 'bin') {
-    			$$invalidate(1, kValueTextAreaString = value);
-    		} else {
-    			/* shouldn't be possible */
-    			$$invalidate(1, kValueTextAreaString = 'ERR!');
-    		}
-    	}
-
     	function kValueDisplayButton() {
-    		if (kValueMode === 'b32') {
-    			$$invalidate(2, kValueMode = 'dec');
-    		} else if (kValueMode === 'dec') {
-    			$$invalidate(2, kValueMode = 'bin');
-    		} else if (kValueMode === 'bin') {
-    			$$invalidate(2, kValueMode = 'b32');
+    		if (kValueBase === 'b64') {
+    			$$invalidate(3, kValueBase = 'dec');
+    		} else if (kValueBase === 'dec') {
+    			$$invalidate(3, kValueBase = 'bin');
+    		} else if (kValueBase === 'bin') {
+    			$$invalidate(3, kValueBase = 'b64');
     		} else {
     			/* default */
-    			$$invalidate(2, kValueMode = 'dec');
+    			$$invalidate(3, kValueBase = 'dec');
     		}
 
-    		kValueDisplay(kValueStringBinary);
+    		$$invalidate(2, kValueTextAreaString = kValueBinaryToBase(kValueBinaryString, kValueBase));
     	}
 
-    	function toolsBrushClickHandle() {
-    		isInBrushMode.update(n => true);
+    	function buttonsClickPaste() {
+    		if (typeof navigator.clipboard.readText === "function") {
+    			let kValueTemp;
+    			navigator.clipboard.readText().then(clipText => kValueTemp = clipText);
+    			kValueTemp = kValueBaseToBinary(kValueTemp, kValueBase);
+    			kValueStringBin.update(n => kValueTemp);
+    			$$invalidate(1, kValuePatternSelected = 0);
+    		} else {
+    			alert('browser clipboard access refused, please paste manually');
+    		}
     	}
 
-    	function toolsEraserClickHandle() {
-    		isInBrushMode.update(n => false);
+    	function buttonsClickOptionsSelect(e) {
+    		let kValueTemp = kValuePatterns[kValuePatternSelected].value;
+    		kValueStringBin.update(n => kValueTemp);
+    	}
+
+    	function buttonsClickOptionsClear(e) {
+    		let kValueTemp = '0';
+    		kValueStringBin.update(n => kValueTemp);
+    		$$invalidate(1, kValuePatternSelected = 0);
+    	}
+
+    	/* manual input handler, god save us all! */
+    	function kValueChangeHandler() {
+    		let kValueTemp = kValueBaseToBinary(kValueTextAreaString, kValueBase);
+    		kValueStringBin.update(n => kValueTemp);
+    		$$invalidate(1, kValuePatternSelected = 0);
     	}
     	const writable_props = ['pixelSize'];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasButtons> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasButtonsBar> was created with unknown prop '${key}'`);
     	});
+
+    	function click_handler(event) {
+    		bubble.call(this, $$self, event);
+    	}
 
     	function textarea_input_handler() {
     		kValueTextAreaString = this.value;
-    		$$invalidate(1, kValueTextAreaString);
+    		$$invalidate(2, kValueTextAreaString);
+    	}
+
+    	function select_change_handler() {
+    		kValuePatternSelected = select_value(this);
+    		$$invalidate(1, kValuePatternSelected);
     	}
 
     	$$self.$$set = $$props => {
@@ -6871,28 +7239,33 @@ var app = (function () {
     	};
 
     	$$self.$capture_state = () => ({
+    		kValueBinaryToBase,
+    		kValueBaseToBinary,
     		CanvasContainer,
+    		kValuePatterns,
     		kValueStringBin,
-    		isInBrushMode,
-    		BigNumber: bignumber.BigNumber,
     		pixelSize,
+    		kValuePatternSelected,
     		kValueTextAreaString,
-    		kValueStringBinary,
-    		kValueMode,
-    		kValueBigNumber,
-    		kValueDisplay,
+    		kValueBinaryString,
+    		kValueBase,
     		kValueDisplayButton,
-    		toolsBrushClickHandle,
-    		toolsEraserClickHandle,
-    		toolsOptionsClickHandle
+    		buttonsClickCopy,
+    		buttonsClickPaste,
+    		buttonsClickComment,
+    		buttonsClickOptions,
+    		buttonsClickOptionsTutorial,
+    		buttonsClickOptionsSelect,
+    		buttonsClickOptionsClear,
+    		kValueChangeHandler
     	});
 
     	$$self.$inject_state = $$props => {
     		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
-    		if ('kValueTextAreaString' in $$props) $$invalidate(1, kValueTextAreaString = $$props.kValueTextAreaString);
-    		if ('kValueStringBinary' in $$props) kValueStringBinary = $$props.kValueStringBinary;
-    		if ('kValueMode' in $$props) $$invalidate(2, kValueMode = $$props.kValueMode);
-    		if ('kValueBigNumber' in $$props) kValueBigNumber = $$props.kValueBigNumber;
+    		if ('kValuePatternSelected' in $$props) $$invalidate(1, kValuePatternSelected = $$props.kValuePatternSelected);
+    		if ('kValueTextAreaString' in $$props) $$invalidate(2, kValueTextAreaString = $$props.kValueTextAreaString);
+    		if ('kValueBinaryString' in $$props) kValueBinaryString = $$props.kValueBinaryString;
+    		if ('kValueBase' in $$props) $$invalidate(3, kValueBase = $$props.kValueBase);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -6901,23 +7274,28 @@ var app = (function () {
 
     	return [
     		pixelSize,
+    		kValuePatternSelected,
     		kValueTextAreaString,
-    		kValueMode,
+    		kValueBase,
     		kValueDisplayButton,
-    		toolsBrushClickHandle,
-    		toolsEraserClickHandle,
-    		textarea_input_handler
+    		buttonsClickPaste,
+    		buttonsClickOptionsSelect,
+    		buttonsClickOptionsClear,
+    		kValueChangeHandler,
+    		click_handler,
+    		textarea_input_handler,
+    		select_change_handler
     	];
     }
 
-    class CanvasButtons extends SvelteComponentDev {
+    class CanvasButtonsBar extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
     		init(this, options, instance$2, create_fragment$2, safe_not_equal, { pixelSize: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
-    			tagName: "CanvasButtons",
+    			tagName: "CanvasButtonsBar",
     			options,
     			id: create_fragment$2.name
     		});
@@ -6926,25 +7304,365 @@ var app = (function () {
     		const props = options.props || {};
 
     		if (/*pixelSize*/ ctx[0] === undefined && !('pixelSize' in props)) {
-    			console.warn("<CanvasButtons> was created without expected prop 'pixelSize'");
+    			console.warn("<CanvasButtonsBar> was created without expected prop 'pixelSize'");
     		}
     	}
 
     	get pixelSize() {
-    		throw new Error("<CanvasButtons>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<CanvasButtonsBar>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	set pixelSize(value) {
-    		throw new Error("<CanvasButtons>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<CanvasButtonsBar>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
-    /* src/demo/CanvasBlanket.svelte generated by Svelte v3.48.0 */
+    /* src/demo/CanvasBaseControl.svelte generated by Svelte v3.48.0 */
 
     const { console: console_1 } = globals;
-    const file = "src/demo/CanvasBlanket.svelte";
+    const file = "src/demo/CanvasBaseControl.svelte";
 
-    // (101:0) {#if isLoaderDisplayed}
+    // (160:4) {:else}
+    function create_else_block(ctx) {
+    	let div;
+    	let canvasbuttonsbar;
+    	let current;
+
+    	canvasbuttonsbar = new CanvasButtonsBar({
+    			props: { pixelSize: /*pixelSize*/ ctx[8] },
+    			$$inline: true
+    		});
+
+    	canvasbuttonsbar.$on("click", /*toggleCanvasMode*/ ctx[9]);
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			create_component(canvasbuttonsbar.$$.fragment);
+    			attr_dev(div, "class", "child-component-container svelte-zbrmfy");
+    			set_style(div, "width", 116 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(div, "height", 34 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(div, "transform", "rotate(" + /*windowRotateDeg*/ ctx[6] + "deg) translate(" + /*windowTranslateX*/ ctx[4] + "px, " + /*windowTranslateY*/ ctx[5] + "px)");
+    			add_location(div, file, 160, 8, 6127);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			mount_component(canvasbuttonsbar, div, null);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const canvasbuttonsbar_changes = {};
+    			if (dirty & /*pixelSize*/ 256) canvasbuttonsbar_changes.pixelSize = /*pixelSize*/ ctx[8];
+    			canvasbuttonsbar.$set(canvasbuttonsbar_changes);
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(div, "width", 116 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(div, "height", 34 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*windowRotateDeg, windowTranslateX, windowTranslateY*/ 112) {
+    				set_style(div, "transform", "rotate(" + /*windowRotateDeg*/ ctx[6] + "deg) translate(" + /*windowTranslateX*/ ctx[4] + "px, " + /*windowTranslateY*/ ctx[5] + "px)");
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(canvasbuttonsbar.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(canvasbuttonsbar.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			destroy_component(canvasbuttonsbar);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(160:4) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (147:4) {#if isInCanvasMode}
+    function create_if_block_2(ctx) {
+    	let div0;
+    	let canvascontainer;
+    	let t0;
+    	let t1;
+    	let div1;
+    	let button0;
+    	let t2;
+    	let button1;
+    	let t3;
+    	let button2;
+    	let t4;
+    	let button3;
+    	let current;
+    	let mounted;
+    	let dispose;
+
+    	canvascontainer = new CanvasContainer({
+    			props: { pixelSize: /*pixelSize*/ ctx[8] },
+    			$$inline: true
+    		});
+
+    	canvascontainer.$on("click", /*toggleCanvasMode*/ ctx[9]);
+    	let if_block = /*isInMoveMode*/ ctx[3] && create_if_block_3(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div0 = element("div");
+    			create_component(canvascontainer.$$.fragment);
+    			t0 = space();
+    			if (if_block) if_block.c();
+    			t1 = space();
+    			div1 = element("div");
+    			button0 = element("button");
+    			t2 = space();
+    			button1 = element("button");
+    			t3 = space();
+    			button2 = element("button");
+    			t4 = space();
+    			button3 = element("button");
+    			attr_dev(div0, "class", "child-component-container svelte-zbrmfy");
+    			set_style(div0, "width", 116 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(div0, "height", 27 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(div0, "transform", "rotate(" + /*windowRotateDeg*/ ctx[6] + "deg) translate(" + /*windowTranslateX*/ ctx[4] + "px, " + /*windowTranslateY*/ ctx[5] + "px)");
+    			add_location(div0, file, 147, 8, 4800);
+    			attr_dev(button0, "class", "basecontrol-buttons-brush svelte-zbrmfy");
+    			attr_dev(button0, "type", "button");
+    			set_style(button0, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(button0, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			add_location(button0, file, 154, 12, 5400);
+    			attr_dev(button1, "class", "basecontrol-buttons-erase svelte-zbrmfy");
+    			attr_dev(button1, "type", "button");
+    			set_style(button1, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(button1, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			add_location(button1, file, 155, 12, 5577);
+    			attr_dev(button2, "class", "basecontrol-buttons-move svelte-zbrmfy");
+    			attr_dev(button2, "type", "button");
+    			set_style(button2, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(button2, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			add_location(button2, file, 156, 12, 5754);
+    			attr_dev(button3, "class", "basecontrol-buttons-exit svelte-zbrmfy");
+    			attr_dev(button3, "type", "button");
+    			set_style(button3, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(button3, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			add_location(button3, file, 157, 12, 5929);
+    			attr_dev(div1, "class", "basecontrol-buttons svelte-zbrmfy");
+    			set_style(div1, "width", 12 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(div1, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			add_location(div1, file, 153, 8, 5291);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div0, anchor);
+    			mount_component(canvascontainer, div0, null);
+    			append_dev(div0, t0);
+    			if (if_block) if_block.m(div0, null);
+    			insert_dev(target, t1, anchor);
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, button0);
+    			append_dev(div1, t2);
+    			append_dev(div1, button1);
+    			append_dev(div1, t3);
+    			append_dev(div1, button2);
+    			append_dev(div1, t4);
+    			append_dev(div1, button3);
+    			current = true;
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(button0, "click", /*buttonsClickHandleBrush*/ ctx[10], false, false, false),
+    					listen_dev(button1, "click", /*buttonsClickHandleErase*/ ctx[11], false, false, false),
+    					listen_dev(button2, "click", /*buttonsClickHandleMove*/ ctx[12], false, false, false),
+    					listen_dev(button3, "click", /*buttonsClickHandleExit*/ ctx[13], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			const canvascontainer_changes = {};
+    			if (dirty & /*pixelSize*/ 256) canvascontainer_changes.pixelSize = /*pixelSize*/ ctx[8];
+    			canvascontainer.$set(canvascontainer_changes);
+
+    			if (/*isInMoveMode*/ ctx[3]) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
+    					if_block = create_if_block_3(ctx);
+    					if_block.c();
+    					if_block.m(div0, null);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(div0, "width", 116 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(div0, "height", 27 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*windowRotateDeg, windowTranslateX, windowTranslateY*/ 112) {
+    				set_style(div0, "transform", "rotate(" + /*windowRotateDeg*/ ctx[6] + "deg) translate(" + /*windowTranslateX*/ ctx[4] + "px, " + /*windowTranslateY*/ ctx[5] + "px)");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button0, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button0, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button1, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button1, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button2, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button2, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button3, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button3, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(div1, "width", 12 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(div1, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(canvascontainer.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(canvascontainer.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div0);
+    			destroy_component(canvascontainer);
+    			if (if_block) if_block.d();
+    			if (detaching) detach_dev(t1);
+    			if (detaching) detach_dev(div1);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2.name,
+    		type: "if",
+    		source: "(147:4) {#if isInCanvasMode}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (150:12) {#if isInMoveMode}
+    function create_if_block_3(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "child-component-container-cover svelte-zbrmfy");
+    			set_style(div, "width", 116 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(div, "height", 27 * /*pixelSize*/ ctx[8] + "px");
+    			add_location(div, file, 150, 16, 5134);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*pixelSize*/ 256) {
+    				set_style(div, "width", 116 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 256) {
+    				set_style(div, "height", 27 * /*pixelSize*/ ctx[8] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_3.name,
+    		type: "if",
+    		source: "(150:12) {#if isInMoveMode}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (189:29) 
+    function create_if_block_1(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "base-resize-fixer svelte-zbrmfy");
+    			add_location(div, file, 189, 8, 7445);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(189:29) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (166:4) {#if isDisplayLoader}
     function create_if_block(ctx) {
     	let div17;
     	let div16;
@@ -7020,45 +7738,45 @@ var app = (function () {
     			div14 = element("div");
     			t16 = space();
     			div15 = element("div");
-    			attr_dev(h1, "class", "blanket-loading-text svelte-156ni7e");
-    			add_location(h1, file, 103, 12, 3735);
-    			attr_dev(div0, "class", "cell d-0 svelte-156ni7e");
-    			add_location(div0, file, 105, 12, 3797);
-    			attr_dev(div1, "class", "cell d-1 svelte-156ni7e");
-    			add_location(div1, file, 106, 12, 3838);
-    			attr_dev(div2, "class", "cell d-2 svelte-156ni7e");
-    			add_location(div2, file, 107, 12, 3879);
-    			attr_dev(div3, "class", "cell d-3 svelte-156ni7e");
-    			add_location(div3, file, 108, 12, 3920);
-    			attr_dev(div4, "class", "cell d-1 svelte-156ni7e");
-    			add_location(div4, file, 109, 12, 3961);
-    			attr_dev(div5, "class", "cell d-2 svelte-156ni7e");
-    			add_location(div5, file, 110, 12, 4002);
-    			attr_dev(div6, "class", "cell d-3 svelte-156ni7e");
-    			add_location(div6, file, 111, 12, 4043);
-    			attr_dev(div7, "class", "cell d-4 svelte-156ni7e");
-    			add_location(div7, file, 112, 12, 4084);
-    			attr_dev(div8, "class", "cell d-2 svelte-156ni7e");
-    			add_location(div8, file, 113, 12, 4125);
-    			attr_dev(div9, "class", "cell d-3 svelte-156ni7e");
-    			add_location(div9, file, 114, 12, 4166);
-    			attr_dev(div10, "class", "cell d-4 svelte-156ni7e");
-    			add_location(div10, file, 115, 12, 4207);
-    			attr_dev(div11, "class", "cell d-5 svelte-156ni7e");
-    			add_location(div11, file, 116, 12, 4248);
-    			attr_dev(div12, "class", "cell d-3 svelte-156ni7e");
-    			add_location(div12, file, 117, 12, 4289);
-    			attr_dev(div13, "class", "cell d-4 svelte-156ni7e");
-    			add_location(div13, file, 118, 12, 4330);
-    			attr_dev(div14, "class", "cell d-5 svelte-156ni7e");
-    			add_location(div14, file, 119, 12, 4371);
-    			attr_dev(div15, "class", "cell d-6 svelte-156ni7e");
-    			add_location(div15, file, 120, 12, 4412);
-    			attr_dev(div16, "class", "blanket-loading-mosaic svelte-156ni7e");
-    			set_style(div16, "--cell-size", 64 * (/*pixelSize*/ ctx[4] / 10) + "px");
-    			add_location(div16, file, 102, 8, 3638);
-    			attr_dev(div17, "class", "blanket-loading svelte-156ni7e");
-    			add_location(div17, file, 101, 4, 3600);
+    			attr_dev(h1, "class", "base-loading-text svelte-zbrmfy");
+    			add_location(h1, file, 168, 16, 6606);
+    			attr_dev(div0, "class", "cell d-0 svelte-zbrmfy");
+    			add_location(div0, file, 170, 16, 6669);
+    			attr_dev(div1, "class", "cell d-1 svelte-zbrmfy");
+    			add_location(div1, file, 171, 16, 6714);
+    			attr_dev(div2, "class", "cell d-2 svelte-zbrmfy");
+    			add_location(div2, file, 172, 16, 6759);
+    			attr_dev(div3, "class", "cell d-3 svelte-zbrmfy");
+    			add_location(div3, file, 173, 16, 6804);
+    			attr_dev(div4, "class", "cell d-1 svelte-zbrmfy");
+    			add_location(div4, file, 174, 16, 6849);
+    			attr_dev(div5, "class", "cell d-2 svelte-zbrmfy");
+    			add_location(div5, file, 175, 16, 6894);
+    			attr_dev(div6, "class", "cell d-3 svelte-zbrmfy");
+    			add_location(div6, file, 176, 16, 6939);
+    			attr_dev(div7, "class", "cell d-4 svelte-zbrmfy");
+    			add_location(div7, file, 177, 16, 6984);
+    			attr_dev(div8, "class", "cell d-2 svelte-zbrmfy");
+    			add_location(div8, file, 178, 16, 7029);
+    			attr_dev(div9, "class", "cell d-3 svelte-zbrmfy");
+    			add_location(div9, file, 179, 16, 7074);
+    			attr_dev(div10, "class", "cell d-4 svelte-zbrmfy");
+    			add_location(div10, file, 180, 16, 7119);
+    			attr_dev(div11, "class", "cell d-5 svelte-zbrmfy");
+    			add_location(div11, file, 181, 16, 7164);
+    			attr_dev(div12, "class", "cell d-3 svelte-zbrmfy");
+    			add_location(div12, file, 182, 16, 7209);
+    			attr_dev(div13, "class", "cell d-4 svelte-zbrmfy");
+    			add_location(div13, file, 183, 16, 7254);
+    			attr_dev(div14, "class", "cell d-5 svelte-zbrmfy");
+    			add_location(div14, file, 184, 16, 7299);
+    			attr_dev(div15, "class", "cell d-6 svelte-zbrmfy");
+    			add_location(div15, file, 185, 16, 7344);
+    			attr_dev(div16, "class", "base-loading-mosaic svelte-zbrmfy");
+    			set_style(div16, "--cell-size", /*loaderCubeSize*/ ctx[7] + "px");
+    			add_location(div16, file, 167, 12, 6515);
+    			attr_dev(div17, "class", "base-loading svelte-zbrmfy");
+    			add_location(div17, file, 166, 8, 6476);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div17, anchor);
@@ -7098,8 +7816,8 @@ var app = (function () {
     			append_dev(div16, div15);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*pixelSize*/ 16) {
-    				set_style(div16, "--cell-size", 64 * (/*pixelSize*/ ctx[4] / 10) + "px");
+    			if (dirty & /*loaderCubeSize*/ 128) {
+    				set_style(div16, "--cell-size", /*loaderCubeSize*/ ctx[7] + "px");
     			}
     		},
     		d: function destroy(detaching) {
@@ -7111,7 +7829,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(101:0) {#if isLoaderDisplayed}",
+    		source: "(166:4) {#if isDisplayLoader}",
     		ctx
     	});
 
@@ -7120,87 +7838,103 @@ var app = (function () {
 
     function create_fragment$1(ctx) {
     	let div;
-    	let canvasbuttons;
+    	let current_block_type_index;
+    	let if_block0;
     	let t;
-    	let if_block_anchor;
     	let current;
+    	const if_block_creators = [create_if_block_2, create_else_block];
+    	const if_blocks = [];
 
-    	canvasbuttons = new CanvasButtons({
-    			props: { pixelSize: /*pixelSize*/ ctx[4] },
-    			$$inline: true
-    		});
+    	function select_block_type(ctx, dirty) {
+    		if (/*isInCanvasMode*/ ctx[2]) return 0;
+    		return 1;
+    	}
 
-    	let if_block = /*isLoaderDisplayed*/ ctx[0] && create_if_block(ctx);
+    	current_block_type_index = select_block_type(ctx);
+    	if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+
+    	function select_block_type_1(ctx, dirty) {
+    		if (/*isDisplayLoader*/ ctx[0]) return create_if_block;
+    		if (/*isDisplayFixer*/ ctx[1]) return create_if_block_1;
+    	}
+
+    	let current_block_type = select_block_type_1(ctx);
+    	let if_block1 = current_block_type && current_block_type(ctx);
 
     	const block = {
     		c: function create() {
     			div = element("div");
-    			create_component(canvasbuttons.$$.fragment);
+    			if_block0.c();
     			t = space();
-    			if (if_block) if_block.c();
-    			if_block_anchor = empty();
-    			attr_dev(div, "class", "butons-container svelte-156ni7e");
-    			set_style(div, "width", 116 * /*pixelSize*/ ctx[4] + "px");
-    			set_style(div, "height", 34 * /*pixelSize*/ ctx[4] + "px");
-    			set_style(div, "transform", "rotate(" + /*windowRotateDeg*/ ctx[3] + "deg) translate(" + /*windowTranslateX*/ ctx[1] + "px, " + /*windowTranslateY*/ ctx[2] + "px)");
-    			add_location(div, file, 96, 0, 3326);
+    			if (if_block1) if_block1.c();
+    			attr_dev(div, "class", "basecontrol svelte-zbrmfy");
+    			add_location(div, file, 145, 0, 4741);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
-    			mount_component(canvasbuttons, div, null);
-    			insert_dev(target, t, anchor);
-    			if (if_block) if_block.m(target, anchor);
-    			insert_dev(target, if_block_anchor, anchor);
+    			if_blocks[current_block_type_index].m(div, null);
+    			append_dev(div, t);
+    			if (if_block1) if_block1.m(div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
-    			const canvasbuttons_changes = {};
-    			if (dirty & /*pixelSize*/ 16) canvasbuttons_changes.pixelSize = /*pixelSize*/ ctx[4];
-    			canvasbuttons.$set(canvasbuttons_changes);
+    			let previous_block_index = current_block_type_index;
+    			current_block_type_index = select_block_type(ctx);
 
-    			if (!current || dirty & /*pixelSize*/ 16) {
-    				set_style(div, "width", 116 * /*pixelSize*/ ctx[4] + "px");
-    			}
+    			if (current_block_type_index === previous_block_index) {
+    				if_blocks[current_block_type_index].p(ctx, dirty);
+    			} else {
+    				group_outros();
 
-    			if (!current || dirty & /*pixelSize*/ 16) {
-    				set_style(div, "height", 34 * /*pixelSize*/ ctx[4] + "px");
-    			}
+    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
+    					if_blocks[previous_block_index] = null;
+    				});
 
-    			if (!current || dirty & /*windowRotateDeg, windowTranslateX, windowTranslateY*/ 14) {
-    				set_style(div, "transform", "rotate(" + /*windowRotateDeg*/ ctx[3] + "deg) translate(" + /*windowTranslateX*/ ctx[1] + "px, " + /*windowTranslateY*/ ctx[2] + "px)");
-    			}
+    				check_outros();
+    				if_block0 = if_blocks[current_block_type_index];
 
-    			if (/*isLoaderDisplayed*/ ctx[0]) {
-    				if (if_block) {
-    					if_block.p(ctx, dirty);
+    				if (!if_block0) {
+    					if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    					if_block0.c();
     				} else {
-    					if_block = create_if_block(ctx);
-    					if_block.c();
-    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    					if_block0.p(ctx, dirty);
     				}
-    			} else if (if_block) {
-    				if_block.d(1);
-    				if_block = null;
+
+    				transition_in(if_block0, 1);
+    				if_block0.m(div, t);
+    			}
+
+    			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block1) {
+    				if_block1.p(ctx, dirty);
+    			} else {
+    				if (if_block1) if_block1.d(1);
+    				if_block1 = current_block_type && current_block_type(ctx);
+
+    				if (if_block1) {
+    					if_block1.c();
+    					if_block1.m(div, null);
+    				}
     			}
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(canvasbuttons.$$.fragment, local);
+    			transition_in(if_block0);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(canvasbuttons.$$.fragment, local);
+    			transition_out(if_block0);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
-    			destroy_component(canvasbuttons);
-    			if (detaching) detach_dev(t);
-    			if (if_block) if_block.d(detaching);
-    			if (detaching) detach_dev(if_block_anchor);
+    			if_blocks[current_block_type_index].d();
+
+    			if (if_block1) {
+    				if_block1.d();
+    			}
     		}
     	};
 
@@ -7217,135 +7951,203 @@ var app = (function () {
 
     function instance$1($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('CanvasBlanket', slots, []);
-    	let isPixelSizeLocked = false;
-    	let isLoaderDisplayed = false;
-    	let isPageLoaded = false;
+    	validate_slots('CanvasBaseControl', slots, []);
+    	let isDisplayLoader = false;
+    	let isDisplayFixer = false;
+    	let isInCanvasMode = false;
+    	let isInBrushMode = false;
+    	let isInMoveMode = true;
 
     	/* DOM accessible globals */
     	let windowTranslateX = 0;
 
     	let windowTranslateY = 0;
     	let windowRotateDeg = 0;
+    	let loaderCubeSize = 0;
     	let pixelSize = 0;
 
     	function getPixelSize(w, h, min, max) {
-    		/* makes sense init?! */
-    		if (isPixelSizeLocked) return max;
-
     		/* returns largest acceptable pixel size */
     		let pSize = w > h ? h : w;
 
     		pSize = pSize <= max ? pSize : max;
     		pSize = pSize >= min ? pSize : min;
-    		return pSize;
+
+    		/* gotta trust the guy that calculates it */
+    		$$invalidate(7, loaderCubeSize = 64 * (pSize / 10));
+
+    		/* makes sense init?! */
+    		if (!isInCanvasMode) return pSize; else return max;
     	}
 
     	function setPixelSize() {
+    		/* necessary evil */
+    		$$invalidate(1, isDisplayFixer = true);
+
     		/* get client screen size */
     		let windowWidth = window.innerWidth;
 
     		let windowHeight = window.innerHeight;
 
-    		/* go default on 'em! */
-    		$$invalidate(1, windowTranslateX = 0);
+    		/* variables don't hurt */
+    		let rowPixels = 116;
 
-    		$$invalidate(2, windowTranslateY = 0);
-    		$$invalidate(3, windowRotateDeg = 0);
+    		let colPixels = isInCanvasMode ? 27 : 34;
+
+    		/* go default on 'em! */
+    		$$invalidate(4, windowTranslateX = 0);
+
+    		$$invalidate(5, windowTranslateY = 0);
+    		$$invalidate(6, windowRotateDeg = 0);
 
     		if (window.matchMedia("(orientation: portrait)").matches) {
     			/* calculate, balance, and set the size of a pixel */
-    			$$invalidate(4, pixelSize = getPixelSize(Math.floor(windowWidth / 34), Math.floor(windowHeight / 116), 4, 16));
+    			$$invalidate(8, pixelSize = getPixelSize(Math.floor(windowWidth / colPixels), Math.floor(windowHeight / rowPixels), 4, 16));
 
     			/* adjust placement according to graph to window ratio */
-    			let wipHeight = pixelSize * 116;
+    			let wipWidth = pixelSize * colPixels;
 
-    			let wipWidth = pixelSize * 34;
+    			let wipHeight = pixelSize * rowPixels;
 
     			/* bad influence! */
-    			$$invalidate(3, windowRotateDeg = -90);
+    			$$invalidate(6, windowRotateDeg = -90);
 
     			/* rotate means translate!!! */
     			if (windowHeight < wipHeight) {
-    				$$invalidate(1, windowTranslateX = wipHeight * -1);
+    				$$invalidate(4, windowTranslateX = wipHeight * -1);
     			} else {
-    				$$invalidate(1, windowTranslateX = (windowHeight - (windowHeight - wipHeight) / 2) * -1);
+    				$$invalidate(4, windowTranslateX = (windowHeight - (windowHeight - wipHeight) / 2) * -1);
     			}
 
-    			/* isPixelSizeLocked? */
+    			/* isInCanvasMode? */
     			if (windowWidth > wipWidth) {
-    				/* definitely not! */
-    				$$invalidate(2, windowTranslateY = (windowWidth - wipWidth) / 2);
+    				/* probably not... */
+    				$$invalidate(5, windowTranslateY = (windowWidth - wipWidth) / 2);
     			}
     		} else if (window.matchMedia("(orientation: landscape)").matches) {
     			/* calculate, balance, and set the size of a pixel */
-    			$$invalidate(4, pixelSize = getPixelSize(Math.floor(windowWidth / 116), Math.floor(windowHeight / 34), 4, 16));
+    			$$invalidate(8, pixelSize = getPixelSize(Math.floor(windowWidth / rowPixels), Math.floor(windowHeight / colPixels), 4, 16));
 
     			/* adjust placement according to graph to window ratio */
-    			let wipWidth = pixelSize * 116;
+    			let wipWidth = pixelSize * rowPixels;
 
-    			let wipHeight = pixelSize * 34;
+    			let wipHeight = pixelSize * colPixels;
 
-    			if (!isPixelSizeLocked) {
-    				$$invalidate(1, windowTranslateX = (windowWidth - wipWidth) / 2);
-    				$$invalidate(2, windowTranslateY = (windowHeight - wipHeight) / 2);
+    			if (!isInCanvasMode) {
+    				$$invalidate(4, windowTranslateX = (windowWidth - wipWidth) / 2);
+    				$$invalidate(5, windowTranslateY = (windowHeight - wipHeight) / 2);
     			}
     		}
 
-    		if (isLoaderDisplayed) {
+    		if (isDisplayLoader) {
     			/* hide the pretty display loader */
     			setTimeout(
     				() => {
-    					$$invalidate(0, isLoaderDisplayed = false);
+    					$$invalidate(0, isDisplayLoader = false);
     				},
     				Math.random() * 1200 | 600
     			);
     		}
 
-    		console.log(`screen loade: W = ${windowWidth}, H = ${windowHeight}, P = ${pixelSize}`);
+    		/* down with the necessary evil! (in 100ms...) */
+    		setTimeout(
+    			() => {
+    				$$invalidate(1, isDisplayFixer = false);
+    			},
+    			300
+    		);
+
+    		console.log(`page loaded: width = ${windowWidth}, height = ${windowHeight}, pixelSize = ${pixelSize}px.`);
     	}
 
     	/* set 330ms delay on function, reset if it is called again before executing */
     	const stabilizedSetPixelSize = stabilizeFunction(setPixelSize, 330);
 
-    	isInCanvasMode.subscribe(value => {
-    		if (!isPageLoaded) window.addEventListener('resize', stabilizedSetPixelSize); /* add event listener on page load and forget */
-    		isPixelSizeLocked = value;
-    		$$invalidate(0, isLoaderDisplayed = true);
-    		isPageLoaded = true;
+    	onMount(() => {
+    		/* mount it and ride it to hell, motherfuckers! */
+    		window.addEventListener('resize', stabilizedSetPixelSize);
+
+    		$$invalidate(0, isDisplayLoader = true);
     		setPixelSize();
+
+    		return () => {
+    			/* and at this point i'm too afraid to ask... */
+    			window.removeEventListener('resize', stabilizedSetPixelSize);
+    		};
     	});
 
+    	/* events and handlers */
+    	function toggleCanvasMode(e) {
+    		$$invalidate(2, isInCanvasMode = !isInCanvasMode);
+    		$$invalidate(0, isDisplayLoader = true);
+    		$$invalidate(3, isInMoveMode = true);
+    		setPixelSize();
+    		CanvasMode.update(n => isInCanvasMode);
+    	}
+
+    	function buttonsClickHandleBrush() {
+    		$$invalidate(3, isInMoveMode = false);
+    		isInBrushMode = true;
+    		BrushMode.update(n => isInBrushMode);
+    	}
+
+    	function buttonsClickHandleErase() {
+    		$$invalidate(3, isInMoveMode = false);
+    		isInBrushMode = false;
+    		BrushMode.update(n => isInBrushMode);
+    	}
+
+    	function buttonsClickHandleMove() {
+    		$$invalidate(3, isInMoveMode = true);
+    	}
+
+    	function buttonsClickHandleExit() {
+    		toggleCanvasMode();
+    	}
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<CanvasBlanket> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<CanvasBaseControl> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$capture_state = () => ({
-    		CanvasButtons,
+    		CanvasButtonsBar,
+    		CanvasContainer,
+    		CanvasMode,
+    		BrushMode,
     		stabilizeFunction,
+    		onMount,
+    		isDisplayLoader,
+    		isDisplayFixer,
     		isInCanvasMode,
-    		isPixelSizeLocked,
-    		isLoaderDisplayed,
-    		isPageLoaded,
+    		isInBrushMode,
+    		isInMoveMode,
     		windowTranslateX,
     		windowTranslateY,
     		windowRotateDeg,
+    		loaderCubeSize,
     		pixelSize,
     		getPixelSize,
     		setPixelSize,
-    		stabilizedSetPixelSize
+    		stabilizedSetPixelSize,
+    		toggleCanvasMode,
+    		buttonsClickHandleBrush,
+    		buttonsClickHandleErase,
+    		buttonsClickHandleMove,
+    		buttonsClickHandleExit
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('isPixelSizeLocked' in $$props) isPixelSizeLocked = $$props.isPixelSizeLocked;
-    		if ('isLoaderDisplayed' in $$props) $$invalidate(0, isLoaderDisplayed = $$props.isLoaderDisplayed);
-    		if ('isPageLoaded' in $$props) isPageLoaded = $$props.isPageLoaded;
-    		if ('windowTranslateX' in $$props) $$invalidate(1, windowTranslateX = $$props.windowTranslateX);
-    		if ('windowTranslateY' in $$props) $$invalidate(2, windowTranslateY = $$props.windowTranslateY);
-    		if ('windowRotateDeg' in $$props) $$invalidate(3, windowRotateDeg = $$props.windowRotateDeg);
-    		if ('pixelSize' in $$props) $$invalidate(4, pixelSize = $$props.pixelSize);
+    		if ('isDisplayLoader' in $$props) $$invalidate(0, isDisplayLoader = $$props.isDisplayLoader);
+    		if ('isDisplayFixer' in $$props) $$invalidate(1, isDisplayFixer = $$props.isDisplayFixer);
+    		if ('isInCanvasMode' in $$props) $$invalidate(2, isInCanvasMode = $$props.isInCanvasMode);
+    		if ('isInBrushMode' in $$props) isInBrushMode = $$props.isInBrushMode;
+    		if ('isInMoveMode' in $$props) $$invalidate(3, isInMoveMode = $$props.isInMoveMode);
+    		if ('windowTranslateX' in $$props) $$invalidate(4, windowTranslateX = $$props.windowTranslateX);
+    		if ('windowTranslateY' in $$props) $$invalidate(5, windowTranslateY = $$props.windowTranslateY);
+    		if ('windowRotateDeg' in $$props) $$invalidate(6, windowRotateDeg = $$props.windowRotateDeg);
+    		if ('loaderCubeSize' in $$props) $$invalidate(7, loaderCubeSize = $$props.loaderCubeSize);
+    		if ('pixelSize' in $$props) $$invalidate(8, pixelSize = $$props.pixelSize);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -7353,22 +8155,31 @@ var app = (function () {
     	}
 
     	return [
-    		isLoaderDisplayed,
+    		isDisplayLoader,
+    		isDisplayFixer,
+    		isInCanvasMode,
+    		isInMoveMode,
     		windowTranslateX,
     		windowTranslateY,
     		windowRotateDeg,
-    		pixelSize
+    		loaderCubeSize,
+    		pixelSize,
+    		toggleCanvasMode,
+    		buttonsClickHandleBrush,
+    		buttonsClickHandleErase,
+    		buttonsClickHandleMove,
+    		buttonsClickHandleExit
     	];
     }
 
-    class CanvasBlanket extends SvelteComponentDev {
+    class CanvasBaseControl extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
     		init(this, options, instance$1, create_fragment$1, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
-    			tagName: "CanvasBlanket",
+    			tagName: "CanvasBaseControl",
     			options,
     			id: create_fragment$1.name
     		});
@@ -7380,7 +8191,7 @@ var app = (function () {
     function create_fragment(ctx) {
     	let demo;
     	let current;
-    	demo = new CanvasBlanket({ $$inline: true });
+    	demo = new CanvasBaseControl({ $$inline: true });
 
     	const block = {
     		c: function create() {
@@ -7428,7 +8239,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ Demo: CanvasBlanket });
+    	$$self.$capture_state = () => ({ Demo: CanvasBaseControl });
     	return [];
     }
 
@@ -7448,9 +8259,6 @@ var app = (function () {
 
     const app = new App({
     	target: document.body,
-    	props: {
-    		name: 'world'
-    	}
     });
 
     return app;
