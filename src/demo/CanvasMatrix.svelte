@@ -1,6 +1,6 @@
 <script>
     import { create2DMatrix, getPixelsOnTheLine, findTouchIndexById, copyCanvasTouch } from './Tools.js'
-    import { BrushMode, CanvasMode, kValueStringBin } from './Stores.js';
+    import { kValueStringBin, BrushMode, CanvasMode } from './Stores.js';
     import { onMount } from 'svelte';
     export let pixelSize;
 
@@ -25,15 +25,15 @@
                     kValueString += kValueArray[i][j];
                 }
             }
-
-            /* export the final binary string for others to access */
+            
+            /* has to be made better!!! */
             kValueStringBin.update(n => kValueString);
             isValueUpToDate = true;
         }
     }
     
     onMount(() => {	/* paint whatever was there in the first place */
-		kValueStringBin.subscribe(value => {
+		const unsubscribe = kValueStringBin.subscribe(value => {
             kValueString = value;
             let pixelCol = 0;
             let pixelRow = 0;
@@ -57,6 +57,10 @@
                 }
             }
         });
+
+        return () => {
+            unsubscribe();
+		};
 	});
 
     /* actually painting, can you imagine?! */
