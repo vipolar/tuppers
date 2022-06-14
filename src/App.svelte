@@ -1,6 +1,6 @@
 <script>
-	//export let name;
-	import Demo from './demo/CanvasBaseControl.svelte'
+	//import Display from './Display.svelte'
+	import Demo from './Demo.svelte'
 </script>
 
 <Demo></Demo>
