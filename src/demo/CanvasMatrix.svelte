@@ -49,9 +49,11 @@
                 pixelRow = k;
                 pixelID = `pixel-${pixelCol}-${pixelRow}`;
                 if (value[i] === '1') {
-                    document.getElementById(pixelID).style.backgroundColor = "#000000";
+                    document.getElementById(pixelID).style.boxShadow = " 0px 0px 1px #665555"; 
+                    document.getElementById(pixelID).style.backgroundColor = "#111111";
                     kValueArray[pixelCol][pixelRow] = '1';
                 } else {
+                    document.getElementById(pixelID).style.boxShadow = " 0px 0px 1px #ffffff"; 
                     document.getElementById(pixelID).style.backgroundColor = "#999999";
                     kValueArray[pixelCol][pixelRow] = '0';
                 }
@@ -79,15 +81,33 @@
         let pixelElement = document.getElementById(pixelID);
 
         if (isInBrushMode) {
-            kValueArray[pixelCol][pixelRow] = '1';
+            pixelElement.style.boxShadow = " 0px 0px 1px #1d1d1d"; 
 			pixelElement.style.backgroundColor = "#383838";
-            setTimeout(() => {pixelElement.style.backgroundColor = "#1a1a1a";}, 25);
-            setTimeout(() => {pixelElement.style.backgroundColor = "#000000";}, 100);
+            setTimeout(() => {
+                pixelElement.style.boxShadow = " 0px 0px 1px #000000"; 
+                pixelElement.style.backgroundColor = "#1a1a1a";
+            }, 25);
+            setTimeout(() => {
+                pixelElement.style.boxShadow = " 0px 0px 1px #8b0000";
+                pixelElement.style.backgroundColor = "#111111";
+            }, 100);
+
+            /* enough theatrics! */
+            kValueArray[pixelCol][pixelRow] = '1';
 		} else {
+            pixelElement.style.boxShadow = " 0px 0px 1px #999999"; 
+			pixelElement.style.backgroundColor = "#ffffff";
+            setTimeout(() => {
+                pixelElement.style.boxShadow = " 0px 0px 1px #ffffff"; 
+                pixelElement.style.backgroundColor = "#dddddd";
+            }, 25);
+            setTimeout(() => {
+                pixelElement.style.boxShadow = " 0px 0px 1px #ffffff";
+                pixelElement.style.backgroundColor = "#999999";
+            }, 100);
+
+            /* enough theatrics! */
             kValueArray[pixelCol][pixelRow] = '0';
-            pixelElement.style.backgroundColor = "#ffffff";
-            setTimeout(() => {pixelElement.style.backgroundColor = "#dddddd";}, 25);
-            setTimeout(() => {pixelElement.style.backgroundColor = "#999999";}, 100);
 		}
     };
     
