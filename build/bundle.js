@@ -1,2 +1,8389 @@
-var app=function(){"use strict";function t(){}function e(t){return t()}function n(){return Object.create(null)}function i(t){t.forEach(e)}function r(t){return"function"==typeof t}function l(t,e){return t!=t?e==e:t!==e||t&&"object"==typeof t||"function"==typeof t}function o(t,e){t.appendChild(e)}function s(t,e,n){t.insertBefore(e,n||null)}function c(t){t.parentNode.removeChild(t)}function h(t){return document.createElement(t)}function u(t){return document.createTextNode(t)}function a(){return u(" ")}function f(t,e,n,i){return t.addEventListener(e,n,i),()=>t.removeEventListener(e,n,i)}function p(t,e,n){null==n?t.removeAttribute(e):t.getAttribute(e)!==n&&t.setAttribute(e,n)}function d(t,e){t.value=null==e?"":e}function g(t,e,n,i){null===n?t.style.removeProperty(e):t.style.setProperty(e,n,i?"important":"")}function x(t,e){for(let n=0;n<t.options.length;n+=1){const i=t.options[n];if(i.__value===e)return void(i.selected=!0)}t.selectedIndex=-1}let w;function m(t){w=t}function v(t){(function(){if(!w)throw new Error("Function called outside component initialization");return w})().$$.on_mount.push(t)}function b(t,e){const n=t.$$.callbacks[e.type];n&&n.slice().forEach((t=>t.call(this,e)))}const y=[],k=[],z=[],$=[],A=Promise.resolve();let E=!1;function N(t){z.push(t)}const S=new Set;let M=0;function O(){const t=w;do{for(;M<y.length;){const t=y[M];M++,m(t),_(t.$$)}for(m(null),y.length=0,M=0;k.length;)k.pop()();for(let t=0;t<z.length;t+=1){const e=z[t];S.has(e)||(S.add(e),e())}z.length=0}while(y.length);for(;$.length;)$.pop()();E=!1,S.clear(),m(t)}function _(t){if(null!==t.fragment){t.update(),i(t.before_update);const e=t.dirty;t.dirty=[-1],t.fragment&&t.fragment.p(t.ctx,e),t.after_update.forEach(N)}}const T=new Set;let B;function C(t,e){t&&t.i&&(T.delete(t),t.i(e))}function L(t,e,n,i){if(t&&t.o){if(T.has(t))return;T.add(t),B.c.push((()=>{T.delete(t),i&&(n&&t.d(1),i())})),t.o(e)}}function R(t,e){t.d(1),e.delete(t.key)}function j(t,e,n,i,r,l,o,s,c,h,u,a){let f=t.length,p=l.length,d=f;const g={};for(;d--;)g[t[d].key]=d;const x=[],w=new Map,m=new Map;for(d=p;d--;){const t=a(r,l,d),s=n(t);let c=o.get(s);c?i&&c.p(t,e):(c=h(s,t),c.c()),w.set(s,x[d]=c),s in g&&m.set(s,Math.abs(d-g[s]))}const v=new Set,b=new Set;function y(t){C(t,1),t.m(s,u),o.set(t.key,t),u=t.first,p--}for(;f&&p;){const e=x[p-1],n=t[f-1],i=e.key,r=n.key;e===n?(u=e.first,f--,p--):w.has(r)?!o.has(i)||v.has(i)?y(e):b.has(r)?f--:m.get(i)>m.get(r)?(b.add(i),y(e)):(v.add(r),f--):(c(n,o),f--)}for(;f--;){const e=t[f];w.has(e.key)||c(e,o)}for(;p;)y(x[p-1]);return x}function I(t){t&&t.c()}function P(t,n,l,o){const{fragment:s,on_mount:c,on_destroy:h,after_update:u}=t.$$;s&&s.m(n,l),o||N((()=>{const n=c.map(e).filter(r);h?h.push(...n):i(n),t.$$.on_mount=[]})),u.forEach(N)}function D(t,e){const n=t.$$;null!==n.fragment&&(i(n.on_destroy),n.fragment&&n.fragment.d(e),n.on_destroy=n.fragment=null,n.ctx=[])}function U(t,e){-1===t.$$.dirty[0]&&(y.push(t),E||(E=!0,A.then(O)),t.$$.dirty.fill(0)),t.$$.dirty[e/31|0]|=1<<e%31}function G(e,r,l,o,s,h,u,a=[-1]){const f=w;m(e);const p=e.$$={fragment:null,ctx:null,props:h,update:t,not_equal:s,bound:n(),on_mount:[],on_destroy:[],on_disconnect:[],before_update:[],after_update:[],context:new Map(r.context||(f?f.$$.context:[])),callbacks:n(),dirty:a,skip_bound:!1,root:r.target||f.$$.root};u&&u(p.root);let d=!1;if(p.ctx=l?l(e,r.props||{},((t,n,...i)=>{const r=i.length?i[0]:n;return p.ctx&&s(p.ctx[t],p.ctx[t]=r)&&(!p.skip_bound&&p.bound[t]&&p.bound[t](r),d&&U(e,t)),n})):[],p.update(),d=!0,i(p.before_update),p.fragment=!!o&&o(p.ctx),r.target){if(r.hydrate){const t=function(t){return Array.from(t.childNodes)}(r.target);p.fragment&&p.fragment.l(t),t.forEach(c)}else p.fragment&&p.fragment.c();r.intro&&C(e.$$.fragment),P(e,r.target,r.anchor,r.customElement),O()}m(f)}class H{$destroy(){D(this,1),this.$destroy=t}$on(t,e){const n=this.$$.callbacks[t]||(this.$$.callbacks[t]=[]);return n.push(e),()=>{const t=n.indexOf(e);-1!==t&&n.splice(t,1)}}$set(t){var e;this.$$set&&(e=t,0!==Object.keys(e).length)&&(this.$$.skip_bound=!0,this.$$set(t),this.$$.skip_bound=!1)}}var F="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{};var q,Y,X=(q=function(t){!function(e){var n,i=/^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i,r=Math.ceil,l=Math.floor,o="[BigNumber Error] ",s=o+"Number primitive has more than 15 significant digits: ",c=1e14,h=14,u=9007199254740991,a=[1,10,100,1e3,1e4,1e5,1e6,1e7,1e8,1e9,1e10,1e11,1e12,1e13],f=1e7,p=1e9;function d(t){var e=0|t;return t>0||t===e?e:e-1}function g(t){for(var e,n,i=1,r=t.length,l=t[0]+"";i<r;){for(e=t[i++]+"",n=h-e.length;n--;e="0"+e);l+=e}for(r=l.length;48===l.charCodeAt(--r););return l.slice(0,r+1||1)}function x(t,e){var n,i,r=t.c,l=e.c,o=t.s,s=e.s,c=t.e,h=e.e;if(!o||!s)return null;if(n=r&&!r[0],i=l&&!l[0],n||i)return n?i?0:-s:o;if(o!=s)return o;if(n=o<0,i=c==h,!r||!l)return i?0:!r^n?1:-1;if(!i)return c>h^n?1:-1;for(s=(c=r.length)<(h=l.length)?c:h,o=0;o<s;o++)if(r[o]!=l[o])return r[o]>l[o]^n?1:-1;return c==h?0:c>h^n?1:-1}function w(t,e,n,i){if(t<e||t>n||t!==l(t))throw Error(o+(i||"Argument")+("number"==typeof t?t<e||t>n?" out of range: ":" not an integer: ":" not a primitive number: ")+String(t))}function m(t){var e=t.c.length-1;return d(t.e/h)==e&&t.c[e]%2!=0}function v(t,e){return(t.length>1?t.charAt(0)+"."+t.slice(1):t)+(e<0?"e":"e+")+e}function b(t,e,n){var i,r;if(e<0){for(r=n+".";++e;r+=n);t=r+t}else if(++e>(i=t.length)){for(r=n,e-=i;--e;r+=n);t+=r}else e<i&&(t=t.slice(0,e)+"."+t.slice(e));return t}n=function t(e){var n,y,k,z,$,A,E,N,S,M,O=F.prototype={constructor:F,toString:null,valueOf:null},_=new F(1),T=20,B=4,C=-7,L=21,R=-1e7,j=1e7,I=!1,P=1,D=0,U={prefix:"",groupSize:3,secondaryGroupSize:0,groupSeparator:",",decimalSeparator:".",fractionGroupSize:0,fractionGroupSeparator:" ",suffix:""},G="0123456789abcdefghijklmnopqrstuvwxyz",H=!0;function F(t,e){var n,r,o,c,a,f,p,d,g=this;if(!(g instanceof F))return new F(t,e);if(null==e){if(t&&!0===t._isBigNumber)return g.s=t.s,void(!t.c||t.e>j?g.c=g.e=null:t.e<R?g.c=[g.e=0]:(g.e=t.e,g.c=t.c.slice()));if((f="number"==typeof t)&&0*t==0){if(g.s=1/t<0?(t=-t,-1):1,t===~~t){for(c=0,a=t;a>=10;a/=10,c++);return void(c>j?g.c=g.e=null:(g.e=c,g.c=[t]))}d=String(t)}else{if(!i.test(d=String(t)))return k(g,d,f);g.s=45==d.charCodeAt(0)?(d=d.slice(1),-1):1}(c=d.indexOf("."))>-1&&(d=d.replace(".","")),(a=d.search(/e/i))>0?(c<0&&(c=a),c+=+d.slice(a+1),d=d.substring(0,a)):c<0&&(c=d.length)}else{if(w(e,2,G.length,"Base"),10==e&&H)return V(g=new F(t),T+g.e+1,B);if(d=String(t),f="number"==typeof t){if(0*t!=0)return k(g,d,f,e);if(g.s=1/t<0?(d=d.slice(1),-1):1,F.DEBUG&&d.replace(/^0\.0*|\./,"").length>15)throw Error(s+t)}else g.s=45===d.charCodeAt(0)?(d=d.slice(1),-1):1;for(n=G.slice(0,e),c=a=0,p=d.length;a<p;a++)if(n.indexOf(r=d.charAt(a))<0){if("."==r){if(a>c){c=p;continue}}else if(!o&&(d==d.toUpperCase()&&(d=d.toLowerCase())||d==d.toLowerCase()&&(d=d.toUpperCase()))){o=!0,a=-1,c=0;continue}return k(g,String(t),f,e)}f=!1,(c=(d=y(d,e,10,g.s)).indexOf("."))>-1?d=d.replace(".",""):c=d.length}for(a=0;48===d.charCodeAt(a);a++);for(p=d.length;48===d.charCodeAt(--p););if(d=d.slice(a,++p)){if(p-=a,f&&F.DEBUG&&p>15&&(t>u||t!==l(t)))throw Error(s+g.s*t);if((c=c-a-1)>j)g.c=g.e=null;else if(c<R)g.c=[g.e=0];else{if(g.e=c,g.c=[],a=(c+1)%h,c<0&&(a+=h),a<p){for(a&&g.c.push(+d.slice(0,a)),p-=h;a<p;)g.c.push(+d.slice(a,a+=h));a=h-(d=d.slice(a)).length}else a-=p;for(;a--;d+="0");g.c.push(+d)}}else g.c=[g.e=0]}function q(t,e,n,i){var r,l,o,s,c;if(null==n?n=B:w(n,0,8),!t.c)return t.toString();if(r=t.c[0],o=t.e,null==e)c=g(t.c),c=1==i||2==i&&(o<=C||o>=L)?v(c,o):b(c,o,"0");else if(l=(t=V(new F(t),e,n)).e,s=(c=g(t.c)).length,1==i||2==i&&(e<=l||l<=C)){for(;s<e;c+="0",s++);c=v(c,l)}else if(e-=o,c=b(c,l,"0"),l+1>s){if(--e>0)for(c+=".";e--;c+="0");}else if((e+=l-s)>0)for(l+1==s&&(c+=".");e--;c+="0");return t.s<0&&r?"-"+c:c}function Y(t,e){for(var n,i=1,r=new F(t[0]);i<t.length;i++){if(!(n=new F(t[i])).s){r=n;break}e.call(r,n)&&(r=n)}return r}function X(t,e,n){for(var i=1,r=e.length;!e[--r];e.pop());for(r=e[0];r>=10;r/=10,i++);return(n=i+n*h-1)>j?t.c=t.e=null:n<R?t.c=[t.e=0]:(t.e=n,t.c=e),t}function V(t,e,n,i){var o,s,u,f,p,d,g,x=t.c,w=a;if(x){t:{for(o=1,f=x[0];f>=10;f/=10,o++);if((s=e-o)<0)s+=h,u=e,g=(p=x[d=0])/w[o-u-1]%10|0;else if((d=r((s+1)/h))>=x.length){if(!i)break t;for(;x.length<=d;x.push(0));p=g=0,o=1,u=(s%=h)-h+1}else{for(p=f=x[d],o=1;f>=10;f/=10,o++);g=(u=(s%=h)-h+o)<0?0:p/w[o-u-1]%10|0}if(i=i||e<0||null!=x[d+1]||(u<0?p:p%w[o-u-1]),i=n<4?(g||i)&&(0==n||n==(t.s<0?3:2)):g>5||5==g&&(4==n||i||6==n&&(s>0?u>0?p/w[o-u]:0:x[d-1])%10&1||n==(t.s<0?8:7)),e<1||!x[0])return x.length=0,i?(e-=t.e+1,x[0]=w[(h-e%h)%h],t.e=-e||0):x[0]=t.e=0,t;if(0==s?(x.length=d,f=1,d--):(x.length=d+1,f=w[h-s],x[d]=u>0?l(p/w[o-u]%w[u])*f:0),i)for(;;){if(0==d){for(s=1,u=x[0];u>=10;u/=10,s++);for(u=x[0]+=f,f=1;u>=10;u/=10,f++);s!=f&&(t.e++,x[0]==c&&(x[0]=1));break}if(x[d]+=f,x[d]!=c)break;x[d--]=0,f=1}for(s=x.length;0===x[--s];x.pop());}t.e>j?t.c=t.e=null:t.e<R&&(t.c=[t.e=0])}return t}function W(t){var e,n=t.e;return null===n?t.toString():(e=g(t.c),e=n<=C||n>=L?v(e,n):b(e,n,"0"),t.s<0?"-"+e:e)}return F.clone=t,F.ROUND_UP=0,F.ROUND_DOWN=1,F.ROUND_CEIL=2,F.ROUND_FLOOR=3,F.ROUND_HALF_UP=4,F.ROUND_HALF_DOWN=5,F.ROUND_HALF_EVEN=6,F.ROUND_HALF_CEIL=7,F.ROUND_HALF_FLOOR=8,F.EUCLID=9,F.config=F.set=function(t){var e,n;if(null!=t){if("object"!=typeof t)throw Error(o+"Object expected: "+t);if(t.hasOwnProperty(e="DECIMAL_PLACES")&&(w(n=t[e],0,p,e),T=n),t.hasOwnProperty(e="ROUNDING_MODE")&&(w(n=t[e],0,8,e),B=n),t.hasOwnProperty(e="EXPONENTIAL_AT")&&((n=t[e])&&n.pop?(w(n[0],-p,0,e),w(n[1],0,p,e),C=n[0],L=n[1]):(w(n,-p,p,e),C=-(L=n<0?-n:n))),t.hasOwnProperty(e="RANGE"))if((n=t[e])&&n.pop)w(n[0],-p,-1,e),w(n[1],1,p,e),R=n[0],j=n[1];else{if(w(n,-p,p,e),!n)throw Error(o+e+" cannot be zero: "+n);R=-(j=n<0?-n:n)}if(t.hasOwnProperty(e="CRYPTO")){if((n=t[e])!==!!n)throw Error(o+e+" not true or false: "+n);if(n){if("undefined"==typeof crypto||!crypto||!crypto.getRandomValues&&!crypto.randomBytes)throw I=!n,Error(o+"crypto unavailable");I=n}else I=n}if(t.hasOwnProperty(e="MODULO_MODE")&&(w(n=t[e],0,9,e),P=n),t.hasOwnProperty(e="POW_PRECISION")&&(w(n=t[e],0,p,e),D=n),t.hasOwnProperty(e="FORMAT")){if("object"!=typeof(n=t[e]))throw Error(o+e+" not an object: "+n);U=n}if(t.hasOwnProperty(e="ALPHABET")){if("string"!=typeof(n=t[e])||/^.?$|[+\-.\s]|(.).*\1/.test(n))throw Error(o+e+" invalid: "+n);H="0123456789"==n.slice(0,10),G=n}}return{DECIMAL_PLACES:T,ROUNDING_MODE:B,EXPONENTIAL_AT:[C,L],RANGE:[R,j],CRYPTO:I,MODULO_MODE:P,POW_PRECISION:D,FORMAT:U,ALPHABET:G}},F.isBigNumber=function(t){if(!t||!0!==t._isBigNumber)return!1;if(!F.DEBUG)return!0;var e,n,i=t.c,r=t.e,s=t.s;t:if("[object Array]"=={}.toString.call(i)){if((1===s||-1===s)&&r>=-p&&r<=p&&r===l(r)){if(0===i[0]){if(0===r&&1===i.length)return!0;break t}if((e=(r+1)%h)<1&&(e+=h),String(i[0]).length==e){for(e=0;e<i.length;e++)if((n=i[e])<0||n>=c||n!==l(n))break t;if(0!==n)return!0}}}else if(null===i&&null===r&&(null===s||1===s||-1===s))return!0;throw Error(o+"Invalid BigNumber: "+t)},F.maximum=F.max=function(){return Y(arguments,O.lt)},F.minimum=F.min=function(){return Y(arguments,O.gt)},F.random=(z=9007199254740992,$=Math.random()*z&2097151?function(){return l(Math.random()*z)}:function(){return 8388608*(1073741824*Math.random()|0)+(8388608*Math.random()|0)},function(t){var e,n,i,s,c,u=0,f=[],d=new F(_);if(null==t?t=T:w(t,0,p),s=r(t/h),I)if(crypto.getRandomValues){for(e=crypto.getRandomValues(new Uint32Array(s*=2));u<s;)(c=131072*e[u]+(e[u+1]>>>11))>=9e15?(n=crypto.getRandomValues(new Uint32Array(2)),e[u]=n[0],e[u+1]=n[1]):(f.push(c%1e14),u+=2);u=s/2}else{if(!crypto.randomBytes)throw I=!1,Error(o+"crypto unavailable");for(e=crypto.randomBytes(s*=7);u<s;)(c=281474976710656*(31&e[u])+1099511627776*e[u+1]+4294967296*e[u+2]+16777216*e[u+3]+(e[u+4]<<16)+(e[u+5]<<8)+e[u+6])>=9e15?crypto.randomBytes(7).copy(e,u):(f.push(c%1e14),u+=7);u=s/7}if(!I)for(;u<s;)(c=$())<9e15&&(f[u++]=c%1e14);for(s=f[--u],t%=h,s&&t&&(c=a[h-t],f[u]=l(s/c)*c);0===f[u];f.pop(),u--);if(u<0)f=[i=0];else{for(i=-1;0===f[0];f.splice(0,1),i-=h);for(u=1,c=f[0];c>=10;c/=10,u++);u<h&&(i-=h-u)}return d.e=i,d.c=f,d}),F.sum=function(){for(var t=1,e=arguments,n=new F(e[0]);t<e.length;)n=n.plus(e[t++]);return n},y=function(){var t="0123456789";function e(t,e,n,i){for(var r,l,o=[0],s=0,c=t.length;s<c;){for(l=o.length;l--;o[l]*=e);for(o[0]+=i.indexOf(t.charAt(s++)),r=0;r<o.length;r++)o[r]>n-1&&(null==o[r+1]&&(o[r+1]=0),o[r+1]+=o[r]/n|0,o[r]%=n)}return o.reverse()}return function(i,r,l,o,s){var c,h,u,a,f,p,d,x,w=i.indexOf("."),m=T,v=B;for(w>=0&&(a=D,D=0,i=i.replace(".",""),p=(x=new F(r)).pow(i.length-w),D=a,x.c=e(b(g(p.c),p.e,"0"),10,l,t),x.e=x.c.length),u=a=(d=e(i,r,l,s?(c=G,t):(c=t,G))).length;0==d[--a];d.pop());if(!d[0])return c.charAt(0);if(w<0?--u:(p.c=d,p.e=u,p.s=o,d=(p=n(p,x,m,v,l)).c,f=p.r,u=p.e),w=d[h=u+m+1],a=l/2,f=f||h<0||null!=d[h+1],f=v<4?(null!=w||f)&&(0==v||v==(p.s<0?3:2)):w>a||w==a&&(4==v||f||6==v&&1&d[h-1]||v==(p.s<0?8:7)),h<1||!d[0])i=f?b(c.charAt(1),-m,c.charAt(0)):c.charAt(0);else{if(d.length=h,f)for(--l;++d[--h]>l;)d[h]=0,h||(++u,d=[1].concat(d));for(a=d.length;!d[--a];);for(w=0,i="";w<=a;i+=c.charAt(d[w++]));i=b(i,u,c.charAt(0))}return i}}(),n=function(){function t(t,e,n){var i,r,l,o,s=0,c=t.length,h=e%f,u=e/f|0;for(t=t.slice();c--;)s=((r=h*(l=t[c]%f)+(i=u*l+(o=t[c]/f|0)*h)%f*f+s)/n|0)+(i/f|0)+u*o,t[c]=r%n;return s&&(t=[s].concat(t)),t}function e(t,e,n,i){var r,l;if(n!=i)l=n>i?1:-1;else for(r=l=0;r<n;r++)if(t[r]!=e[r]){l=t[r]>e[r]?1:-1;break}return l}function n(t,e,n,i){for(var r=0;n--;)t[n]-=r,r=t[n]<e[n]?1:0,t[n]=r*i+t[n]-e[n];for(;!t[0]&&t.length>1;t.splice(0,1));}return function(i,r,o,s,u){var a,f,p,g,x,w,m,v,b,y,k,z,$,A,E,N,S,M=i.s==r.s?1:-1,O=i.c,_=r.c;if(!(O&&O[0]&&_&&_[0]))return new F(i.s&&r.s&&(O?!_||O[0]!=_[0]:_)?O&&0==O[0]||!_?0*M:M/0:NaN);for(b=(v=new F(M)).c=[],M=o+(f=i.e-r.e)+1,u||(u=c,f=d(i.e/h)-d(r.e/h),M=M/h|0),p=0;_[p]==(O[p]||0);p++);if(_[p]>(O[p]||0)&&f--,M<0)b.push(1),g=!0;else{for(A=O.length,N=_.length,p=0,M+=2,(x=l(u/(_[0]+1)))>1&&(_=t(_,x,u),O=t(O,x,u),N=_.length,A=O.length),$=N,k=(y=O.slice(0,N)).length;k<N;y[k++]=0);S=_.slice(),S=[0].concat(S),E=_[0],_[1]>=u/2&&E++;do{if(x=0,(a=e(_,y,N,k))<0){if(z=y[0],N!=k&&(z=z*u+(y[1]||0)),(x=l(z/E))>1)for(x>=u&&(x=u-1),m=(w=t(_,x,u)).length,k=y.length;1==e(w,y,m,k);)x--,n(w,N<m?S:_,m,u),m=w.length,a=1;else 0==x&&(a=x=1),m=(w=_.slice()).length;if(m<k&&(w=[0].concat(w)),n(y,w,k,u),k=y.length,-1==a)for(;e(_,y,N,k)<1;)x++,n(y,N<k?S:_,k,u),k=y.length}else 0===a&&(x++,y=[0]);b[p++]=x,y[0]?y[k++]=O[$]||0:(y=[O[$]],k=1)}while(($++<A||null!=y[0])&&M--);g=null!=y[0],b[0]||b.splice(0,1)}if(u==c){for(p=1,M=b[0];M>=10;M/=10,p++);V(v,o+(v.e=p+f*h-1)+1,s,g)}else v.e=f,v.r=+g;return v}}(),A=/^(-?)0([xbo])(?=\w[\w.]*$)/i,E=/^([^.]+)\.$/,N=/^\.([^.]+)$/,S=/^-?(Infinity|NaN)$/,M=/^\s*\+(?=[\w.])|^\s+|\s+$/g,k=function(t,e,n,i){var r,l=n?e:e.replace(M,"");if(S.test(l))t.s=isNaN(l)?null:l<0?-1:1;else{if(!n&&(l=l.replace(A,(function(t,e,n){return r="x"==(n=n.toLowerCase())?16:"b"==n?2:8,i&&i!=r?t:e})),i&&(r=i,l=l.replace(E,"$1").replace(N,"0.$1")),e!=l))return new F(l,r);if(F.DEBUG)throw Error(o+"Not a"+(i?" base "+i:"")+" number: "+e);t.s=null}t.c=t.e=null},O.absoluteValue=O.abs=function(){var t=new F(this);return t.s<0&&(t.s=1),t},O.comparedTo=function(t,e){return x(this,new F(t,e))},O.decimalPlaces=O.dp=function(t,e){var n,i,r,l=this;if(null!=t)return w(t,0,p),null==e?e=B:w(e,0,8),V(new F(l),t+l.e+1,e);if(!(n=l.c))return null;if(i=((r=n.length-1)-d(this.e/h))*h,r=n[r])for(;r%10==0;r/=10,i--);return i<0&&(i=0),i},O.dividedBy=O.div=function(t,e){return n(this,new F(t,e),T,B)},O.dividedToIntegerBy=O.idiv=function(t,e){return n(this,new F(t,e),0,1)},O.exponentiatedBy=O.pow=function(t,e){var n,i,s,c,u,a,f,p,d=this;if((t=new F(t)).c&&!t.isInteger())throw Error(o+"Exponent not an integer: "+W(t));if(null!=e&&(e=new F(e)),u=t.e>14,!d.c||!d.c[0]||1==d.c[0]&&!d.e&&1==d.c.length||!t.c||!t.c[0])return p=new F(Math.pow(+W(d),u?2-m(t):+W(t))),e?p.mod(e):p;if(a=t.s<0,e){if(e.c?!e.c[0]:!e.s)return new F(NaN);(i=!a&&d.isInteger()&&e.isInteger())&&(d=d.mod(e))}else{if(t.e>9&&(d.e>0||d.e<-1||(0==d.e?d.c[0]>1||u&&d.c[1]>=24e7:d.c[0]<8e13||u&&d.c[0]<=9999975e7)))return c=d.s<0&&m(t)?-0:0,d.e>-1&&(c=1/c),new F(a?1/c:c);D&&(c=r(D/h+2))}for(u?(n=new F(.5),a&&(t.s=1),f=m(t)):f=(s=Math.abs(+W(t)))%2,p=new F(_);;){if(f){if(!(p=p.times(d)).c)break;c?p.c.length>c&&(p.c.length=c):i&&(p=p.mod(e))}if(s){if(0===(s=l(s/2)))break;f=s%2}else if(V(t=t.times(n),t.e+1,1),t.e>14)f=m(t);else{if(0==(s=+W(t)))break;f=s%2}d=d.times(d),c?d.c&&d.c.length>c&&(d.c.length=c):i&&(d=d.mod(e))}return i?p:(a&&(p=_.div(p)),e?p.mod(e):c?V(p,D,B,void 0):p)},O.integerValue=function(t){var e=new F(this);return null==t?t=B:w(t,0,8),V(e,e.e+1,t)},O.isEqualTo=O.eq=function(t,e){return 0===x(this,new F(t,e))},O.isFinite=function(){return!!this.c},O.isGreaterThan=O.gt=function(t,e){return x(this,new F(t,e))>0},O.isGreaterThanOrEqualTo=O.gte=function(t,e){return 1===(e=x(this,new F(t,e)))||0===e},O.isInteger=function(){return!!this.c&&d(this.e/h)>this.c.length-2},O.isLessThan=O.lt=function(t,e){return x(this,new F(t,e))<0},O.isLessThanOrEqualTo=O.lte=function(t,e){return-1===(e=x(this,new F(t,e)))||0===e},O.isNaN=function(){return!this.s},O.isNegative=function(){return this.s<0},O.isPositive=function(){return this.s>0},O.isZero=function(){return!!this.c&&0==this.c[0]},O.minus=function(t,e){var n,i,r,l,o=this,s=o.s;if(e=(t=new F(t,e)).s,!s||!e)return new F(NaN);if(s!=e)return t.s=-e,o.plus(t);var u=o.e/h,a=t.e/h,f=o.c,p=t.c;if(!u||!a){if(!f||!p)return f?(t.s=-e,t):new F(p?o:NaN);if(!f[0]||!p[0])return p[0]?(t.s=-e,t):new F(f[0]?o:3==B?-0:0)}if(u=d(u),a=d(a),f=f.slice(),s=u-a){for((l=s<0)?(s=-s,r=f):(a=u,r=p),r.reverse(),e=s;e--;r.push(0));r.reverse()}else for(i=(l=(s=f.length)<(e=p.length))?s:e,s=e=0;e<i;e++)if(f[e]!=p[e]){l=f[e]<p[e];break}if(l&&(r=f,f=p,p=r,t.s=-t.s),(e=(i=p.length)-(n=f.length))>0)for(;e--;f[n++]=0);for(e=c-1;i>s;){if(f[--i]<p[i]){for(n=i;n&&!f[--n];f[n]=e);--f[n],f[i]+=c}f[i]-=p[i]}for(;0==f[0];f.splice(0,1),--a);return f[0]?X(t,f,a):(t.s=3==B?-1:1,t.c=[t.e=0],t)},O.modulo=O.mod=function(t,e){var i,r,l=this;return t=new F(t,e),!l.c||!t.s||t.c&&!t.c[0]?new F(NaN):!t.c||l.c&&!l.c[0]?new F(l):(9==P?(r=t.s,t.s=1,i=n(l,t,0,3),t.s=r,i.s*=r):i=n(l,t,0,P),(t=l.minus(i.times(t))).c[0]||1!=P||(t.s=l.s),t)},O.multipliedBy=O.times=function(t,e){var n,i,r,l,o,s,u,a,p,g,x,w,m,v,b,y=this,k=y.c,z=(t=new F(t,e)).c;if(!(k&&z&&k[0]&&z[0]))return!y.s||!t.s||k&&!k[0]&&!z||z&&!z[0]&&!k?t.c=t.e=t.s=null:(t.s*=y.s,k&&z?(t.c=[0],t.e=0):t.c=t.e=null),t;for(i=d(y.e/h)+d(t.e/h),t.s*=y.s,(u=k.length)<(g=z.length)&&(m=k,k=z,z=m,r=u,u=g,g=r),r=u+g,m=[];r--;m.push(0));for(v=c,b=f,r=g;--r>=0;){for(n=0,x=z[r]%b,w=z[r]/b|0,l=r+(o=u);l>r;)n=((a=x*(a=k[--o]%b)+(s=w*a+(p=k[o]/b|0)*x)%b*b+m[l]+n)/v|0)+(s/b|0)+w*p,m[l--]=a%v;m[l]=n}return n?++i:m.splice(0,1),X(t,m,i)},O.negated=function(){var t=new F(this);return t.s=-t.s||null,t},O.plus=function(t,e){var n,i=this,r=i.s;if(e=(t=new F(t,e)).s,!r||!e)return new F(NaN);if(r!=e)return t.s=-e,i.minus(t);var l=i.e/h,o=t.e/h,s=i.c,u=t.c;if(!l||!o){if(!s||!u)return new F(r/0);if(!s[0]||!u[0])return u[0]?t:new F(s[0]?i:0*r)}if(l=d(l),o=d(o),s=s.slice(),r=l-o){for(r>0?(o=l,n=u):(r=-r,n=s),n.reverse();r--;n.push(0));n.reverse()}for((r=s.length)-(e=u.length)<0&&(n=u,u=s,s=n,e=r),r=0;e;)r=(s[--e]=s[e]+u[e]+r)/c|0,s[e]=c===s[e]?0:s[e]%c;return r&&(s=[r].concat(s),++o),X(t,s,o)},O.precision=O.sd=function(t,e){var n,i,r,l=this;if(null!=t&&t!==!!t)return w(t,1,p),null==e?e=B:w(e,0,8),V(new F(l),t,e);if(!(n=l.c))return null;if(i=(r=n.length-1)*h+1,r=n[r]){for(;r%10==0;r/=10,i--);for(r=n[0];r>=10;r/=10,i++);}return t&&l.e+1>i&&(i=l.e+1),i},O.shiftedBy=function(t){return w(t,-9007199254740991,u),this.times("1e"+t)},O.squareRoot=O.sqrt=function(){var t,e,i,r,l,o=this,s=o.c,c=o.s,h=o.e,u=T+4,a=new F("0.5");if(1!==c||!s||!s[0])return new F(!c||c<0&&(!s||s[0])?NaN:s?o:1/0);if(0==(c=Math.sqrt(+W(o)))||c==1/0?(((e=g(s)).length+h)%2==0&&(e+="0"),c=Math.sqrt(+e),h=d((h+1)/2)-(h<0||h%2),i=new F(e=c==1/0?"5e"+h:(e=c.toExponential()).slice(0,e.indexOf("e")+1)+h)):i=new F(c+""),i.c[0])for((c=(h=i.e)+u)<3&&(c=0);;)if(l=i,i=a.times(l.plus(n(o,l,u,1))),g(l.c).slice(0,c)===(e=g(i.c)).slice(0,c)){if(i.e<h&&--c,"9999"!=(e=e.slice(c-3,c+1))&&(r||"4999"!=e)){+e&&(+e.slice(1)||"5"!=e.charAt(0))||(V(i,i.e+T+2,1),t=!i.times(i).eq(o));break}if(!r&&(V(l,l.e+T+2,0),l.times(l).eq(o))){i=l;break}u+=4,c+=4,r=1}return V(i,i.e+T+1,B,t)},O.toExponential=function(t,e){return null!=t&&(w(t,0,p),t++),q(this,t,e,1)},O.toFixed=function(t,e){return null!=t&&(w(t,0,p),t=t+this.e+1),q(this,t,e)},O.toFormat=function(t,e,n){var i,r=this;if(null==n)null!=t&&e&&"object"==typeof e?(n=e,e=null):t&&"object"==typeof t?(n=t,t=e=null):n=U;else if("object"!=typeof n)throw Error(o+"Argument not an object: "+n);if(i=r.toFixed(t,e),r.c){var l,s=i.split("."),c=+n.groupSize,h=+n.secondaryGroupSize,u=n.groupSeparator||"",a=s[0],f=s[1],p=r.s<0,d=p?a.slice(1):a,g=d.length;if(h&&(l=c,c=h,h=l,g-=l),c>0&&g>0){for(l=g%c||c,a=d.substr(0,l);l<g;l+=c)a+=u+d.substr(l,c);h>0&&(a+=u+d.slice(l)),p&&(a="-"+a)}i=f?a+(n.decimalSeparator||"")+((h=+n.fractionGroupSize)?f.replace(new RegExp("\\d{"+h+"}\\B","g"),"$&"+(n.fractionGroupSeparator||"")):f):a}return(n.prefix||"")+i+(n.suffix||"")},O.toFraction=function(t){var e,i,r,l,s,c,u,f,p,d,x,w,m=this,v=m.c;if(null!=t&&(!(u=new F(t)).isInteger()&&(u.c||1!==u.s)||u.lt(_)))throw Error(o+"Argument "+(u.isInteger()?"out of range: ":"not an integer: ")+W(u));if(!v)return new F(m);for(e=new F(_),p=i=new F(_),r=f=new F(_),w=g(v),s=e.e=w.length-m.e-1,e.c[0]=a[(c=s%h)<0?h+c:c],t=!t||u.comparedTo(e)>0?s>0?e:p:u,c=j,j=1/0,u=new F(w),f.c[0]=0;d=n(u,e,0,1),1!=(l=i.plus(d.times(r))).comparedTo(t);)i=r,r=l,p=f.plus(d.times(l=p)),f=l,e=u.minus(d.times(l=e)),u=l;return l=n(t.minus(i),r,0,1),f=f.plus(l.times(p)),i=i.plus(l.times(r)),f.s=p.s=m.s,x=n(p,r,s*=2,B).minus(m).abs().comparedTo(n(f,i,s,B).minus(m).abs())<1?[p,r]:[f,i],j=c,x},O.toNumber=function(){return+W(this)},O.toPrecision=function(t,e){return null!=t&&w(t,1,p),q(this,t,e,2)},O.toString=function(t){var e,n=this,i=n.s,r=n.e;return null===r?i?(e="Infinity",i<0&&(e="-"+e)):e="NaN":(null==t?e=r<=C||r>=L?v(g(n.c),r):b(g(n.c),r,"0"):10===t&&H?e=b(g((n=V(new F(n),T+r+1,B)).c),n.e,"0"):(w(t,2,G.length,"Base"),e=y(b(g(n.c),r,"0"),10,t,i,!0)),i<0&&n.c[0]&&(e="-"+e)),e},O.valueOf=O.toJSON=function(){return W(this)},O._isBigNumber=!0,null!=e&&F.set(e),F}(),n.default=n.BigNumber=n,t.exports?t.exports=n:(e||(e="undefined"!=typeof self&&self?self:window),e.BigNumber=n)}(F)},q(Y={exports:{}},Y.exports),Y.exports);function V(t,e){let n,i;return X.BigNumber.config({ALPHABET:"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_~"}),"b64"===e?(n=new X.BigNumber(t,2).times(17),i=n.toString(64)):"dec"===e?(n=new X.BigNumber(t,2).times(17),i=n.toString(10)):i="bin"===e?t:"!ERROR!",i}function W(t,e){let n;return X.BigNumber.config({ALPHABET:"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_~"}),n="b64"===e?new X.BigNumber(t,64).div(17).toString(2).padStart(1802,0):"dec"===e?new X.BigNumber(t,10).div(17).toString(2).padStart(1802,0):"bin"===e?t:"!ERROR!",n}function J(t,e){for(let n=0;n<t.length;n++){if(t[n].pointerId==e)return n}return-1}function Z({pointerId:t,layerX:e,layerY:n}){return{pointerId:t,layerX:e,layerY:n}}const K=[];function Q(e,n=t){let i;const r=new Set;function o(t){if(l(e,t)&&(e=t,i)){const t=!K.length;for(const t of r)t[1](),K.push(t,e);if(t){for(let t=0;t<K.length;t+=2)K[t][0](K[t+1]);K.length=0}}}return{set:o,update:function(t){o(t(e))},subscribe:function(l,s=t){const c=[l,s];return r.add(c),1===r.size&&(i=n(o)||t),l(e),()=>{r.delete(c),0===r.size&&(i(),i=null)}}}}const tt=Q("0"),et=Q(!1),nt=Q(!0);function it(t,e,n){const i=t.slice();return i[16]=e[n],i[18]=n,i}function rt(t,e,n){const i=t.slice();return i[16]=e[n],i[20]=n,i}function lt(t,e){let n;return{key:t,first:null,c(){n=h("div"),p(n,"id","pixel-"+e[18]+"-"+e[20]),p(n,"class","matrix-pixel svelte-77w6pz"),g(n,"width",e[0]+"px"),g(n,"height",e[0]+"px"),this.first=n},m(t,e){s(t,n,e)},p(t,i){e=t,1&i&&g(n,"width",e[0]+"px"),1&i&&g(n,"height",e[0]+"px")},d(t){t&&c(n)}}}function ot(t,e){let n,i=[],r=new Map,l=Array(17);const o=t=>t[20];for(let t=0;t<l.length;t+=1){let n=rt(e,l,t),s=o(n);r.set(s,i[t]=lt(s,n))}return{key:t,first:null,c(){n=h("div");for(let t=0;t<i.length;t+=1)i[t].c();p(n,"class","matrix-column svelte-77w6pz"),g(n,"width",e[0]+"px"),g(n,"height",17*e[0]+"px"),this.first=n},m(t,e){s(t,n,e);for(let t=0;t<i.length;t+=1)i[t].m(n,null)},p(t,s){e=t,1&s&&(l=Array(17),i=j(i,s,o,1,e,l,r,n,R,lt,null,rt)),1&s&&g(n,"width",e[0]+"px"),1&s&&g(n,"height",17*e[0]+"px")},d(t){t&&c(n);for(let t=0;t<i.length;t+=1)i[t].d()}}}function st(t){let e,n,i;return{c(){e=h("div"),p(e,"class","matrix-canvas svelte-77w6pz"),g(e,"width",106*t[0]+"px"),g(e,"height",17*t[0]+"px"),g(e,"touch-action","auto")},m(r,l){s(r,e,l),n||(i=f(e,"click",t[12]),n=!0)},p(t,n){1&n&&g(e,"width",106*t[0]+"px"),1&n&&g(e,"height",17*t[0]+"px")},d(t){t&&c(e),n=!1,i()}}}function ct(t){let e,n,r,l,u,a;return{c(){e=h("canvas"),n=h("b"),n.innerHTML="<i>Your browser does not support canvas element.</i>",p(e,"id","canvas"),p(e,"class","matrix-canvas svelte-77w6pz"),p(e,"width",r=106*t[0]),p(e,"height",l=17*t[0]),g(e,"touch-action","none")},m(i,r){s(i,e,r),o(e,n),u||(a=[f(e,"pointerdown",t[2]),f(e,"pointermove",t[3]),f(e,"pointerup",t[4]),f(e,"pointerleave",t[5]),f(e,"pointercancel",t[6]),f(e,"dragstart",t[7])],u=!0)},p(t,n){1&n&&r!==(r=106*t[0])&&p(e,"width",r),1&n&&l!==(l=17*t[0])&&p(e,"height",l)},d(t){t&&c(e),u=!1,i(a)}}}function ht(e){let n,i,r=[],l=new Map,u=Array(106);const f=t=>t[18];for(let t=0;t<u.length;t+=1){let n=it(e,u,t),i=f(n);l.set(i,r[t]=ot(i,n))}function d(t,e){return t[1]?ct:st}let x=d(e),w=x(e);return{c(){n=h("div");for(let t=0;t<r.length;t+=1)r[t].c();i=a(),w.c(),p(n,"id","matrix"),p(n,"class","matrix svelte-77w6pz"),g(n,"width",106*e[0]+"px"),g(n,"height",17*e[0]+"px")},m(t,e){s(t,n,e);for(let t=0;t<r.length;t+=1)r[t].m(n,null);o(n,i),w.m(n,null)},p(t,[e]){1&e&&(u=Array(106),r=j(r,e,f,1,t,u,l,n,R,ot,i,it)),x===(x=d(t))&&w?w.p(t,e):(w.d(1),w=x(t),w&&(w.c(),w.m(n,null))),1&e&&g(n,"width",106*t[0]+"px"),1&e&&g(n,"height",17*t[0]+"px")},i:t,o:t,d(t){t&&c(n);for(let t=0;t<r.length;t+=1)r[t].d();w.d()}}}function ut(t,e,n){let{pixelSize:i}=e,r=function(t,e,n){let i=new Array(t);for(let t=0;t<i.length;t++){i[t]=new Array(e);for(let e=0;e<i[t].length;e++)i[t][e]=n}return i}(106,17,"0");const l=[];let o=!1,s=!0,c=!1,h=!0,u="";function a(t,e){let i=t,l=16-e,o=`pixel-${i}-${l}`,s=document.getElementById(o);h?(s.style.backgroundColor="#ff0000",n(8,r[i][l]="1",r)):(s.style.backgroundColor="#999999",n(8,r[i][l]="0",r))}return v((()=>{tt.subscribe((t=>{n(11,u=t);let e=0,i=0,l="";for(let o=0,s=0,c=0;o<t.length;o++,s++,c++)17===s&&(e++,s=0,c=0),i=c,l=`pixel-${e}-${i}`,"1"===t[o]?(document.getElementById(l).style.backgroundColor="#ff0000",n(8,r[e][i]="1",r)):(document.getElementById(l).style.backgroundColor="#999999",n(8,r[e][i]="0",r))}))})),et.subscribe((t=>{n(1,o=t)})),nt.subscribe((t=>{h=t})),t.$$set=t=>{"pixelSize"in t&&n(0,i=t.pixelSize)},t.$$.update=()=>{if(3840&t.$$.dirty)if(!0===c)n(9,s=!1);else if(!1===s){n(11,u="");for(let t=0;t<r.length;t++)for(let e=0;e<r[t].length;e++)n(11,u+=r[t][e]);tt.update((t=>u)),n(9,s=!0)}},[i,o,function(t){l.push(Z(t)),n(10,c=!0),a(Math.floor(t.layerX/i),Math.floor(t.layerY/i))},function(t){if(!c)return;const e=J(l,t.pointerId);if(e<0);else{let r=function(t,e,n,i,r){const l=[];let o,s,c,h,u,a,f,p,d,g,x,w,m=0,v=20,b=20;if(h=n-t,u=i-e,a=Math.abs(h),f=Math.abs(u),p=2*f-a,d=2*a-f,f<=a)for(h>=0?(s=t,c=e,g=n):(s=n,c=i,g=t),w=0;s<g;w++)s+=1,p<0?p+=2*f:(h<0&&u<0||h>0&&u>0?c+=1:c-=1,p+=2*(f-a)),v=Math.floor(s/r),b=Math.floor(c/r),o=[v,b],m=l.length-1,l.length>0&&v==l[m][0]&&b==l[m][1]||l.push(o);else for(u>=0?(s=t,c=e,x=i):(s=n,c=i,x=e),w=0;c<x;w++)c+=1,d<=0?d+=2*a:(h<0&&u<0||h>0&&u>0?s+=1:s-=1,d+=2*(a-f)),v=Math.floor(s/r),b=Math.floor(c/r),o=[v,b],m=l.length-1,l.length>0&&v==l[m][0]&&b==l[m][1]||l.push(o);return l}(l[e].layerX,l[e].layerY,t.layerX,t.layerY,i);if(r.length>0)for(let t=0;t<r.length;t++){let e=r[t][0],i=r[t][1];if(e>105||i>16||i<0||e<0){n(10,c=!1);break}a(e,i)}l.splice(e,1,Z(t))}},function(t){n(10,c=!1);const e=J(l,t.pointerId);e<0||(l.splice(e,1),n(10,c=!1))},function(t){n(10,c=!1);const e=J(l,t.pointerId);e<0||l.splice(e,1)},function(t){n(10,c=!1);const e=J(l,t.pointerId);e<0||l.splice(e,1)},function(t){n(10,c=!1),t.preventDefault()},r,s,c,u,function(e){b.call(this,t,e)}]}class at extends H{constructor(t){super(),G(this,t,ut,ht,l,{pixelSize:0})}}function ft(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function pt(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function dt(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function gt(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function xt(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function wt(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function mt(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function vt(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function bt(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function yt(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function kt(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function zt(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function $t(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function At(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function Et(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function Nt(t,e,n){const i=t.slice();return i[2]=e[n],i[4]=n,i}function St(t,e){let n;return{key:t,first:null,c(){n=h("div"),p(n,"class","decore-outer-pixel svelte-18izcba"),g(n,"width",e[0]+"px"),g(n,"height",e[0]+"px"),this.first=n},m(t,e){s(t,n,e)},p(t,i){e=t,1&i&&g(n,"width",e[0]+"px"),1&i&&g(n,"height",e[0]+"px")},d(t){t&&c(n)}}}function Mt(t,e){let n,i,r=[],l=new Map,u=Array(3);const f=t=>t[4];for(let t=0;t<u.length;t+=1){let n=Nt(e,u,t),i=f(n);l.set(i,r[t]=St(i,n))}return{key:t,first:null,c(){n=h("div");for(let t=0;t<r.length;t+=1)r[t].c();i=a(),p(n,"class","decore-outer-column"),g(n,"width",e[0]+"px"),g(n,"height",3*e[0]+"px"),this.first=n},m(t,e){s(t,n,e);for(let t=0;t<r.length;t+=1)r[t].m(n,null);o(n,i)},p(t,o){e=t,1&o&&(u=Array(3),r=j(r,o,f,1,e,u,l,n,R,St,i,Nt)),1&o&&g(n,"width",e[0]+"px"),1&o&&g(n,"height",3*e[0]+"px")},d(t){t&&c(n);for(let t=0;t<r.length;t+=1)r[t].d()}}}function Ot(t,e){let n;return{key:t,first:null,c(){n=h("div"),p(n,"class","decore-outer-pixel svelte-18izcba"),g(n,"width",e[0]+"px"),g(n,"height",e[0]+"px"),this.first=n},m(t,e){s(t,n,e)},p(t,i){e=t,1&i&&g(n,"width",e[0]+"px"),1&i&&g(n,"height",e[0]+"px")},d(t){t&&c(n)}}}function _t(t,e){let n,i,r=[],l=new Map,u=Array(21);const f=t=>t[4];for(let t=0;t<u.length;t+=1){let n=At(e,u,t),i=f(n);l.set(i,r[t]=Ot(i,n))}return{key:t,first:null,c(){n=h("div");for(let t=0;t<r.length;t+=1)r[t].c();i=a(),p(n,"class","decore-outer-column"),g(n,"width",e[0]+"px"),g(n,"height",21*e[0]+"px"),this.first=n},m(t,e){s(t,n,e);for(let t=0;t<r.length;t+=1)r[t].m(n,null);o(n,i)},p(t,o){e=t,1&o&&(u=Array(21),r=j(r,o,f,1,e,u,l,n,R,Ot,i,At)),1&o&&g(n,"width",e[0]+"px"),1&o&&g(n,"height",21*e[0]+"px")},d(t){t&&c(n);for(let t=0;t<r.length;t+=1)r[t].d()}}}function Tt(t,e){let n;return{key:t,first:null,c(){n=h("div"),p(n,"class","decore-inner-pixel svelte-18izcba"),g(n,"width",e[0]+"px"),g(n,"height",e[0]+"px"),this.first=n},m(t,e){s(t,n,e)},p(t,i){e=t,1&i&&g(n,"width",e[0]+"px"),1&i&&g(n,"height",e[0]+"px")},d(t){t&&c(n)}}}function Bt(t,e){let n,i,r=[],l=new Map,u=Array(2);const f=t=>t[4];for(let t=0;t<u.length;t+=1){let n=zt(e,u,t),i=f(n);l.set(i,r[t]=Tt(i,n))}return{key:t,first:null,c(){n=h("div");for(let t=0;t<r.length;t+=1)r[t].c();i=a(),p(n,"class","decore-inner-column"),g(n,"width",e[0]+"px"),g(n,"height",2*e[0]+"px"),this.first=n},m(t,e){s(t,n,e);for(let t=0;t<r.length;t+=1)r[t].m(n,null);o(n,i)},p(t,o){e=t,1&o&&(u=Array(2),r=j(r,o,f,1,e,u,l,n,R,Tt,i,zt)),1&o&&g(n,"width",e[0]+"px"),1&o&&g(n,"height",2*e[0]+"px")},d(t){t&&c(n);for(let t=0;t<r.length;t+=1)r[t].d()}}}function Ct(t,e){let n;return{key:t,first:null,c(){n=h("div"),p(n,"class","decore-inner-pixel svelte-18izcba"),g(n,"width",e[0]+"px"),g(n,"height",e[0]+"px"),this.first=n},m(t,e){s(t,n,e)},p(t,i){e=t,1&i&&g(n,"width",e[0]+"px"),1&i&&g(n,"height",e[0]+"px")},d(t){t&&c(n)}}}function Lt(t,e){let n,i,r=[],l=new Map,u=Array(17);const f=t=>t[4];for(let t=0;t<u.length;t+=1){let n=yt(e,u,t),i=f(n);l.set(i,r[t]=Ct(i,n))}return{key:t,first:null,c(){n=h("div");for(let t=0;t<r.length;t+=1)r[t].c();i=a(),p(n,"class","decore-inner-column"),g(n,"width",e[0]+"px"),g(n,"height",17*e[0]+"px"),this.first=n},m(t,e){s(t,n,e);for(let t=0;t<r.length;t+=1)r[t].m(n,null);o(n,i)},p(t,o){e=t,1&o&&(u=Array(17),r=j(r,o,f,1,e,u,l,n,R,Ct,i,yt)),1&o&&g(n,"width",e[0]+"px"),1&o&&g(n,"height",17*e[0]+"px")},d(t){t&&c(n);for(let t=0;t<r.length;t+=1)r[t].d()}}}function Rt(t,e){let n;return{key:t,first:null,c(){n=h("div"),p(n,"class","decore-inner-pixel svelte-18izcba"),g(n,"width",e[0]+"px"),g(n,"height",e[0]+"px"),this.first=n},m(t,e){s(t,n,e)},p(t,i){e=t,1&i&&g(n,"width",e[0]+"px"),1&i&&g(n,"height",e[0]+"px")},d(t){t&&c(n)}}}function jt(t,e){let n,i,r=[],l=new Map,u=Array(17);const f=t=>t[4];for(let t=0;t<u.length;t+=1){let n=vt(e,u,t),i=f(n);l.set(i,r[t]=Rt(i,n))}return{key:t,first:null,c(){n=h("div");for(let t=0;t<r.length;t+=1)r[t].c();i=a(),p(n,"class","decore-inner-column"),g(n,"width",e[0]+"px"),g(n,"height",17*e[0]+"px"),this.first=n},m(t,e){s(t,n,e);for(let t=0;t<r.length;t+=1)r[t].m(n,null);o(n,i)},p(t,o){e=t,1&o&&(u=Array(17),r=j(r,o,f,1,e,u,l,n,R,Rt,i,vt)),1&o&&g(n,"width",e[0]+"px"),1&o&&g(n,"height",17*e[0]+"px")},d(t){t&&c(n);for(let t=0;t<r.length;t+=1)r[t].d()}}}function It(t,e){let n;return{key:t,first:null,c(){n=h("div"),p(n,"class","decore-inner-pixel svelte-18izcba"),g(n,"width",e[0]+"px"),g(n,"height",e[0]+"px"),this.first=n},m(t,e){s(t,n,e)},p(t,i){e=t,1&i&&g(n,"width",e[0]+"px"),1&i&&g(n,"height",e[0]+"px")},d(t){t&&c(n)}}}function Pt(t,e){let n,i,r=[],l=new Map,u=Array(2);const f=t=>t[4];for(let t=0;t<u.length;t+=1){let n=wt(e,u,t),i=f(n);l.set(i,r[t]=It(i,n))}return{key:t,first:null,c(){n=h("div");for(let t=0;t<r.length;t+=1)r[t].c();i=a(),p(n,"class","decore-inner-column"),g(n,"width",e[0]+"px"),g(n,"height",2*e[0]+"px"),this.first=n},m(t,e){s(t,n,e);for(let t=0;t<r.length;t+=1)r[t].m(n,null);o(n,i)},p(t,o){e=t,1&o&&(u=Array(2),r=j(r,o,f,1,e,u,l,n,R,It,i,wt)),1&o&&g(n,"width",e[0]+"px"),1&o&&g(n,"height",2*e[0]+"px")},d(t){t&&c(n);for(let t=0;t<r.length;t+=1)r[t].d()}}}function Dt(t,e){let n;return{key:t,first:null,c(){n=h("div"),p(n,"class","decore-outer-pixel svelte-18izcba"),g(n,"width",e[0]+"px"),g(n,"height",e[0]+"px"),this.first=n},m(t,e){s(t,n,e)},p(t,i){e=t,1&i&&g(n,"width",e[0]+"px"),1&i&&g(n,"height",e[0]+"px")},d(t){t&&c(n)}}}function Ut(t,e){let n,i,r=[],l=new Map,u=Array(21);const f=t=>t[4];for(let t=0;t<u.length;t+=1){let n=gt(e,u,t),i=f(n);l.set(i,r[t]=Dt(i,n))}return{key:t,first:null,c(){n=h("div");for(let t=0;t<r.length;t+=1)r[t].c();i=a(),p(n,"class","decore-outer-column"),g(n,"width",e[0]+"px"),g(n,"height",21*e[0]+"px"),this.first=n},m(t,e){s(t,n,e);for(let t=0;t<r.length;t+=1)r[t].m(n,null);o(n,i)},p(t,o){e=t,1&o&&(u=Array(21),r=j(r,o,f,1,e,u,l,n,R,Dt,i,gt)),1&o&&g(n,"width",e[0]+"px"),1&o&&g(n,"height",21*e[0]+"px")},d(t){t&&c(n);for(let t=0;t<r.length;t+=1)r[t].d()}}}function Gt(t,e){let n;return{key:t,first:null,c(){n=h("div"),p(n,"class","decore-outer-pixel svelte-18izcba"),g(n,"width",e[0]+"px"),g(n,"height",e[0]+"px"),this.first=n},m(t,e){s(t,n,e)},p(t,i){e=t,1&i&&g(n,"width",e[0]+"px"),1&i&&g(n,"height",e[0]+"px")},d(t){t&&c(n)}}}function Ht(t,e){let n,i,r=[],l=new Map,u=Array(3);const f=t=>t[4];for(let t=0;t<u.length;t+=1){let n=pt(e,u,t),i=f(n);l.set(i,r[t]=Gt(i,n))}return{key:t,first:null,c(){n=h("div");for(let t=0;t<r.length;t+=1)r[t].c();i=a(),p(n,"class","decore-outer-column"),g(n,"width",e[0]+"px"),g(n,"height",3*e[0]+"px"),this.first=n},m(t,e){s(t,n,e);for(let t=0;t<r.length;t+=1)r[t].m(n,null);o(n,i)},p(t,o){e=t,1&o&&(u=Array(3),r=j(r,o,f,1,e,u,l,n,R,Gt,i,pt)),1&o&&g(n,"width",e[0]+"px"),1&o&&g(n,"height",3*e[0]+"px")},d(t){t&&c(n);for(let t=0;t<r.length;t+=1)r[t].d()}}}function Ft(t){let e,n,i,r,l,u,f,d,x,w,m,v,b,y,k,z,$,A,E,N,S,M=[],O=new Map,_=[],T=new Map,B=[],U=new Map,G=[],H=new Map,F=[],q=new Map,Y=[],X=new Map,V=[],W=new Map,J=[],Z=new Map,K=Array(116);const Q=t=>t[4];for(let e=0;e<K.length;e+=1){let n=Et(t,K,e),i=Q(n);O.set(i,M[e]=Mt(i,n))}let tt=Array(3);const et=t=>t[4];for(let e=0;e<tt.length;e+=1){let n=$t(t,tt,e),i=et(n);T.set(i,_[e]=_t(i,n))}let nt=Array(110);const it=t=>t[4];for(let e=0;e<nt.length;e+=1){let n=kt(t,nt,e),i=it(n);U.set(i,B[e]=Bt(i,n))}let rt=Array(2);const lt=t=>t[4];for(let e=0;e<rt.length;e+=1){let n=bt(t,rt,e),i=lt(n);H.set(i,G[e]=Lt(i,n))}v=new at({props:{pixelSize:t[0]}}),v.$on("click",t[1]);let ot=Array(2);const st=t=>t[4];for(let e=0;e<ot.length;e+=1){let n=mt(t,ot,e),i=st(n);q.set(i,F[e]=jt(i,n))}let ct=Array(110);const ht=t=>t[4];for(let e=0;e<ct.length;e+=1){let n=xt(t,ct,e),i=ht(n);X.set(i,Y[e]=Pt(i,n))}let ut=Array(3);const pt=t=>t[4];for(let e=0;e<ut.length;e+=1){let n=dt(t,ut,e),i=pt(n);W.set(i,V[e]=Ut(i,n))}let gt=Array(116);const wt=t=>t[4];for(let e=0;e<gt.length;e+=1){let n=ft(t,gt,e),i=wt(n);Z.set(i,J[e]=Ht(i,n))}return{c(){e=h("div"),n=h("div");for(let t=0;t<M.length;t+=1)M[t].c();i=a(),r=h("div");for(let t=0;t<_.length;t+=1)_[t].c();l=a(),u=h("div"),f=h("div");for(let t=0;t<B.length;t+=1)B[t].c();d=a(),x=h("div");for(let t=0;t<G.length;t+=1)G[t].c();w=a(),m=h("div"),I(v.$$.fragment),b=a(),y=h("div");for(let t=0;t<F.length;t+=1)F[t].c();k=a(),z=h("div");for(let t=0;t<Y.length;t+=1)Y[t].c();$=a(),A=h("div");for(let t=0;t<V.length;t+=1)V[t].c();E=a(),N=h("div");for(let t=0;t<J.length;t+=1)J[t].c();p(n,"class","decore-outer-top svelte-18izcba"),g(n,"width",116*t[0]+"px"),g(n,"height",3*t[0]+"px"),p(r,"class","decore-outer-left svelte-18izcba"),g(r,"width",3*t[0]+"px"),g(r,"height",21*t[0]+"px"),p(f,"class","decore-inner-top svelte-18izcba"),g(f,"width",110*t[0]+"px"),g(f,"height",2*t[0]+"px"),p(x,"class","decore-inner-left svelte-18izcba"),g(x,"width",2*t[0]+"px"),g(x,"height",17*t[0]+"px"),p(m,"class","child-component-container svelte-18izcba"),g(m,"width",106*t[0]+"px"),g(m,"height",17*t[0]+"px"),p(y,"class","decore-inner-right svelte-18izcba"),g(y,"width",2*t[0]+"px"),g(y,"height",17*t[0]+"px"),p(z,"class","decore-inner-bot svelte-18izcba"),g(z,"width",110*t[0]+"px"),g(z,"height",2*t[0]+"px"),p(u,"class","decore-inner svelte-18izcba"),g(u,"width",110*t[0]+"px"),g(u,"height",21*t[0]+"px"),p(A,"class","decore-outer-right svelte-18izcba"),g(A,"width",3*t[0]+"px"),g(A,"height",21*t[0]+"px"),p(N,"class","decore-outer-bot svelte-18izcba"),g(N,"width",116*t[0]+"px"),g(N,"height",3*t[0]+"px"),p(e,"class","decore svelte-18izcba"),g(e,"width",116*t[0]+"px"),g(e,"height",27*t[0]+"px")},m(t,c){s(t,e,c),o(e,n);for(let t=0;t<M.length;t+=1)M[t].m(n,null);o(e,i),o(e,r);for(let t=0;t<_.length;t+=1)_[t].m(r,null);o(e,l),o(e,u),o(u,f);for(let t=0;t<B.length;t+=1)B[t].m(f,null);o(u,d),o(u,x);for(let t=0;t<G.length;t+=1)G[t].m(x,null);o(u,w),o(u,m),P(v,m,null),o(u,b),o(u,y);for(let t=0;t<F.length;t+=1)F[t].m(y,null);o(u,k),o(u,z);for(let t=0;t<Y.length;t+=1)Y[t].m(z,null);o(e,$),o(e,A);for(let t=0;t<V.length;t+=1)V[t].m(A,null);o(e,E),o(e,N);for(let t=0;t<J.length;t+=1)J[t].m(N,null);S=!0},p(t,[i]){1&i&&(K=Array(116),M=j(M,i,Q,1,t,K,O,n,R,Mt,null,Et)),(!S||1&i)&&g(n,"width",116*t[0]+"px"),(!S||1&i)&&g(n,"height",3*t[0]+"px"),1&i&&(tt=Array(3),_=j(_,i,et,1,t,tt,T,r,R,_t,null,$t)),(!S||1&i)&&g(r,"width",3*t[0]+"px"),(!S||1&i)&&g(r,"height",21*t[0]+"px"),1&i&&(nt=Array(110),B=j(B,i,it,1,t,nt,U,f,R,Bt,null,kt)),(!S||1&i)&&g(f,"width",110*t[0]+"px"),(!S||1&i)&&g(f,"height",2*t[0]+"px"),1&i&&(rt=Array(2),G=j(G,i,lt,1,t,rt,H,x,R,Lt,null,bt)),(!S||1&i)&&g(x,"width",2*t[0]+"px"),(!S||1&i)&&g(x,"height",17*t[0]+"px");const l={};1&i&&(l.pixelSize=t[0]),v.$set(l),(!S||1&i)&&g(m,"width",106*t[0]+"px"),(!S||1&i)&&g(m,"height",17*t[0]+"px"),1&i&&(ot=Array(2),F=j(F,i,st,1,t,ot,q,y,R,jt,null,mt)),(!S||1&i)&&g(y,"width",2*t[0]+"px"),(!S||1&i)&&g(y,"height",17*t[0]+"px"),1&i&&(ct=Array(110),Y=j(Y,i,ht,1,t,ct,X,z,R,Pt,null,xt)),(!S||1&i)&&g(z,"width",110*t[0]+"px"),(!S||1&i)&&g(z,"height",2*t[0]+"px"),(!S||1&i)&&g(u,"width",110*t[0]+"px"),(!S||1&i)&&g(u,"height",21*t[0]+"px"),1&i&&(ut=Array(3),V=j(V,i,pt,1,t,ut,W,A,R,Ut,null,dt)),(!S||1&i)&&g(A,"width",3*t[0]+"px"),(!S||1&i)&&g(A,"height",21*t[0]+"px"),1&i&&(gt=Array(116),J=j(J,i,wt,1,t,gt,Z,N,R,Ht,null,ft)),(!S||1&i)&&g(N,"width",116*t[0]+"px"),(!S||1&i)&&g(N,"height",3*t[0]+"px"),(!S||1&i)&&g(e,"width",116*t[0]+"px"),(!S||1&i)&&g(e,"height",27*t[0]+"px")},i(t){S||(C(v.$$.fragment,t),S=!0)},o(t){L(v.$$.fragment,t),S=!1},d(t){t&&c(e);for(let t=0;t<M.length;t+=1)M[t].d();for(let t=0;t<_.length;t+=1)_[t].d();for(let t=0;t<B.length;t+=1)B[t].d();for(let t=0;t<G.length;t+=1)G[t].d();D(v);for(let t=0;t<F.length;t+=1)F[t].d();for(let t=0;t<Y.length;t+=1)Y[t].d();for(let t=0;t<V.length;t+=1)V[t].d();for(let t=0;t<J.length;t+=1)J[t].d()}}}function qt(t,e,n){let{pixelSize:i}=e;return t.$$set=t=>{"pixelSize"in t&&n(0,i=t.pixelSize)},[i,function(e){b.call(this,t,e)}]}class Yt extends H{constructor(t){super(),G(this,t,qt,Ft,l,{pixelSize:0})}}function Xt(t){let e,n,i,r,l,u,f,d,x,w,m,v,b,y,k,z,$,A,E,N,S,M,O,_,T,B,R,j,U,G,H,F,q,Y,X,V,W,J,Z,K,Q,tt,et,nt;return m=new Yt({props:{pixelSize:t[0]}}),m.$on("click",t[1]),{c(){e=h("div"),n=h("div"),i=a(),r=h("div"),l=a(),u=h("div"),f=a(),d=h("div"),x=a(),w=h("div"),I(m.$$.fragment),v=a(),b=h("div"),y=h("div"),k=a(),z=h("div"),$=a(),A=h("div"),E=h("div"),N=h("b"),N.textContent="Y",S=a(),M=h("div"),O=h("div"),_=h("b"),_.innerHTML="<i>k</i>",T=a(),B=h("div"),R=h("b"),R.innerHTML="<i>k+17</i>",j=a(),U=h("div"),G=h("div"),H=a(),F=h("div"),q=a(),Y=h("div"),X=h("div"),V=h("b"),V.textContent="X",W=a(),J=h("div"),Z=h("div"),K=h("b"),K.innerHTML="<i>0</i>",Q=a(),tt=h("div"),et=h("b"),et.innerHTML="<i>106</i>",p(n,"class","container-top-gradient svelte-ky55ju"),g(n,"width",116*t[0]+"px"),g(n,"height",5*t[0]+"px"),p(r,"class","container-left-gradient svelte-ky55ju"),g(r,"width",5*t[0]+"px"),g(r,"height",27*t[0]+"px"),p(u,"class","container-right-gradient svelte-ky55ju"),g(u,"width",5*t[0]+"px"),g(u,"height",27*t[0]+"px"),p(d,"class","container-bot-gradient svelte-ky55ju"),g(d,"width",116*t[0]+"px"),g(d,"height",5*t[0]+"px"),p(w,"class","child-component-container svelte-ky55ju"),g(w,"width",116*t[0]+"px"),g(w,"height",27*t[0]+"px"),p(y,"class","container-axis-y-arrow-body svelte-ky55ju"),p(z,"class","container-axis-y-arrow-head svelte-ky55ju"),g(z,"width",t[0]+"px"),g(z,"height",t[0]+"px"),g(z,"top",t[0]/5+"px"),p(E,"class","container-axis-y-arrow-rest-name svelte-ky55ju"),g(E,"font-size",t[0]/10+"em"),g(E,"right",-1.5*t[0]+"px"),g(E,"top",t[0]+"px"),p(O,"class","container-axis-y-arrow-rest-dash-first svelte-ky55ju"),g(O,"font-size",t[0]/10+"em"),g(O,"right",t[0]/2+"px"),g(O,"bottom",t[0]/5+"px"),p(B,"class","container-axis-y-arrow-rest-dash-last svelte-ky55ju"),g(B,"font-size",t[0]/10+"em"),g(B,"right",t[0]/2+"px"),g(B,"top",-1*t[0]+"px"),p(M,"class","container-axis-y-arrow-rest-dash svelte-ky55ju"),g(M,"width",5*t[0]+"px"),g(M,"height",17*t[0]+"px"),p(A,"class","container-axis-y-arrow-rest svelte-ky55ju"),g(A,"width",5*t[0]+"px"),g(A,"height",22*t[0]+"px"),p(b,"class","container-axis-y svelte-ky55ju"),g(b,"width",5*t[0]+"px"),g(b,"height",27*t[0]+"px"),p(G,"class","container-axis-x-arrow-body svelte-ky55ju"),p(F,"class","container-axis-x-arrow-head svelte-ky55ju"),g(F,"width",t[0]+"px"),g(F,"height",t[0]+"px"),g(F,"right",t[0]/5+"px"),p(X,"class","container-axis-x-arrow-rest-name svelte-ky55ju"),g(X,"font-size",t[0]/10+"em"),g(X,"right",1.3*t[0]+"px"),g(X,"top",-2*t[0]+"px"),p(Z,"class","container-axis-x-arrow-rest-dash-first svelte-ky55ju"),g(Z,"font-size",t[0]/10+"em"),g(Z,"left",t[0]/5+"px"),p(tt,"class","container-axis-x-arrow-rest-dash-last svelte-ky55ju"),g(tt,"font-size",t[0]/10+"em"),g(tt,"right",-1*t[0]+"px"),p(J,"class","container-axis-x-arrow-rest-dash svelte-ky55ju"),g(J,"width",106*t[0]+"px"),g(J,"height",5*t[0]+"px"),p(Y,"class","container-axis-x-arrow-rest svelte-ky55ju"),g(Y,"width",111*t[0]+"px"),g(Y,"height",5*t[0]+"px"),p(U,"class","container-axis-x svelte-ky55ju"),g(U,"width",116*t[0]+"px"),g(U,"height",5*t[0]+"px"),p(e,"class","container svelte-ky55ju"),g(e,"width",116*t[0]+"px"),g(e,"height",27*t[0]+"px")},m(t,c){s(t,e,c),o(e,n),o(e,i),o(e,r),o(e,l),o(e,u),o(e,f),o(e,d),o(e,x),o(e,w),P(m,w,null),o(e,v),o(e,b),o(b,y),o(b,k),o(b,z),o(b,$),o(b,A),o(A,E),o(E,N),o(A,S),o(A,M),o(M,O),o(O,_),o(M,T),o(M,B),o(B,R),o(e,j),o(e,U),o(U,G),o(U,H),o(U,F),o(U,q),o(U,Y),o(Y,X),o(X,V),o(Y,W),o(Y,J),o(J,Z),o(Z,K),o(J,Q),o(J,tt),o(tt,et),nt=!0},p(t,[i]){(!nt||1&i)&&g(n,"width",116*t[0]+"px"),(!nt||1&i)&&g(n,"height",5*t[0]+"px"),(!nt||1&i)&&g(r,"width",5*t[0]+"px"),(!nt||1&i)&&g(r,"height",27*t[0]+"px"),(!nt||1&i)&&g(u,"width",5*t[0]+"px"),(!nt||1&i)&&g(u,"height",27*t[0]+"px"),(!nt||1&i)&&g(d,"width",116*t[0]+"px"),(!nt||1&i)&&g(d,"height",5*t[0]+"px");const l={};1&i&&(l.pixelSize=t[0]),m.$set(l),(!nt||1&i)&&g(w,"width",116*t[0]+"px"),(!nt||1&i)&&g(w,"height",27*t[0]+"px"),(!nt||1&i)&&g(z,"width",t[0]+"px"),(!nt||1&i)&&g(z,"height",t[0]+"px"),(!nt||1&i)&&g(z,"top",t[0]/5+"px"),(!nt||1&i)&&g(E,"font-size",t[0]/10+"em"),(!nt||1&i)&&g(E,"right",-1.5*t[0]+"px"),(!nt||1&i)&&g(E,"top",t[0]+"px"),(!nt||1&i)&&g(O,"font-size",t[0]/10+"em"),(!nt||1&i)&&g(O,"right",t[0]/2+"px"),(!nt||1&i)&&g(O,"bottom",t[0]/5+"px"),(!nt||1&i)&&g(B,"font-size",t[0]/10+"em"),(!nt||1&i)&&g(B,"right",t[0]/2+"px"),(!nt||1&i)&&g(B,"top",-1*t[0]+"px"),(!nt||1&i)&&g(M,"width",5*t[0]+"px"),(!nt||1&i)&&g(M,"height",17*t[0]+"px"),(!nt||1&i)&&g(A,"width",5*t[0]+"px"),(!nt||1&i)&&g(A,"height",22*t[0]+"px"),(!nt||1&i)&&g(b,"width",5*t[0]+"px"),(!nt||1&i)&&g(b,"height",27*t[0]+"px"),(!nt||1&i)&&g(F,"width",t[0]+"px"),(!nt||1&i)&&g(F,"height",t[0]+"px"),(!nt||1&i)&&g(F,"right",t[0]/5+"px"),(!nt||1&i)&&g(X,"font-size",t[0]/10+"em"),(!nt||1&i)&&g(X,"right",1.3*t[0]+"px"),(!nt||1&i)&&g(X,"top",-2*t[0]+"px"),(!nt||1&i)&&g(Z,"font-size",t[0]/10+"em"),(!nt||1&i)&&g(Z,"left",t[0]/5+"px"),(!nt||1&i)&&g(tt,"font-size",t[0]/10+"em"),(!nt||1&i)&&g(tt,"right",-1*t[0]+"px"),(!nt||1&i)&&g(J,"width",106*t[0]+"px"),(!nt||1&i)&&g(J,"height",5*t[0]+"px"),(!nt||1&i)&&g(Y,"width",111*t[0]+"px"),(!nt||1&i)&&g(Y,"height",5*t[0]+"px"),(!nt||1&i)&&g(U,"width",116*t[0]+"px"),(!nt||1&i)&&g(U,"height",5*t[0]+"px"),(!nt||1&i)&&g(e,"width",116*t[0]+"px"),(!nt||1&i)&&g(e,"height",27*t[0]+"px")},i(t){nt||(C(m.$$.fragment,t),nt=!0)},o(t){L(m.$$.fragment,t),nt=!1},d(t){t&&c(e),D(m)}}}function Vt(t,e,n){let{pixelSize:i}=e;return t.$$set=t=>{"pixelSize"in t&&n(0,i=t.pixelSize)},[i,function(e){b.call(this,t,e)}]}class Wt extends H{constructor(t){super(),G(this,t,Vt,Xt,l,{pixelSize:0})}}let Jt=[{id:0,text:"Custom",value:"0"},{id:1,text:"Tuppers default",value:"00110010101000100001010101011111000010010010100000000000000000000000000000001000000000000000101000000000000010001000000000000000000000001111111111111111110000000000000000100000111100000000000000001000000000000011100000000000000000100000000000001110000000000000000000000000000000011000000000000001001000000000000010010000000000000011000000000000000000000000000000001100000000000000100100000000000001001000000000000011111100000000000000000000000000011111110000000111000000011100110000000000000110000000000000000011111111111111110100000000000000001011111010000000000000000101011000001100101001000001000111010001100010000000000000000111111111111111100000000000000000000000011001000000000000101001000000000001001010000000000010001000100000000000000001000000000000000000000000000000011111000000000000000000000000000001100100000000000000111000000000000000000000000001111111100000000010000000000000000100101000000000000000100000000000010010100000000000100000000000000001111111100000000000000000000000000000001000000000000000010000000000000000000000000000000111000000000000000010000000000000011100000000000000001000000000000001100000000000000000000000000000000111000000000000001010000000000000011100000000000000000000000000000001110000000000000010100000000000000111110000000000000000000000000000111100000000000110000110000000000000000000000000011111111000000000100000000000000001010110000000000000010000000000000100011000000000001000000000000000011111111000000000000000000000000001000000000000000001100000000000000000000000000000000001111100000000000000000000000000000110010000000000000011100000000000000000000000000110000110001000000011110000001100000000000000000000000000000000001100100000000000010100100000000000100101000001100001000100001100111000000011100100001111111000001000000000000000011111111111111111"},{id:2,text:"Tuppers mirrored",value:"11111111111111111000000000000000010000011111110000100111000000011100110000100010000110000010100100000000000100101000000000000100110000000000000000000000000000000000110000001111000000010001100001100000000000000000000000000111000000000000001001100000000000000000000000000000111110000000000000000000000000000000000110000000000000000010000000000000000000000000011111111000000000000000010000000000011000100000000000001000000000000001101010000000000000000100000000011111111000000000000000000000000001100001100000000000111100000000000000000000000000001111100000000000000101000000000000001110000000000000000000000000000000111000000000000001010000000000000011100000000000000000000000000000000110000000000000010000000000000000111000000000000001000000000000000011100000000000000000000000000000001000000000000000010000000000000000000000000000000111111110000000000000000100000000000101001000000000000100000000000000010100100000000000000001000000000111111110000000000000000000000000011100000000000000100110000000000000000000000000000011111000000000000000000000000000000010000000000000000100010001000000000001010010000000000010010100000000000010011000000000000000000000000111111111111111100000000000000001000110001011100010000010010100110000011010100000000000000001011111010000000000000000101111111111111111000000000000000001100000000000001100111000000011100000001111111000000000000000000000000000111111000000000000010010000000000000100100000000000000110000000000000000000000000000000011000000000000001001000000000000010010000000000000011000000000000000000000000000000001110000000000000100000000000000000111000000000000010000000000000000111100000100000000000000001111111111111111110000000000000000000000010001000000000000010100000000000000010000000000000000000000000000000101001001000011111010101010000100010101001100"},{id:3,text:"Hello there",value:"11111111111111111100000000000000011000000000000000110000000000000001111111100011111111111111000111111111111110001111111111111100011111111111111000111111111111110001111111100000000000000011000000000000000110000000000000001111111111111111111111111111111111111100000001111111110000000001111111000000000001111110000000000011111100011001000111111000110010001111110000100000011111100001000000111111100010000011111111100100001111111111111111111111111111111111111111110000000000000001100000000000000011000000000000000111111111111111111111111111111111111000000000000000110000000000000001100000000000000011111111111111111111111111111111111111000000011111111100000000011111110000000000011111100000100000111111000111110001111110001111100011111100011111000111111000001000001111110000000000011111110000000001111111110000000111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110011111100000000000001111000000000000001110000000000000011100011111100111111000111111001111111111111111111111111111111111111111000000000000000110000000000000001100000000000000011111111000011111111111111100011111111111111000111111111111110001111111111111000011111100000000000111111000000000001111110000000000111111111111111111111111111111111111111111100000001111111110000000001111111000000000001111110000000000011111100011001000111111000110010001111110000100000011111100001000000111111100010000011111111100100001111111111111111111111111111111111111111110000000000011111100000000000111111000000000001111111111100000011111111111111000111111111111110001111111111111100011111111111111111111111110000000111111111000000000111111100000000000111111000000000001111110001100100011111100011001000111111000010000001111110000100000011111110001000001111111110010000111111111111111111111111"}];function Zt(t,e,n){const i=t.slice();return i[13]=e[n],i}function Kt(e){let n,i,r,l,f=e[13].text+"";return{c(){n=h("option"),i=u(f),r=a(),n.__value=l=e[13].id,n.value=n.__value},m(t,e){s(t,n,e),o(n,i),o(n,r)},p:t,d(t){t&&c(n)}}}function Qt(t){let e,n,r,l,w,m,v,b,y,k,z,$,A,E,S,M,O,_,T,B,R,j,U,G,H,F,q,Y,X,V,W,J,Z,K,Q,tt,et,nt;r=new Wt({props:{pixelSize:t[0]}}),r.$on("click",t[9]);let it=Jt,rt=[];for(let e=0;e<it.length;e+=1)rt[e]=Kt(Zt(t,it,e));return{c(){e=h("div"),n=h("div"),I(r.$$.fragment),l=a(),w=h("div"),m=h("div"),v=h("button"),b=h("i"),y=u("k"),k=h("sub"),z=u(t[3]),$=a(),A=h("textarea"),E=a(),S=h("div"),M=h("button"),O=u("Comment"),_=a(),T=h("button"),B=u("Paste"),R=a(),j=h("button"),U=u("Copy"),G=a(),H=h("div"),F=h("button"),q=h("button"),Y=u("Tutorial"),X=a(),V=h("button"),W=h("select");for(let t=0;t<rt.length;t+=1)rt[t].c();J=a(),Z=h("button"),K=h("button"),Q=u("Clear!"),p(n,"class","child-component-container svelte-b4cm5k"),g(n,"width",116*t[0]+"px"),g(n,"height",27*t[0]+"px"),p(v,"type","button"),g(v,"font-size",2*t[0]-4+"px"),g(v,"width",8*t[0]+"px"),g(v,"height",2.5*t[0]+"px"),p(v,"class","svelte-b4cm5k"),p(A,"id","textarea"),g(A,"line-height",2.5*t[0]-1+"px"),g(A,"font-size",2*t[0]-6+"px"),g(A,"width",88*t[0]+"px"),g(A,"height",2.5*t[0]+"px"),p(A,"class","svelte-b4cm5k"),p(m,"class","k-buttons-value svelte-b4cm5k"),g(m,"width",96*t[0]+"px"),g(m,"height",2.5*t[0]+"px"),p(M,"class","k-buttons-action-comment svelte-b4cm5k"),p(M,"type","button"),g(M,"font-size",2*t[0]-6+"px"),g(M,"width",12*t[0]+"px"),g(M,"height",2.5*t[0]+"px"),p(T,"class","k-buttons-action-paste svelte-b4cm5k"),p(T,"type","button"),g(T,"font-size",2*t[0]-6+"px"),g(T,"width",12*t[0]+"px"),g(T,"height",2.5*t[0]+"px"),p(j,"class","k-buttons-action-copy svelte-b4cm5k"),p(j,"type","button"),g(j,"font-size",2*t[0]-6+"px"),g(j,"width",12*t[0]+"px"),g(j,"height",2.5*t[0]+"px"),p(q,"class","k-buttons-action-options-tutorial-button svelte-b4cm5k"),p(q,"type","button"),g(q,"font-size",2*t[0]-6+"px"),g(q,"width",13.5*t[0]+"px"),g(q,"height",2.5*t[0]+"px"),p(F,"class","k-buttons-action-options-tutorial svelte-b4cm5k"),p(F,"type","button"),g(F,"width",2.5*t[0]+"px"),g(F,"height",2.5*t[0]+"px"),p(W,"id","kvalueselector"),p(W,"class","k-buttons-action-options-select-selector svelte-b4cm5k"),g(W,"font-size",2*t[0]-6+"px"),g(W,"width",13.5*t[0]+"px"),g(W,"height",2.5*t[0]+"px"),void 0===t[1]&&N((()=>t[11].call(W))),p(V,"class","k-buttons-action-options-select svelte-b4cm5k"),p(V,"type","button"),g(V,"font-size",2*t[0]-6+"px"),g(V,"width",2.5*t[0]+"px"),g(V,"height",2.5*t[0]+"px"),p(K,"class","k-buttons-action-options-clear-confirm svelte-b4cm5k"),p(K,"type","button"),g(K,"font-size",2*t[0]-6+"px"),g(K,"width",13.5*t[0]+"px"),g(K,"height",2.5*t[0]+"px"),p(Z,"class","k-buttons-action-options-clear svelte-b4cm5k"),p(Z,"type","button"),g(Z,"width",2.5*t[0]+"px"),g(Z,"height",2.5*t[0]+"px"),p(H,"class","k-buttons-action-options svelte-b4cm5k"),g(H,"width",50*t[0]+"px"),g(H,"height",2.5*t[0]+"px"),p(S,"class","k-buttons-action svelte-b4cm5k"),g(S,"width",96*t[0]+"px"),g(S,"height",2.5*t[0]+"px"),p(w,"class","k-buttons svelte-b4cm5k"),g(w,"width",96*t[0]+"px"),g(w,"height",6*t[0]+"px"),p(e,"class","buttons svelte-b4cm5k"),g(e,"width",116*t[0]+"px"),g(e,"height",33*t[0]+"px"),g(e,"padding-top",t[0]+"px")},m(i,c){s(i,e,c),o(e,n),P(r,n,null),o(e,l),o(e,w),o(w,m),o(m,v),o(v,b),o(b,y),o(b,k),o(k,z),o(m,$),o(m,A),d(A,t[2]),o(w,E),o(w,S),o(S,M),o(M,O),o(S,_),o(S,T),o(T,B),o(S,R),o(S,j),o(j,U),o(S,G),o(S,H),o(H,F),o(F,q),o(q,Y),o(H,X),o(H,V),o(V,W);for(let t=0;t<rt.length;t+=1)rt[t].m(W,null);x(W,t[1]),o(H,J),o(H,Z),o(Z,K),o(K,Q),tt=!0,et||(nt=[f(v,"click",t[4]),f(A,"input",t[10]),f(A,"input",t[8]),f(M,"click",ee),f(T,"click",t[5]),f(j,"click",te),f(q,"click",ie),f(F,"click",ne),f(W,"change",t[11]),f(V,"click",ne),f(V,"change",t[6]),f(K,"click",t[7]),f(Z,"click",ne)],et=!0)},p(t,[i]){const l={};if(1&i&&(l.pixelSize=t[0]),r.$set(l),(!tt||1&i)&&g(n,"width",116*t[0]+"px"),(!tt||1&i)&&g(n,"height",27*t[0]+"px"),(!tt||8&i)&&function(t,e){e=""+e,t.wholeText!==e&&(t.data=e)}(z,t[3]),(!tt||1&i)&&g(v,"font-size",2*t[0]-4+"px"),(!tt||1&i)&&g(v,"width",8*t[0]+"px"),(!tt||1&i)&&g(v,"height",2.5*t[0]+"px"),(!tt||1&i)&&g(A,"line-height",2.5*t[0]-1+"px"),(!tt||1&i)&&g(A,"font-size",2*t[0]-6+"px"),(!tt||1&i)&&g(A,"width",88*t[0]+"px"),(!tt||1&i)&&g(A,"height",2.5*t[0]+"px"),4&i&&d(A,t[2]),(!tt||1&i)&&g(m,"width",96*t[0]+"px"),(!tt||1&i)&&g(m,"height",2.5*t[0]+"px"),(!tt||1&i)&&g(M,"font-size",2*t[0]-6+"px"),(!tt||1&i)&&g(M,"width",12*t[0]+"px"),(!tt||1&i)&&g(M,"height",2.5*t[0]+"px"),(!tt||1&i)&&g(T,"font-size",2*t[0]-6+"px"),(!tt||1&i)&&g(T,"width",12*t[0]+"px"),(!tt||1&i)&&g(T,"height",2.5*t[0]+"px"),(!tt||1&i)&&g(j,"font-size",2*t[0]-6+"px"),(!tt||1&i)&&g(j,"width",12*t[0]+"px"),(!tt||1&i)&&g(j,"height",2.5*t[0]+"px"),(!tt||1&i)&&g(q,"font-size",2*t[0]-6+"px"),(!tt||1&i)&&g(q,"width",13.5*t[0]+"px"),(!tt||1&i)&&g(q,"height",2.5*t[0]+"px"),(!tt||1&i)&&g(F,"width",2.5*t[0]+"px"),(!tt||1&i)&&g(F,"height",2.5*t[0]+"px"),0&i){let e;for(it=Jt,e=0;e<it.length;e+=1){const n=Zt(t,it,e);rt[e]?rt[e].p(n,i):(rt[e]=Kt(n),rt[e].c(),rt[e].m(W,null))}for(;e<rt.length;e+=1)rt[e].d(1);rt.length=it.length}(!tt||1&i)&&g(W,"font-size",2*t[0]-6+"px"),(!tt||1&i)&&g(W,"width",13.5*t[0]+"px"),(!tt||1&i)&&g(W,"height",2.5*t[0]+"px"),2&i&&x(W,t[1]),(!tt||1&i)&&g(V,"font-size",2*t[0]-6+"px"),(!tt||1&i)&&g(V,"width",2.5*t[0]+"px"),(!tt||1&i)&&g(V,"height",2.5*t[0]+"px"),(!tt||1&i)&&g(K,"font-size",2*t[0]-6+"px"),(!tt||1&i)&&g(K,"width",13.5*t[0]+"px"),(!tt||1&i)&&g(K,"height",2.5*t[0]+"px"),(!tt||1&i)&&g(Z,"width",2.5*t[0]+"px"),(!tt||1&i)&&g(Z,"height",2.5*t[0]+"px"),(!tt||1&i)&&g(H,"width",50*t[0]+"px"),(!tt||1&i)&&g(H,"height",2.5*t[0]+"px"),(!tt||1&i)&&g(S,"width",96*t[0]+"px"),(!tt||1&i)&&g(S,"height",2.5*t[0]+"px"),(!tt||1&i)&&g(w,"width",96*t[0]+"px"),(!tt||1&i)&&g(w,"height",6*t[0]+"px"),(!tt||1&i)&&g(e,"width",116*t[0]+"px"),(!tt||1&i)&&g(e,"height",33*t[0]+"px"),(!tt||1&i)&&g(e,"padding-top",t[0]+"px")},i(t){tt||(C(r.$$.fragment,t),tt=!0)},o(t){L(r.$$.fragment,t),tt=!1},d(t){t&&c(e),D(r),function(t,e){for(let n=0;n<t.length;n+=1)t[n]&&t[n].d(e)}(rt,t),et=!1,i(nt)}}}function te(){const t=document.getElementById("textarea");t.select(),t.setSelectionRange(0,99999),navigator.clipboard.writeText(t.value)}function ee(){alert("to be added soon")}function ne(t){t.target.firstChild.style&&("block"!=t.target.firstChild.style.display?(t.target.firstChild.style.display="block",t.target.style.borderRadius="7px",t.target.style.transition="0.25s",t.target.style.flexGrow="0.35"):(t.target.firstChild.style.display="none",t.target.style.borderRadius="100%",t.target.style.flexGrow="0"))}function ie(t){alert("click on canvas and paint!")}function re(t,e,n){let{pixelSize:i}=e,r=0,l="",o="",s="dec";return tt.subscribe((t=>{o=t,n(2,l=V(o,s))})),t.$$set=t=>{"pixelSize"in t&&n(0,i=t.pixelSize)},[i,r,l,s,function(){n(3,s="b64"===s?"dec":"dec"===s?"bin":"bin"===s?"b64":"dec"),n(2,l=V(o,s))},function(){if("function"==typeof navigator.clipboard.readText){let t;navigator.clipboard.readText().then((e=>t=e)),t=W(t,s),tt.update((e=>t)),n(1,r=0)}else alert("browser clipboard access refused, please paste manually")},function(t){let e=Jt[r].value;tt.update((t=>e))},function(t){tt.update((t=>"0")),n(1,r=0)},function(){let t=W(l,s);tt.update((e=>t)),n(1,r=0)},function(e){b.call(this,t,e)},function(){l=this.value,n(2,l)},function(){r=function(t){const e=t.querySelector(":checked")||t.options[0];return e&&e.__value}(this),n(1,r)}]}class le extends H{constructor(t){super(),G(this,t,re,Qt,l,{pixelSize:0})}}function oe(t){let e,n,i;return n=new le({props:{pixelSize:t[8]}}),n.$on("click",t[9]),{c(){e=h("div"),I(n.$$.fragment),p(e,"class","child-component-container svelte-zbrmfy"),g(e,"width",116*t[8]+"px"),g(e,"height",34*t[8]+"px"),g(e,"transform","rotate("+t[6]+"deg) translate("+t[4]+"px, "+t[5]+"px)")},m(t,r){s(t,e,r),P(n,e,null),i=!0},p(t,r){const l={};256&r&&(l.pixelSize=t[8]),n.$set(l),(!i||256&r)&&g(e,"width",116*t[8]+"px"),(!i||256&r)&&g(e,"height",34*t[8]+"px"),(!i||112&r)&&g(e,"transform","rotate("+t[6]+"deg) translate("+t[4]+"px, "+t[5]+"px)")},i(t){i||(C(n.$$.fragment,t),i=!0)},o(t){L(n.$$.fragment,t),i=!1},d(t){t&&c(e),D(n)}}}function se(t){let e,n,r,l,u,d,x,w,m,v,b,y,k,z,$;n=new Wt({props:{pixelSize:t[8]}}),n.$on("click",t[9]);let A=t[3]&&ce(t);return{c(){e=h("div"),I(n.$$.fragment),r=a(),A&&A.c(),l=a(),u=h("div"),d=h("button"),x=a(),w=h("button"),m=a(),v=h("button"),b=a(),y=h("button"),p(e,"class","child-component-container svelte-zbrmfy"),g(e,"width",116*t[8]+"px"),g(e,"height",27*t[8]+"px"),g(e,"transform","rotate("+t[6]+"deg) translate("+t[4]+"px, "+t[5]+"px)"),p(d,"class","basecontrol-buttons-brush svelte-zbrmfy"),p(d,"type","button"),g(d,"width",2.5*t[8]+"px"),g(d,"height",2.5*t[8]+"px"),p(w,"class","basecontrol-buttons-erase svelte-zbrmfy"),p(w,"type","button"),g(w,"width",2.5*t[8]+"px"),g(w,"height",2.5*t[8]+"px"),p(v,"class","basecontrol-buttons-move svelte-zbrmfy"),p(v,"type","button"),g(v,"width",2.5*t[8]+"px"),g(v,"height",2.5*t[8]+"px"),p(y,"class","basecontrol-buttons-exit svelte-zbrmfy"),p(y,"type","button"),g(y,"width",2.5*t[8]+"px"),g(y,"height",2.5*t[8]+"px"),p(u,"class","basecontrol-buttons svelte-zbrmfy"),g(u,"width",12*t[8]+"px"),g(u,"height",2.5*t[8]+"px")},m(i,c){s(i,e,c),P(n,e,null),o(e,r),A&&A.m(e,null),s(i,l,c),s(i,u,c),o(u,d),o(u,x),o(u,w),o(u,m),o(u,v),o(u,b),o(u,y),k=!0,z||($=[f(d,"click",t[10]),f(w,"click",t[11]),f(v,"click",t[12]),f(y,"click",t[13])],z=!0)},p(t,i){const r={};256&i&&(r.pixelSize=t[8]),n.$set(r),t[3]?A?A.p(t,i):(A=ce(t),A.c(),A.m(e,null)):A&&(A.d(1),A=null),(!k||256&i)&&g(e,"width",116*t[8]+"px"),(!k||256&i)&&g(e,"height",27*t[8]+"px"),(!k||112&i)&&g(e,"transform","rotate("+t[6]+"deg) translate("+t[4]+"px, "+t[5]+"px)"),(!k||256&i)&&g(d,"width",2.5*t[8]+"px"),(!k||256&i)&&g(d,"height",2.5*t[8]+"px"),(!k||256&i)&&g(w,"width",2.5*t[8]+"px"),(!k||256&i)&&g(w,"height",2.5*t[8]+"px"),(!k||256&i)&&g(v,"width",2.5*t[8]+"px"),(!k||256&i)&&g(v,"height",2.5*t[8]+"px"),(!k||256&i)&&g(y,"width",2.5*t[8]+"px"),(!k||256&i)&&g(y,"height",2.5*t[8]+"px"),(!k||256&i)&&g(u,"width",12*t[8]+"px"),(!k||256&i)&&g(u,"height",2.5*t[8]+"px")},i(t){k||(C(n.$$.fragment,t),k=!0)},o(t){L(n.$$.fragment,t),k=!1},d(t){t&&c(e),D(n),A&&A.d(),t&&c(l),t&&c(u),z=!1,i($)}}}function ce(t){let e;return{c(){e=h("div"),p(e,"class","child-component-container-cover svelte-zbrmfy"),g(e,"width",116*t[8]+"px"),g(e,"height",27*t[8]+"px")},m(t,n){s(t,e,n)},p(t,n){256&n&&g(e,"width",116*t[8]+"px"),256&n&&g(e,"height",27*t[8]+"px")},d(t){t&&c(e)}}}function he(e){let n;return{c(){n=h("div"),p(n,"class","base-resize-fixer svelte-zbrmfy")},m(t,e){s(t,n,e)},p:t,d(t){t&&c(n)}}}function ue(t){let e,n,i,r,l,u,f,d,x,w,m,v,b,y,k,z,$,A,E,N,S,M,O,_,T,B,C,L,R,j,I,P,D,U,G;return{c(){e=h("div"),n=h("div"),i=h("h1"),i.textContent="Loading...",r=a(),l=h("div"),u=a(),f=h("div"),d=a(),x=h("div"),w=a(),m=h("div"),v=a(),b=h("div"),y=a(),k=h("div"),z=a(),$=h("div"),A=a(),E=h("div"),N=a(),S=h("div"),M=a(),O=h("div"),_=a(),T=h("div"),B=a(),C=h("div"),L=a(),R=h("div"),j=a(),I=h("div"),P=a(),D=h("div"),U=a(),G=h("div"),p(i,"class","base-loading-text svelte-zbrmfy"),p(l,"class","cell d-0 svelte-zbrmfy"),p(f,"class","cell d-1 svelte-zbrmfy"),p(x,"class","cell d-2 svelte-zbrmfy"),p(m,"class","cell d-3 svelte-zbrmfy"),p(b,"class","cell d-1 svelte-zbrmfy"),p(k,"class","cell d-2 svelte-zbrmfy"),p($,"class","cell d-3 svelte-zbrmfy"),p(E,"class","cell d-4 svelte-zbrmfy"),p(S,"class","cell d-2 svelte-zbrmfy"),p(O,"class","cell d-3 svelte-zbrmfy"),p(T,"class","cell d-4 svelte-zbrmfy"),p(C,"class","cell d-5 svelte-zbrmfy"),p(R,"class","cell d-3 svelte-zbrmfy"),p(I,"class","cell d-4 svelte-zbrmfy"),p(D,"class","cell d-5 svelte-zbrmfy"),p(G,"class","cell d-6 svelte-zbrmfy"),p(n,"class","base-loading-mosaic svelte-zbrmfy"),g(n,"--cell-size",t[7]+"px"),p(e,"class","base-loading svelte-zbrmfy")},m(t,c){s(t,e,c),o(e,n),o(n,i),o(n,r),o(n,l),o(n,u),o(n,f),o(n,d),o(n,x),o(n,w),o(n,m),o(n,v),o(n,b),o(n,y),o(n,k),o(n,z),o(n,$),o(n,A),o(n,E),o(n,N),o(n,S),o(n,M),o(n,O),o(n,_),o(n,T),o(n,B),o(n,C),o(n,L),o(n,R),o(n,j),o(n,I),o(n,P),o(n,D),o(n,U),o(n,G)},p(t,e){128&e&&g(n,"--cell-size",t[7]+"px")},d(t){t&&c(e)}}}function ae(t){let e,n,r,l,u;const f=[se,oe],d=[];function g(t,e){return t[2]?0:1}function x(t,e){return t[0]?ue:t[1]?he:void 0}n=g(t),r=d[n]=f[n](t);let w=x(t),m=w&&w(t);return{c(){e=h("div"),r.c(),l=a(),m&&m.c(),p(e,"class","basecontrol svelte-zbrmfy")},m(t,i){s(t,e,i),d[n].m(e,null),o(e,l),m&&m.m(e,null),u=!0},p(t,[o]){let s=n;n=g(t),n===s?d[n].p(t,o):(B={r:0,c:[],p:B},L(d[s],1,1,(()=>{d[s]=null})),B.r||i(B.c),B=B.p,r=d[n],r?r.p(t,o):(r=d[n]=f[n](t),r.c()),C(r,1),r.m(e,l)),w===(w=x(t))&&m?m.p(t,o):(m&&m.d(1),m=w&&w(t),m&&(m.c(),m.m(e,null)))},i(t){u||(C(r),u=!0)},o(t){L(r),u=!1},d(t){t&&c(e),d[n].d(),m&&m.d()}}}function fe(t,e,n){let i=!1,r=!1,l=!1,o=!1,s=!0,c=0,h=0,u=0,a=0,f=0;function p(t,e,i,r){let o=t>e?e:t;return o=o<=r?o:r,o=o>=i?o:i,n(7,a=o/10*64),l?r:o}function d(){n(1,r=!0);let t=window.innerWidth,e=window.innerHeight,o=116,s=l?27:34;if(n(4,c=0),n(5,h=0),n(6,u=0),window.matchMedia("(orientation: portrait)").matches){n(8,f=p(Math.floor(t/s),Math.floor(e/o),4,16));let i=f*s,r=f*o;n(6,u=-90),n(4,c=e<r?-1*r:-1*(e-(e-r)/2)),t>i&&n(5,h=(t-i)/2)}else if(window.matchMedia("(orientation: landscape)").matches){n(8,f=p(Math.floor(t/o),Math.floor(e/s),4,16));let i=f*o,r=f*s;l||(n(4,c=(t-i)/2),n(5,h=(e-r)/2))}i&&setTimeout((()=>{n(0,i=!1)}),1200*Math.random()|600),setTimeout((()=>{n(1,r=!1)}),300),console.log(`page loaded: width = ${t}, height = ${e}, pixelSize = ${f}px.`)}const g=function(t,e){let n;return function(){const i=this,r=arguments;clearTimeout(n),n=setTimeout((()=>t.apply(i,r)),e)}}(d,330);function x(t){n(2,l=!l),n(0,i=!0),n(3,s=!0),d(),et.update((t=>l))}return v((()=>(window.addEventListener("resize",g),n(0,i=!0),d(),()=>{window.removeEventListener("resize",g)}))),[i,r,l,s,c,h,u,a,f,x,function(){n(3,s=!1),o=!0,nt.update((t=>o))},function(){n(3,s=!1),o=!1,nt.update((t=>o))},function(){n(3,s=!0)},function(){x()}]}class pe extends H{constructor(t){super(),G(this,t,fe,ae,l,{})}}function de(e){let n,i;return n=new pe({}),{c(){I(n.$$.fragment)},m(t,e){P(n,t,e),i=!0},p:t,i(t){i||(C(n.$$.fragment,t),i=!0)},o(t){L(n.$$.fragment,t),i=!1},d(t){D(n,t)}}}return new class extends H{constructor(t){super(),G(this,t,null,de,l,{})}}({target:document.body})}();
+
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
+var app = (function () {
+    'use strict';
+
+    function noop() { }
+    function add_location(element, file, line, column, char) {
+        element.__svelte_meta = {
+            loc: { file, line, column, char }
+        };
+    }
+    function run(fn) {
+        return fn();
+    }
+    function blank_object() {
+        return Object.create(null);
+    }
+    function run_all(fns) {
+        fns.forEach(run);
+    }
+    function is_function(thing) {
+        return typeof thing === 'function';
+    }
+    function safe_not_equal(a, b) {
+        return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
+    }
+    function is_empty(obj) {
+        return Object.keys(obj).length === 0;
+    }
+    function append(target, node) {
+        target.appendChild(node);
+    }
+    function insert(target, node, anchor) {
+        target.insertBefore(node, anchor || null);
+    }
+    function detach(node) {
+        node.parentNode.removeChild(node);
+    }
+    function destroy_each(iterations, detaching) {
+        for (let i = 0; i < iterations.length; i += 1) {
+            if (iterations[i])
+                iterations[i].d(detaching);
+        }
+    }
+    function element(name) {
+        return document.createElement(name);
+    }
+    function text(data) {
+        return document.createTextNode(data);
+    }
+    function space() {
+        return text(' ');
+    }
+    function listen(node, event, handler, options) {
+        node.addEventListener(event, handler, options);
+        return () => node.removeEventListener(event, handler, options);
+    }
+    function attr(node, attribute, value) {
+        if (value == null)
+            node.removeAttribute(attribute);
+        else if (node.getAttribute(attribute) !== value)
+            node.setAttribute(attribute, value);
+    }
+    function children(element) {
+        return Array.from(element.childNodes);
+    }
+    function set_input_value(input, value) {
+        input.value = value == null ? '' : value;
+    }
+    function set_style(node, key, value, important) {
+        if (value === null) {
+            node.style.removeProperty(key);
+        }
+        else {
+            node.style.setProperty(key, value, important ? 'important' : '');
+        }
+    }
+    function select_option(select, value) {
+        for (let i = 0; i < select.options.length; i += 1) {
+            const option = select.options[i];
+            if (option.__value === value) {
+                option.selected = true;
+                return;
+            }
+        }
+        select.selectedIndex = -1; // no option should be selected
+    }
+    function select_value(select) {
+        const selected_option = select.querySelector(':checked') || select.options[0];
+        return selected_option && selected_option.__value;
+    }
+    function custom_event(type, detail, { bubbles = false, cancelable = false } = {}) {
+        const e = document.createEvent('CustomEvent');
+        e.initCustomEvent(type, bubbles, cancelable, detail);
+        return e;
+    }
+
+    let current_component;
+    function set_current_component(component) {
+        current_component = component;
+    }
+    function get_current_component() {
+        if (!current_component)
+            throw new Error('Function called outside component initialization');
+        return current_component;
+    }
+    function onMount(fn) {
+        get_current_component().$$.on_mount.push(fn);
+    }
+    // TODO figure out if we still want to support
+    // shorthand events, or if we want to implement
+    // a real bubbling mechanism
+    function bubble(component, event) {
+        const callbacks = component.$$.callbacks[event.type];
+        if (callbacks) {
+            // @ts-ignore
+            callbacks.slice().forEach(fn => fn.call(this, event));
+        }
+    }
+
+    const dirty_components = [];
+    const binding_callbacks = [];
+    const render_callbacks = [];
+    const flush_callbacks = [];
+    const resolved_promise = Promise.resolve();
+    let update_scheduled = false;
+    function schedule_update() {
+        if (!update_scheduled) {
+            update_scheduled = true;
+            resolved_promise.then(flush);
+        }
+    }
+    function add_render_callback(fn) {
+        render_callbacks.push(fn);
+    }
+    // flush() calls callbacks in this order:
+    // 1. All beforeUpdate callbacks, in order: parents before children
+    // 2. All bind:this callbacks, in reverse order: children before parents.
+    // 3. All afterUpdate callbacks, in order: parents before children. EXCEPT
+    //    for afterUpdates called during the initial onMount, which are called in
+    //    reverse order: children before parents.
+    // Since callbacks might update component values, which could trigger another
+    // call to flush(), the following steps guard against this:
+    // 1. During beforeUpdate, any updated components will be added to the
+    //    dirty_components array and will cause a reentrant call to flush(). Because
+    //    the flush index is kept outside the function, the reentrant call will pick
+    //    up where the earlier call left off and go through all dirty components. The
+    //    current_component value is saved and restored so that the reentrant call will
+    //    not interfere with the "parent" flush() call.
+    // 2. bind:this callbacks cannot trigger new flush() calls.
+    // 3. During afterUpdate, any updated components will NOT have their afterUpdate
+    //    callback called a second time; the seen_callbacks set, outside the flush()
+    //    function, guarantees this behavior.
+    const seen_callbacks = new Set();
+    let flushidx = 0; // Do *not* move this inside the flush() function
+    function flush() {
+        const saved_component = current_component;
+        do {
+            // first, call beforeUpdate functions
+            // and update components
+            while (flushidx < dirty_components.length) {
+                const component = dirty_components[flushidx];
+                flushidx++;
+                set_current_component(component);
+                update(component.$$);
+            }
+            set_current_component(null);
+            dirty_components.length = 0;
+            flushidx = 0;
+            while (binding_callbacks.length)
+                binding_callbacks.pop()();
+            // then, once components are updated, call
+            // afterUpdate functions. This may cause
+            // subsequent updates...
+            for (let i = 0; i < render_callbacks.length; i += 1) {
+                const callback = render_callbacks[i];
+                if (!seen_callbacks.has(callback)) {
+                    // ...so guard against infinite loops
+                    seen_callbacks.add(callback);
+                    callback();
+                }
+            }
+            render_callbacks.length = 0;
+        } while (dirty_components.length);
+        while (flush_callbacks.length) {
+            flush_callbacks.pop()();
+        }
+        update_scheduled = false;
+        seen_callbacks.clear();
+        set_current_component(saved_component);
+    }
+    function update($$) {
+        if ($$.fragment !== null) {
+            $$.update();
+            run_all($$.before_update);
+            const dirty = $$.dirty;
+            $$.dirty = [-1];
+            $$.fragment && $$.fragment.p($$.ctx, dirty);
+            $$.after_update.forEach(add_render_callback);
+        }
+    }
+    const outroing = new Set();
+    let outros;
+    function group_outros() {
+        outros = {
+            r: 0,
+            c: [],
+            p: outros // parent group
+        };
+    }
+    function check_outros() {
+        if (!outros.r) {
+            run_all(outros.c);
+        }
+        outros = outros.p;
+    }
+    function transition_in(block, local) {
+        if (block && block.i) {
+            outroing.delete(block);
+            block.i(local);
+        }
+    }
+    function transition_out(block, local, detach, callback) {
+        if (block && block.o) {
+            if (outroing.has(block))
+                return;
+            outroing.add(block);
+            outros.c.push(() => {
+                outroing.delete(block);
+                if (callback) {
+                    if (detach)
+                        block.d(1);
+                    callback();
+                }
+            });
+            block.o(local);
+        }
+    }
+
+    function destroy_block(block, lookup) {
+        block.d(1);
+        lookup.delete(block.key);
+    }
+    function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block, next, get_context) {
+        let o = old_blocks.length;
+        let n = list.length;
+        let i = o;
+        const old_indexes = {};
+        while (i--)
+            old_indexes[old_blocks[i].key] = i;
+        const new_blocks = [];
+        const new_lookup = new Map();
+        const deltas = new Map();
+        i = n;
+        while (i--) {
+            const child_ctx = get_context(ctx, list, i);
+            const key = get_key(child_ctx);
+            let block = lookup.get(key);
+            if (!block) {
+                block = create_each_block(key, child_ctx);
+                block.c();
+            }
+            else if (dynamic) {
+                block.p(child_ctx, dirty);
+            }
+            new_lookup.set(key, new_blocks[i] = block);
+            if (key in old_indexes)
+                deltas.set(key, Math.abs(i - old_indexes[key]));
+        }
+        const will_move = new Set();
+        const did_move = new Set();
+        function insert(block) {
+            transition_in(block, 1);
+            block.m(node, next);
+            lookup.set(block.key, block);
+            next = block.first;
+            n--;
+        }
+        while (o && n) {
+            const new_block = new_blocks[n - 1];
+            const old_block = old_blocks[o - 1];
+            const new_key = new_block.key;
+            const old_key = old_block.key;
+            if (new_block === old_block) {
+                // do nothing
+                next = new_block.first;
+                o--;
+                n--;
+            }
+            else if (!new_lookup.has(old_key)) {
+                // remove old block
+                destroy(old_block, lookup);
+                o--;
+            }
+            else if (!lookup.has(new_key) || will_move.has(new_key)) {
+                insert(new_block);
+            }
+            else if (did_move.has(old_key)) {
+                o--;
+            }
+            else if (deltas.get(new_key) > deltas.get(old_key)) {
+                did_move.add(new_key);
+                insert(new_block);
+            }
+            else {
+                will_move.add(old_key);
+                o--;
+            }
+        }
+        while (o--) {
+            const old_block = old_blocks[o];
+            if (!new_lookup.has(old_block.key))
+                destroy(old_block, lookup);
+        }
+        while (n)
+            insert(new_blocks[n - 1]);
+        return new_blocks;
+    }
+    function validate_each_keys(ctx, list, get_context, get_key) {
+        const keys = new Set();
+        for (let i = 0; i < list.length; i++) {
+            const key = get_key(get_context(ctx, list, i));
+            if (keys.has(key)) {
+                throw new Error('Cannot have duplicate keys in a keyed each');
+            }
+            keys.add(key);
+        }
+    }
+    function create_component(block) {
+        block && block.c();
+    }
+    function mount_component(component, target, anchor, customElement) {
+        const { fragment, on_mount, on_destroy, after_update } = component.$$;
+        fragment && fragment.m(target, anchor);
+        if (!customElement) {
+            // onMount happens before the initial afterUpdate
+            add_render_callback(() => {
+                const new_on_destroy = on_mount.map(run).filter(is_function);
+                if (on_destroy) {
+                    on_destroy.push(...new_on_destroy);
+                }
+                else {
+                    // Edge case - component was destroyed immediately,
+                    // most likely as a result of a binding initialising
+                    run_all(new_on_destroy);
+                }
+                component.$$.on_mount = [];
+            });
+        }
+        after_update.forEach(add_render_callback);
+    }
+    function destroy_component(component, detaching) {
+        const $$ = component.$$;
+        if ($$.fragment !== null) {
+            run_all($$.on_destroy);
+            $$.fragment && $$.fragment.d(detaching);
+            // TODO null out other refs, including component.$$ (but need to
+            // preserve final state?)
+            $$.on_destroy = $$.fragment = null;
+            $$.ctx = [];
+        }
+    }
+    function make_dirty(component, i) {
+        if (component.$$.dirty[0] === -1) {
+            dirty_components.push(component);
+            schedule_update();
+            component.$$.dirty.fill(0);
+        }
+        component.$$.dirty[(i / 31) | 0] |= (1 << (i % 31));
+    }
+    function init(component, options, instance, create_fragment, not_equal, props, append_styles, dirty = [-1]) {
+        const parent_component = current_component;
+        set_current_component(component);
+        const $$ = component.$$ = {
+            fragment: null,
+            ctx: null,
+            // state
+            props,
+            update: noop,
+            not_equal,
+            bound: blank_object(),
+            // lifecycle
+            on_mount: [],
+            on_destroy: [],
+            on_disconnect: [],
+            before_update: [],
+            after_update: [],
+            context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
+            // everything else
+            callbacks: blank_object(),
+            dirty,
+            skip_bound: false,
+            root: options.target || parent_component.$$.root
+        };
+        append_styles && append_styles($$.root);
+        let ready = false;
+        $$.ctx = instance
+            ? instance(component, options.props || {}, (i, ret, ...rest) => {
+                const value = rest.length ? rest[0] : ret;
+                if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
+                    if (!$$.skip_bound && $$.bound[i])
+                        $$.bound[i](value);
+                    if (ready)
+                        make_dirty(component, i);
+                }
+                return ret;
+            })
+            : [];
+        $$.update();
+        ready = true;
+        run_all($$.before_update);
+        // `false` as a special case of no DOM component
+        $$.fragment = create_fragment ? create_fragment($$.ctx) : false;
+        if (options.target) {
+            if (options.hydrate) {
+                const nodes = children(options.target);
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                $$.fragment && $$.fragment.l(nodes);
+                nodes.forEach(detach);
+            }
+            else {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                $$.fragment && $$.fragment.c();
+            }
+            if (options.intro)
+                transition_in(component.$$.fragment);
+            mount_component(component, options.target, options.anchor, options.customElement);
+            flush();
+        }
+        set_current_component(parent_component);
+    }
+    /**
+     * Base class for Svelte components. Used when dev=false.
+     */
+    class SvelteComponent {
+        $destroy() {
+            destroy_component(this, 1);
+            this.$destroy = noop;
+        }
+        $on(type, callback) {
+            const callbacks = (this.$$.callbacks[type] || (this.$$.callbacks[type] = []));
+            callbacks.push(callback);
+            return () => {
+                const index = callbacks.indexOf(callback);
+                if (index !== -1)
+                    callbacks.splice(index, 1);
+            };
+        }
+        $set($$props) {
+            if (this.$$set && !is_empty($$props)) {
+                this.$$.skip_bound = true;
+                this.$$set($$props);
+                this.$$.skip_bound = false;
+            }
+        }
+    }
+
+    function dispatch_dev(type, detail) {
+        document.dispatchEvent(custom_event(type, Object.assign({ version: '3.48.0' }, detail), { bubbles: true }));
+    }
+    function append_dev(target, node) {
+        dispatch_dev('SvelteDOMInsert', { target, node });
+        append(target, node);
+    }
+    function insert_dev(target, node, anchor) {
+        dispatch_dev('SvelteDOMInsert', { target, node, anchor });
+        insert(target, node, anchor);
+    }
+    function detach_dev(node) {
+        dispatch_dev('SvelteDOMRemove', { node });
+        detach(node);
+    }
+    function listen_dev(node, event, handler, options, has_prevent_default, has_stop_propagation) {
+        const modifiers = options === true ? ['capture'] : options ? Array.from(Object.keys(options)) : [];
+        if (has_prevent_default)
+            modifiers.push('preventDefault');
+        if (has_stop_propagation)
+            modifiers.push('stopPropagation');
+        dispatch_dev('SvelteDOMAddEventListener', { node, event, handler, modifiers });
+        const dispose = listen(node, event, handler, options);
+        return () => {
+            dispatch_dev('SvelteDOMRemoveEventListener', { node, event, handler, modifiers });
+            dispose();
+        };
+    }
+    function attr_dev(node, attribute, value) {
+        attr(node, attribute, value);
+        if (value == null)
+            dispatch_dev('SvelteDOMRemoveAttribute', { node, attribute });
+        else
+            dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
+    }
+    function set_data_dev(text, data) {
+        data = '' + data;
+        if (text.wholeText === data)
+            return;
+        dispatch_dev('SvelteDOMSetData', { node: text, data });
+        text.data = data;
+    }
+    function validate_each_argument(arg) {
+        if (typeof arg !== 'string' && !(arg && typeof arg === 'object' && 'length' in arg)) {
+            let msg = '{#each} only iterates over array-like objects.';
+            if (typeof Symbol === 'function' && arg && Symbol.iterator in arg) {
+                msg += ' You can use a spread to convert this iterable into an array.';
+            }
+            throw new Error(msg);
+        }
+    }
+    function validate_slots(name, slot, keys) {
+        for (const slot_key of Object.keys(slot)) {
+            if (!~keys.indexOf(slot_key)) {
+                console.warn(`<${name}> received an unexpected slot "${slot_key}".`);
+            }
+        }
+    }
+    /**
+     * Base class for Svelte components with some minor dev-enhancements. Used when dev=true.
+     */
+    class SvelteComponentDev extends SvelteComponent {
+        constructor(options) {
+            if (!options || (!options.target && !options.$$inline)) {
+                throw new Error("'target' is a required option");
+            }
+            super();
+        }
+        $destroy() {
+            super.$destroy();
+            this.$destroy = () => {
+                console.warn('Component was already destroyed'); // eslint-disable-line no-console
+            };
+        }
+        $capture_state() { }
+        $inject_state() { }
+    }
+
+    var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+    function createCommonjsModule(fn) {
+      var module = { exports: {} };
+    	return fn(module, module.exports), module.exports;
+    }
+
+    var bignumber = createCommonjsModule(function (module) {
+    (function (globalObject) {
+
+    /*
+     *      bignumber.js v9.0.2
+     *      A JavaScript library for arbitrary-precision arithmetic.
+     *      https://github.com/MikeMcl/bignumber.js
+     *      Copyright (c) 2021 Michael Mclaughlin <M8ch88l@gmail.com>
+     *      MIT Licensed.
+     *
+     *      BigNumber.prototype methods     |  BigNumber methods
+     *                                      |
+     *      absoluteValue            abs    |  clone
+     *      comparedTo                      |  config               set
+     *      decimalPlaces            dp     |      DECIMAL_PLACES
+     *      dividedBy                div    |      ROUNDING_MODE
+     *      dividedToIntegerBy       idiv   |      EXPONENTIAL_AT
+     *      exponentiatedBy          pow    |      RANGE
+     *      integerValue                    |      CRYPTO
+     *      isEqualTo                eq     |      MODULO_MODE
+     *      isFinite                        |      POW_PRECISION
+     *      isGreaterThan            gt     |      FORMAT
+     *      isGreaterThanOrEqualTo   gte    |      ALPHABET
+     *      isInteger                       |  isBigNumber
+     *      isLessThan               lt     |  maximum              max
+     *      isLessThanOrEqualTo      lte    |  minimum              min
+     *      isNaN                           |  random
+     *      isNegative                      |  sum
+     *      isPositive                      |
+     *      isZero                          |
+     *      minus                           |
+     *      modulo                   mod    |
+     *      multipliedBy             times  |
+     *      negated                         |
+     *      plus                            |
+     *      precision                sd     |
+     *      shiftedBy                       |
+     *      squareRoot               sqrt   |
+     *      toExponential                   |
+     *      toFixed                         |
+     *      toFormat                        |
+     *      toFraction                      |
+     *      toJSON                          |
+     *      toNumber                        |
+     *      toPrecision                     |
+     *      toString                        |
+     *      valueOf                         |
+     *
+     */
+
+
+      var BigNumber,
+        isNumeric = /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i,
+        mathceil = Math.ceil,
+        mathfloor = Math.floor,
+
+        bignumberError = '[BigNumber Error] ',
+        tooManyDigits = bignumberError + 'Number primitive has more than 15 significant digits: ',
+
+        BASE = 1e14,
+        LOG_BASE = 14,
+        MAX_SAFE_INTEGER = 0x1fffffffffffff,         // 2^53 - 1
+        // MAX_INT32 = 0x7fffffff,                   // 2^31 - 1
+        POWS_TEN = [1, 10, 100, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13],
+        SQRT_BASE = 1e7,
+
+        // EDITABLE
+        // The limit on the value of DECIMAL_PLACES, TO_EXP_NEG, TO_EXP_POS, MIN_EXP, MAX_EXP, and
+        // the arguments to toExponential, toFixed, toFormat, and toPrecision.
+        MAX = 1E9;                                   // 0 to MAX_INT32
+
+
+      /*
+       * Create and return a BigNumber constructor.
+       */
+      function clone(configObject) {
+        var div, convertBase, parseNumeric,
+          P = BigNumber.prototype = { constructor: BigNumber, toString: null, valueOf: null },
+          ONE = new BigNumber(1),
+
+
+          //----------------------------- EDITABLE CONFIG DEFAULTS -------------------------------
+
+
+          // The default values below must be integers within the inclusive ranges stated.
+          // The values can also be changed at run-time using BigNumber.set.
+
+          // The maximum number of decimal places for operations involving division.
+          DECIMAL_PLACES = 20,                     // 0 to MAX
+
+          // The rounding mode used when rounding to the above decimal places, and when using
+          // toExponential, toFixed, toFormat and toPrecision, and round (default value).
+          // UP         0 Away from zero.
+          // DOWN       1 Towards zero.
+          // CEIL       2 Towards +Infinity.
+          // FLOOR      3 Towards -Infinity.
+          // HALF_UP    4 Towards nearest neighbour. If equidistant, up.
+          // HALF_DOWN  5 Towards nearest neighbour. If equidistant, down.
+          // HALF_EVEN  6 Towards nearest neighbour. If equidistant, towards even neighbour.
+          // HALF_CEIL  7 Towards nearest neighbour. If equidistant, towards +Infinity.
+          // HALF_FLOOR 8 Towards nearest neighbour. If equidistant, towards -Infinity.
+          ROUNDING_MODE = 4,                       // 0 to 8
+
+          // EXPONENTIAL_AT : [TO_EXP_NEG , TO_EXP_POS]
+
+          // The exponent value at and beneath which toString returns exponential notation.
+          // Number type: -7
+          TO_EXP_NEG = -7,                         // 0 to -MAX
+
+          // The exponent value at and above which toString returns exponential notation.
+          // Number type: 21
+          TO_EXP_POS = 21,                         // 0 to MAX
+
+          // RANGE : [MIN_EXP, MAX_EXP]
+
+          // The minimum exponent value, beneath which underflow to zero occurs.
+          // Number type: -324  (5e-324)
+          MIN_EXP = -1e7,                          // -1 to -MAX
+
+          // The maximum exponent value, above which overflow to Infinity occurs.
+          // Number type:  308  (1.7976931348623157e+308)
+          // For MAX_EXP > 1e7, e.g. new BigNumber('1e100000000').plus(1) may be slow.
+          MAX_EXP = 1e7,                           // 1 to MAX
+
+          // Whether to use cryptographically-secure random number generation, if available.
+          CRYPTO = false,                          // true or false
+
+          // The modulo mode used when calculating the modulus: a mod n.
+          // The quotient (q = a / n) is calculated according to the corresponding rounding mode.
+          // The remainder (r) is calculated as: r = a - n * q.
+          //
+          // UP        0 The remainder is positive if the dividend is negative, else is negative.
+          // DOWN      1 The remainder has the same sign as the dividend.
+          //             This modulo mode is commonly known as 'truncated division' and is
+          //             equivalent to (a % n) in JavaScript.
+          // FLOOR     3 The remainder has the same sign as the divisor (Python %).
+          // HALF_EVEN 6 This modulo mode implements the IEEE 754 remainder function.
+          // EUCLID    9 Euclidian division. q = sign(n) * floor(a / abs(n)).
+          //             The remainder is always positive.
+          //
+          // The truncated division, floored division, Euclidian division and IEEE 754 remainder
+          // modes are commonly used for the modulus operation.
+          // Although the other rounding modes can also be used, they may not give useful results.
+          MODULO_MODE = 1,                         // 0 to 9
+
+          // The maximum number of significant digits of the result of the exponentiatedBy operation.
+          // If POW_PRECISION is 0, there will be unlimited significant digits.
+          POW_PRECISION = 0,                       // 0 to MAX
+
+          // The format specification used by the BigNumber.prototype.toFormat method.
+          FORMAT = {
+            prefix: '',
+            groupSize: 3,
+            secondaryGroupSize: 0,
+            groupSeparator: ',',
+            decimalSeparator: '.',
+            fractionGroupSize: 0,
+            fractionGroupSeparator: '\xA0',        // non-breaking space
+            suffix: ''
+          },
+
+          // The alphabet used for base conversion. It must be at least 2 characters long, with no '+',
+          // '-', '.', whitespace, or repeated character.
+          // '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_'
+          ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz',
+          alphabetHasNormalDecimalDigits = true;
+
+
+        //------------------------------------------------------------------------------------------
+
+
+        // CONSTRUCTOR
+
+
+        /*
+         * The BigNumber constructor and exported function.
+         * Create and return a new instance of a BigNumber object.
+         *
+         * v {number|string|BigNumber} A numeric value.
+         * [b] {number} The base of v. Integer, 2 to ALPHABET.length inclusive.
+         */
+        function BigNumber(v, b) {
+          var alphabet, c, caseChanged, e, i, isNum, len, str,
+            x = this;
+
+          // Enable constructor call without `new`.
+          if (!(x instanceof BigNumber)) return new BigNumber(v, b);
+
+          if (b == null) {
+
+            if (v && v._isBigNumber === true) {
+              x.s = v.s;
+
+              if (!v.c || v.e > MAX_EXP) {
+                x.c = x.e = null;
+              } else if (v.e < MIN_EXP) {
+                x.c = [x.e = 0];
+              } else {
+                x.e = v.e;
+                x.c = v.c.slice();
+              }
+
+              return;
+            }
+
+            if ((isNum = typeof v == 'number') && v * 0 == 0) {
+
+              // Use `1 / n` to handle minus zero also.
+              x.s = 1 / v < 0 ? (v = -v, -1) : 1;
+
+              // Fast path for integers, where n < 2147483648 (2**31).
+              if (v === ~~v) {
+                for (e = 0, i = v; i >= 10; i /= 10, e++);
+
+                if (e > MAX_EXP) {
+                  x.c = x.e = null;
+                } else {
+                  x.e = e;
+                  x.c = [v];
+                }
+
+                return;
+              }
+
+              str = String(v);
+            } else {
+
+              if (!isNumeric.test(str = String(v))) return parseNumeric(x, str, isNum);
+
+              x.s = str.charCodeAt(0) == 45 ? (str = str.slice(1), -1) : 1;
+            }
+
+            // Decimal point?
+            if ((e = str.indexOf('.')) > -1) str = str.replace('.', '');
+
+            // Exponential form?
+            if ((i = str.search(/e/i)) > 0) {
+
+              // Determine exponent.
+              if (e < 0) e = i;
+              e += +str.slice(i + 1);
+              str = str.substring(0, i);
+            } else if (e < 0) {
+
+              // Integer.
+              e = str.length;
+            }
+
+          } else {
+
+            // '[BigNumber Error] Base {not a primitive number|not an integer|out of range}: {b}'
+            intCheck(b, 2, ALPHABET.length, 'Base');
+
+            // Allow exponential notation to be used with base 10 argument, while
+            // also rounding to DECIMAL_PLACES as with other bases.
+            if (b == 10 && alphabetHasNormalDecimalDigits) {
+              x = new BigNumber(v);
+              return round(x, DECIMAL_PLACES + x.e + 1, ROUNDING_MODE);
+            }
+
+            str = String(v);
+
+            if (isNum = typeof v == 'number') {
+
+              // Avoid potential interpretation of Infinity and NaN as base 44+ values.
+              if (v * 0 != 0) return parseNumeric(x, str, isNum, b);
+
+              x.s = 1 / v < 0 ? (str = str.slice(1), -1) : 1;
+
+              // '[BigNumber Error] Number primitive has more than 15 significant digits: {n}'
+              if (BigNumber.DEBUG && str.replace(/^0\.0*|\./, '').length > 15) {
+                throw Error
+                 (tooManyDigits + v);
+              }
+            } else {
+              x.s = str.charCodeAt(0) === 45 ? (str = str.slice(1), -1) : 1;
+            }
+
+            alphabet = ALPHABET.slice(0, b);
+            e = i = 0;
+
+            // Check that str is a valid base b number.
+            // Don't use RegExp, so alphabet can contain special characters.
+            for (len = str.length; i < len; i++) {
+              if (alphabet.indexOf(c = str.charAt(i)) < 0) {
+                if (c == '.') {
+
+                  // If '.' is not the first character and it has not be found before.
+                  if (i > e) {
+                    e = len;
+                    continue;
+                  }
+                } else if (!caseChanged) {
+
+                  // Allow e.g. hexadecimal 'FF' as well as 'ff'.
+                  if (str == str.toUpperCase() && (str = str.toLowerCase()) ||
+                      str == str.toLowerCase() && (str = str.toUpperCase())) {
+                    caseChanged = true;
+                    i = -1;
+                    e = 0;
+                    continue;
+                  }
+                }
+
+                return parseNumeric(x, String(v), isNum, b);
+              }
+            }
+
+            // Prevent later check for length on converted number.
+            isNum = false;
+            str = convertBase(str, b, 10, x.s);
+
+            // Decimal point?
+            if ((e = str.indexOf('.')) > -1) str = str.replace('.', '');
+            else e = str.length;
+          }
+
+          // Determine leading zeros.
+          for (i = 0; str.charCodeAt(i) === 48; i++);
+
+          // Determine trailing zeros.
+          for (len = str.length; str.charCodeAt(--len) === 48;);
+
+          if (str = str.slice(i, ++len)) {
+            len -= i;
+
+            // '[BigNumber Error] Number primitive has more than 15 significant digits: {n}'
+            if (isNum && BigNumber.DEBUG &&
+              len > 15 && (v > MAX_SAFE_INTEGER || v !== mathfloor(v))) {
+                throw Error
+                 (tooManyDigits + (x.s * v));
+            }
+
+             // Overflow?
+            if ((e = e - i - 1) > MAX_EXP) {
+
+              // Infinity.
+              x.c = x.e = null;
+
+            // Underflow?
+            } else if (e < MIN_EXP) {
+
+              // Zero.
+              x.c = [x.e = 0];
+            } else {
+              x.e = e;
+              x.c = [];
+
+              // Transform base
+
+              // e is the base 10 exponent.
+              // i is where to slice str to get the first element of the coefficient array.
+              i = (e + 1) % LOG_BASE;
+              if (e < 0) i += LOG_BASE;  // i < 1
+
+              if (i < len) {
+                if (i) x.c.push(+str.slice(0, i));
+
+                for (len -= LOG_BASE; i < len;) {
+                  x.c.push(+str.slice(i, i += LOG_BASE));
+                }
+
+                i = LOG_BASE - (str = str.slice(i)).length;
+              } else {
+                i -= len;
+              }
+
+              for (; i--; str += '0');
+              x.c.push(+str);
+            }
+          } else {
+
+            // Zero.
+            x.c = [x.e = 0];
+          }
+        }
+
+
+        // CONSTRUCTOR PROPERTIES
+
+
+        BigNumber.clone = clone;
+
+        BigNumber.ROUND_UP = 0;
+        BigNumber.ROUND_DOWN = 1;
+        BigNumber.ROUND_CEIL = 2;
+        BigNumber.ROUND_FLOOR = 3;
+        BigNumber.ROUND_HALF_UP = 4;
+        BigNumber.ROUND_HALF_DOWN = 5;
+        BigNumber.ROUND_HALF_EVEN = 6;
+        BigNumber.ROUND_HALF_CEIL = 7;
+        BigNumber.ROUND_HALF_FLOOR = 8;
+        BigNumber.EUCLID = 9;
+
+
+        /*
+         * Configure infrequently-changing library-wide settings.
+         *
+         * Accept an object with the following optional properties (if the value of a property is
+         * a number, it must be an integer within the inclusive range stated):
+         *
+         *   DECIMAL_PLACES   {number}           0 to MAX
+         *   ROUNDING_MODE    {number}           0 to 8
+         *   EXPONENTIAL_AT   {number|number[]}  -MAX to MAX  or  [-MAX to 0, 0 to MAX]
+         *   RANGE            {number|number[]}  -MAX to MAX (not zero)  or  [-MAX to -1, 1 to MAX]
+         *   CRYPTO           {boolean}          true or false
+         *   MODULO_MODE      {number}           0 to 9
+         *   POW_PRECISION       {number}           0 to MAX
+         *   ALPHABET         {string}           A string of two or more unique characters which does
+         *                                       not contain '.'.
+         *   FORMAT           {object}           An object with some of the following properties:
+         *     prefix                 {string}
+         *     groupSize              {number}
+         *     secondaryGroupSize     {number}
+         *     groupSeparator         {string}
+         *     decimalSeparator       {string}
+         *     fractionGroupSize      {number}
+         *     fractionGroupSeparator {string}
+         *     suffix                 {string}
+         *
+         * (The values assigned to the above FORMAT object properties are not checked for validity.)
+         *
+         * E.g.
+         * BigNumber.config({ DECIMAL_PLACES : 20, ROUNDING_MODE : 4 })
+         *
+         * Ignore properties/parameters set to null or undefined, except for ALPHABET.
+         *
+         * Return an object with the properties current values.
+         */
+        BigNumber.config = BigNumber.set = function (obj) {
+          var p, v;
+
+          if (obj != null) {
+
+            if (typeof obj == 'object') {
+
+              // DECIMAL_PLACES {number} Integer, 0 to MAX inclusive.
+              // '[BigNumber Error] DECIMAL_PLACES {not a primitive number|not an integer|out of range}: {v}'
+              if (obj.hasOwnProperty(p = 'DECIMAL_PLACES')) {
+                v = obj[p];
+                intCheck(v, 0, MAX, p);
+                DECIMAL_PLACES = v;
+              }
+
+              // ROUNDING_MODE {number} Integer, 0 to 8 inclusive.
+              // '[BigNumber Error] ROUNDING_MODE {not a primitive number|not an integer|out of range}: {v}'
+              if (obj.hasOwnProperty(p = 'ROUNDING_MODE')) {
+                v = obj[p];
+                intCheck(v, 0, 8, p);
+                ROUNDING_MODE = v;
+              }
+
+              // EXPONENTIAL_AT {number|number[]}
+              // Integer, -MAX to MAX inclusive or
+              // [integer -MAX to 0 inclusive, 0 to MAX inclusive].
+              // '[BigNumber Error] EXPONENTIAL_AT {not a primitive number|not an integer|out of range}: {v}'
+              if (obj.hasOwnProperty(p = 'EXPONENTIAL_AT')) {
+                v = obj[p];
+                if (v && v.pop) {
+                  intCheck(v[0], -MAX, 0, p);
+                  intCheck(v[1], 0, MAX, p);
+                  TO_EXP_NEG = v[0];
+                  TO_EXP_POS = v[1];
+                } else {
+                  intCheck(v, -MAX, MAX, p);
+                  TO_EXP_NEG = -(TO_EXP_POS = v < 0 ? -v : v);
+                }
+              }
+
+              // RANGE {number|number[]} Non-zero integer, -MAX to MAX inclusive or
+              // [integer -MAX to -1 inclusive, integer 1 to MAX inclusive].
+              // '[BigNumber Error] RANGE {not a primitive number|not an integer|out of range|cannot be zero}: {v}'
+              if (obj.hasOwnProperty(p = 'RANGE')) {
+                v = obj[p];
+                if (v && v.pop) {
+                  intCheck(v[0], -MAX, -1, p);
+                  intCheck(v[1], 1, MAX, p);
+                  MIN_EXP = v[0];
+                  MAX_EXP = v[1];
+                } else {
+                  intCheck(v, -MAX, MAX, p);
+                  if (v) {
+                    MIN_EXP = -(MAX_EXP = v < 0 ? -v : v);
+                  } else {
+                    throw Error
+                     (bignumberError + p + ' cannot be zero: ' + v);
+                  }
+                }
+              }
+
+              // CRYPTO {boolean} true or false.
+              // '[BigNumber Error] CRYPTO not true or false: {v}'
+              // '[BigNumber Error] crypto unavailable'
+              if (obj.hasOwnProperty(p = 'CRYPTO')) {
+                v = obj[p];
+                if (v === !!v) {
+                  if (v) {
+                    if (typeof crypto != 'undefined' && crypto &&
+                     (crypto.getRandomValues || crypto.randomBytes)) {
+                      CRYPTO = v;
+                    } else {
+                      CRYPTO = !v;
+                      throw Error
+                       (bignumberError + 'crypto unavailable');
+                    }
+                  } else {
+                    CRYPTO = v;
+                  }
+                } else {
+                  throw Error
+                   (bignumberError + p + ' not true or false: ' + v);
+                }
+              }
+
+              // MODULO_MODE {number} Integer, 0 to 9 inclusive.
+              // '[BigNumber Error] MODULO_MODE {not a primitive number|not an integer|out of range}: {v}'
+              if (obj.hasOwnProperty(p = 'MODULO_MODE')) {
+                v = obj[p];
+                intCheck(v, 0, 9, p);
+                MODULO_MODE = v;
+              }
+
+              // POW_PRECISION {number} Integer, 0 to MAX inclusive.
+              // '[BigNumber Error] POW_PRECISION {not a primitive number|not an integer|out of range}: {v}'
+              if (obj.hasOwnProperty(p = 'POW_PRECISION')) {
+                v = obj[p];
+                intCheck(v, 0, MAX, p);
+                POW_PRECISION = v;
+              }
+
+              // FORMAT {object}
+              // '[BigNumber Error] FORMAT not an object: {v}'
+              if (obj.hasOwnProperty(p = 'FORMAT')) {
+                v = obj[p];
+                if (typeof v == 'object') FORMAT = v;
+                else throw Error
+                 (bignumberError + p + ' not an object: ' + v);
+              }
+
+              // ALPHABET {string}
+              // '[BigNumber Error] ALPHABET invalid: {v}'
+              if (obj.hasOwnProperty(p = 'ALPHABET')) {
+                v = obj[p];
+
+                // Disallow if less than two characters,
+                // or if it contains '+', '-', '.', whitespace, or a repeated character.
+                if (typeof v == 'string' && !/^.?$|[+\-.\s]|(.).*\1/.test(v)) {
+                  alphabetHasNormalDecimalDigits = v.slice(0, 10) == '0123456789';
+                  ALPHABET = v;
+                } else {
+                  throw Error
+                   (bignumberError + p + ' invalid: ' + v);
+                }
+              }
+
+            } else {
+
+              // '[BigNumber Error] Object expected: {v}'
+              throw Error
+               (bignumberError + 'Object expected: ' + obj);
+            }
+          }
+
+          return {
+            DECIMAL_PLACES: DECIMAL_PLACES,
+            ROUNDING_MODE: ROUNDING_MODE,
+            EXPONENTIAL_AT: [TO_EXP_NEG, TO_EXP_POS],
+            RANGE: [MIN_EXP, MAX_EXP],
+            CRYPTO: CRYPTO,
+            MODULO_MODE: MODULO_MODE,
+            POW_PRECISION: POW_PRECISION,
+            FORMAT: FORMAT,
+            ALPHABET: ALPHABET
+          };
+        };
+
+
+        /*
+         * Return true if v is a BigNumber instance, otherwise return false.
+         *
+         * If BigNumber.DEBUG is true, throw if a BigNumber instance is not well-formed.
+         *
+         * v {any}
+         *
+         * '[BigNumber Error] Invalid BigNumber: {v}'
+         */
+        BigNumber.isBigNumber = function (v) {
+          if (!v || v._isBigNumber !== true) return false;
+          if (!BigNumber.DEBUG) return true;
+
+          var i, n,
+            c = v.c,
+            e = v.e,
+            s = v.s;
+
+          out: if ({}.toString.call(c) == '[object Array]') {
+
+            if ((s === 1 || s === -1) && e >= -MAX && e <= MAX && e === mathfloor(e)) {
+
+              // If the first element is zero, the BigNumber value must be zero.
+              if (c[0] === 0) {
+                if (e === 0 && c.length === 1) return true;
+                break out;
+              }
+
+              // Calculate number of digits that c[0] should have, based on the exponent.
+              i = (e + 1) % LOG_BASE;
+              if (i < 1) i += LOG_BASE;
+
+              // Calculate number of digits of c[0].
+              //if (Math.ceil(Math.log(c[0] + 1) / Math.LN10) == i) {
+              if (String(c[0]).length == i) {
+
+                for (i = 0; i < c.length; i++) {
+                  n = c[i];
+                  if (n < 0 || n >= BASE || n !== mathfloor(n)) break out;
+                }
+
+                // Last element cannot be zero, unless it is the only element.
+                if (n !== 0) return true;
+              }
+            }
+
+          // Infinity/NaN
+          } else if (c === null && e === null && (s === null || s === 1 || s === -1)) {
+            return true;
+          }
+
+          throw Error
+            (bignumberError + 'Invalid BigNumber: ' + v);
+        };
+
+
+        /*
+         * Return a new BigNumber whose value is the maximum of the arguments.
+         *
+         * arguments {number|string|BigNumber}
+         */
+        BigNumber.maximum = BigNumber.max = function () {
+          return maxOrMin(arguments, P.lt);
+        };
+
+
+        /*
+         * Return a new BigNumber whose value is the minimum of the arguments.
+         *
+         * arguments {number|string|BigNumber}
+         */
+        BigNumber.minimum = BigNumber.min = function () {
+          return maxOrMin(arguments, P.gt);
+        };
+
+
+        /*
+         * Return a new BigNumber with a random value equal to or greater than 0 and less than 1,
+         * and with dp, or DECIMAL_PLACES if dp is omitted, decimal places (or less if trailing
+         * zeros are produced).
+         *
+         * [dp] {number} Decimal places. Integer, 0 to MAX inclusive.
+         *
+         * '[BigNumber Error] Argument {not a primitive number|not an integer|out of range}: {dp}'
+         * '[BigNumber Error] crypto unavailable'
+         */
+        BigNumber.random = (function () {
+          var pow2_53 = 0x20000000000000;
+
+          // Return a 53 bit integer n, where 0 <= n < 9007199254740992.
+          // Check if Math.random() produces more than 32 bits of randomness.
+          // If it does, assume at least 53 bits are produced, otherwise assume at least 30 bits.
+          // 0x40000000 is 2^30, 0x800000 is 2^23, 0x1fffff is 2^21 - 1.
+          var random53bitInt = (Math.random() * pow2_53) & 0x1fffff
+           ? function () { return mathfloor(Math.random() * pow2_53); }
+           : function () { return ((Math.random() * 0x40000000 | 0) * 0x800000) +
+             (Math.random() * 0x800000 | 0); };
+
+          return function (dp) {
+            var a, b, e, k, v,
+              i = 0,
+              c = [],
+              rand = new BigNumber(ONE);
+
+            if (dp == null) dp = DECIMAL_PLACES;
+            else intCheck(dp, 0, MAX);
+
+            k = mathceil(dp / LOG_BASE);
+
+            if (CRYPTO) {
+
+              // Browsers supporting crypto.getRandomValues.
+              if (crypto.getRandomValues) {
+
+                a = crypto.getRandomValues(new Uint32Array(k *= 2));
+
+                for (; i < k;) {
+
+                  // 53 bits:
+                  // ((Math.pow(2, 32) - 1) * Math.pow(2, 21)).toString(2)
+                  // 11111 11111111 11111111 11111111 11100000 00000000 00000000
+                  // ((Math.pow(2, 32) - 1) >>> 11).toString(2)
+                  //                                     11111 11111111 11111111
+                  // 0x20000 is 2^21.
+                  v = a[i] * 0x20000 + (a[i + 1] >>> 11);
+
+                  // Rejection sampling:
+                  // 0 <= v < 9007199254740992
+                  // Probability that v >= 9e15, is
+                  // 7199254740992 / 9007199254740992 ~= 0.0008, i.e. 1 in 1251
+                  if (v >= 9e15) {
+                    b = crypto.getRandomValues(new Uint32Array(2));
+                    a[i] = b[0];
+                    a[i + 1] = b[1];
+                  } else {
+
+                    // 0 <= v <= 8999999999999999
+                    // 0 <= (v % 1e14) <= 99999999999999
+                    c.push(v % 1e14);
+                    i += 2;
+                  }
+                }
+                i = k / 2;
+
+              // Node.js supporting crypto.randomBytes.
+              } else if (crypto.randomBytes) {
+
+                // buffer
+                a = crypto.randomBytes(k *= 7);
+
+                for (; i < k;) {
+
+                  // 0x1000000000000 is 2^48, 0x10000000000 is 2^40
+                  // 0x100000000 is 2^32, 0x1000000 is 2^24
+                  // 11111 11111111 11111111 11111111 11111111 11111111 11111111
+                  // 0 <= v < 9007199254740992
+                  v = ((a[i] & 31) * 0x1000000000000) + (a[i + 1] * 0x10000000000) +
+                     (a[i + 2] * 0x100000000) + (a[i + 3] * 0x1000000) +
+                     (a[i + 4] << 16) + (a[i + 5] << 8) + a[i + 6];
+
+                  if (v >= 9e15) {
+                    crypto.randomBytes(7).copy(a, i);
+                  } else {
+
+                    // 0 <= (v % 1e14) <= 99999999999999
+                    c.push(v % 1e14);
+                    i += 7;
+                  }
+                }
+                i = k / 7;
+              } else {
+                CRYPTO = false;
+                throw Error
+                 (bignumberError + 'crypto unavailable');
+              }
+            }
+
+            // Use Math.random.
+            if (!CRYPTO) {
+
+              for (; i < k;) {
+                v = random53bitInt();
+                if (v < 9e15) c[i++] = v % 1e14;
+              }
+            }
+
+            k = c[--i];
+            dp %= LOG_BASE;
+
+            // Convert trailing digits to zeros according to dp.
+            if (k && dp) {
+              v = POWS_TEN[LOG_BASE - dp];
+              c[i] = mathfloor(k / v) * v;
+            }
+
+            // Remove trailing elements which are zero.
+            for (; c[i] === 0; c.pop(), i--);
+
+            // Zero?
+            if (i < 0) {
+              c = [e = 0];
+            } else {
+
+              // Remove leading elements which are zero and adjust exponent accordingly.
+              for (e = -1 ; c[0] === 0; c.splice(0, 1), e -= LOG_BASE);
+
+              // Count the digits of the first element of c to determine leading zeros, and...
+              for (i = 1, v = c[0]; v >= 10; v /= 10, i++);
+
+              // adjust the exponent accordingly.
+              if (i < LOG_BASE) e -= LOG_BASE - i;
+            }
+
+            rand.e = e;
+            rand.c = c;
+            return rand;
+          };
+        })();
+
+
+        /*
+         * Return a BigNumber whose value is the sum of the arguments.
+         *
+         * arguments {number|string|BigNumber}
+         */
+        BigNumber.sum = function () {
+          var i = 1,
+            args = arguments,
+            sum = new BigNumber(args[0]);
+          for (; i < args.length;) sum = sum.plus(args[i++]);
+          return sum;
+        };
+
+
+        // PRIVATE FUNCTIONS
+
+
+        // Called by BigNumber and BigNumber.prototype.toString.
+        convertBase = (function () {
+          var decimal = '0123456789';
+
+          /*
+           * Convert string of baseIn to an array of numbers of baseOut.
+           * Eg. toBaseOut('255', 10, 16) returns [15, 15].
+           * Eg. toBaseOut('ff', 16, 10) returns [2, 5, 5].
+           */
+          function toBaseOut(str, baseIn, baseOut, alphabet) {
+            var j,
+              arr = [0],
+              arrL,
+              i = 0,
+              len = str.length;
+
+            for (; i < len;) {
+              for (arrL = arr.length; arrL--; arr[arrL] *= baseIn);
+
+              arr[0] += alphabet.indexOf(str.charAt(i++));
+
+              for (j = 0; j < arr.length; j++) {
+
+                if (arr[j] > baseOut - 1) {
+                  if (arr[j + 1] == null) arr[j + 1] = 0;
+                  arr[j + 1] += arr[j] / baseOut | 0;
+                  arr[j] %= baseOut;
+                }
+              }
+            }
+
+            return arr.reverse();
+          }
+
+          // Convert a numeric string of baseIn to a numeric string of baseOut.
+          // If the caller is toString, we are converting from base 10 to baseOut.
+          // If the caller is BigNumber, we are converting from baseIn to base 10.
+          return function (str, baseIn, baseOut, sign, callerIsToString) {
+            var alphabet, d, e, k, r, x, xc, y,
+              i = str.indexOf('.'),
+              dp = DECIMAL_PLACES,
+              rm = ROUNDING_MODE;
+
+            // Non-integer.
+            if (i >= 0) {
+              k = POW_PRECISION;
+
+              // Unlimited precision.
+              POW_PRECISION = 0;
+              str = str.replace('.', '');
+              y = new BigNumber(baseIn);
+              x = y.pow(str.length - i);
+              POW_PRECISION = k;
+
+              // Convert str as if an integer, then restore the fraction part by dividing the
+              // result by its base raised to a power.
+
+              y.c = toBaseOut(toFixedPoint(coeffToString(x.c), x.e, '0'),
+               10, baseOut, decimal);
+              y.e = y.c.length;
+            }
+
+            // Convert the number as integer.
+
+            xc = toBaseOut(str, baseIn, baseOut, callerIsToString
+             ? (alphabet = ALPHABET, decimal)
+             : (alphabet = decimal, ALPHABET));
+
+            // xc now represents str as an integer and converted to baseOut. e is the exponent.
+            e = k = xc.length;
+
+            // Remove trailing zeros.
+            for (; xc[--k] == 0; xc.pop());
+
+            // Zero?
+            if (!xc[0]) return alphabet.charAt(0);
+
+            // Does str represent an integer? If so, no need for the division.
+            if (i < 0) {
+              --e;
+            } else {
+              x.c = xc;
+              x.e = e;
+
+              // The sign is needed for correct rounding.
+              x.s = sign;
+              x = div(x, y, dp, rm, baseOut);
+              xc = x.c;
+              r = x.r;
+              e = x.e;
+            }
+
+            // xc now represents str converted to baseOut.
+
+            // THe index of the rounding digit.
+            d = e + dp + 1;
+
+            // The rounding digit: the digit to the right of the digit that may be rounded up.
+            i = xc[d];
+
+            // Look at the rounding digits and mode to determine whether to round up.
+
+            k = baseOut / 2;
+            r = r || d < 0 || xc[d + 1] != null;
+
+            r = rm < 4 ? (i != null || r) && (rm == 0 || rm == (x.s < 0 ? 3 : 2))
+                  : i > k || i == k &&(rm == 4 || r || rm == 6 && xc[d - 1] & 1 ||
+                   rm == (x.s < 0 ? 8 : 7));
+
+            // If the index of the rounding digit is not greater than zero, or xc represents
+            // zero, then the result of the base conversion is zero or, if rounding up, a value
+            // such as 0.00001.
+            if (d < 1 || !xc[0]) {
+
+              // 1^-dp or 0
+              str = r ? toFixedPoint(alphabet.charAt(1), -dp, alphabet.charAt(0)) : alphabet.charAt(0);
+            } else {
+
+              // Truncate xc to the required number of decimal places.
+              xc.length = d;
+
+              // Round up?
+              if (r) {
+
+                // Rounding up may mean the previous digit has to be rounded up and so on.
+                for (--baseOut; ++xc[--d] > baseOut;) {
+                  xc[d] = 0;
+
+                  if (!d) {
+                    ++e;
+                    xc = [1].concat(xc);
+                  }
+                }
+              }
+
+              // Determine trailing zeros.
+              for (k = xc.length; !xc[--k];);
+
+              // E.g. [4, 11, 15] becomes 4bf.
+              for (i = 0, str = ''; i <= k; str += alphabet.charAt(xc[i++]));
+
+              // Add leading zeros, decimal point and trailing zeros as required.
+              str = toFixedPoint(str, e, alphabet.charAt(0));
+            }
+
+            // The caller will add the sign.
+            return str;
+          };
+        })();
+
+
+        // Perform division in the specified base. Called by div and convertBase.
+        div = (function () {
+
+          // Assume non-zero x and k.
+          function multiply(x, k, base) {
+            var m, temp, xlo, xhi,
+              carry = 0,
+              i = x.length,
+              klo = k % SQRT_BASE,
+              khi = k / SQRT_BASE | 0;
+
+            for (x = x.slice(); i--;) {
+              xlo = x[i] % SQRT_BASE;
+              xhi = x[i] / SQRT_BASE | 0;
+              m = khi * xlo + xhi * klo;
+              temp = klo * xlo + ((m % SQRT_BASE) * SQRT_BASE) + carry;
+              carry = (temp / base | 0) + (m / SQRT_BASE | 0) + khi * xhi;
+              x[i] = temp % base;
+            }
+
+            if (carry) x = [carry].concat(x);
+
+            return x;
+          }
+
+          function compare(a, b, aL, bL) {
+            var i, cmp;
+
+            if (aL != bL) {
+              cmp = aL > bL ? 1 : -1;
+            } else {
+
+              for (i = cmp = 0; i < aL; i++) {
+
+                if (a[i] != b[i]) {
+                  cmp = a[i] > b[i] ? 1 : -1;
+                  break;
+                }
+              }
+            }
+
+            return cmp;
+          }
+
+          function subtract(a, b, aL, base) {
+            var i = 0;
+
+            // Subtract b from a.
+            for (; aL--;) {
+              a[aL] -= i;
+              i = a[aL] < b[aL] ? 1 : 0;
+              a[aL] = i * base + a[aL] - b[aL];
+            }
+
+            // Remove leading zeros.
+            for (; !a[0] && a.length > 1; a.splice(0, 1));
+          }
+
+          // x: dividend, y: divisor.
+          return function (x, y, dp, rm, base) {
+            var cmp, e, i, more, n, prod, prodL, q, qc, rem, remL, rem0, xi, xL, yc0,
+              yL, yz,
+              s = x.s == y.s ? 1 : -1,
+              xc = x.c,
+              yc = y.c;
+
+            // Either NaN, Infinity or 0?
+            if (!xc || !xc[0] || !yc || !yc[0]) {
+
+              return new BigNumber(
+
+               // Return NaN if either NaN, or both Infinity or 0.
+               !x.s || !y.s || (xc ? yc && xc[0] == yc[0] : !yc) ? NaN :
+
+                // Return ±0 if x is ±0 or y is ±Infinity, or return ±Infinity as y is ±0.
+                xc && xc[0] == 0 || !yc ? s * 0 : s / 0
+             );
+            }
+
+            q = new BigNumber(s);
+            qc = q.c = [];
+            e = x.e - y.e;
+            s = dp + e + 1;
+
+            if (!base) {
+              base = BASE;
+              e = bitFloor(x.e / LOG_BASE) - bitFloor(y.e / LOG_BASE);
+              s = s / LOG_BASE | 0;
+            }
+
+            // Result exponent may be one less then the current value of e.
+            // The coefficients of the BigNumbers from convertBase may have trailing zeros.
+            for (i = 0; yc[i] == (xc[i] || 0); i++);
+
+            if (yc[i] > (xc[i] || 0)) e--;
+
+            if (s < 0) {
+              qc.push(1);
+              more = true;
+            } else {
+              xL = xc.length;
+              yL = yc.length;
+              i = 0;
+              s += 2;
+
+              // Normalise xc and yc so highest order digit of yc is >= base / 2.
+
+              n = mathfloor(base / (yc[0] + 1));
+
+              // Not necessary, but to handle odd bases where yc[0] == (base / 2) - 1.
+              // if (n > 1 || n++ == 1 && yc[0] < base / 2) {
+              if (n > 1) {
+                yc = multiply(yc, n, base);
+                xc = multiply(xc, n, base);
+                yL = yc.length;
+                xL = xc.length;
+              }
+
+              xi = yL;
+              rem = xc.slice(0, yL);
+              remL = rem.length;
+
+              // Add zeros to make remainder as long as divisor.
+              for (; remL < yL; rem[remL++] = 0);
+              yz = yc.slice();
+              yz = [0].concat(yz);
+              yc0 = yc[0];
+              if (yc[1] >= base / 2) yc0++;
+              // Not necessary, but to prevent trial digit n > base, when using base 3.
+              // else if (base == 3 && yc0 == 1) yc0 = 1 + 1e-15;
+
+              do {
+                n = 0;
+
+                // Compare divisor and remainder.
+                cmp = compare(yc, rem, yL, remL);
+
+                // If divisor < remainder.
+                if (cmp < 0) {
+
+                  // Calculate trial digit, n.
+
+                  rem0 = rem[0];
+                  if (yL != remL) rem0 = rem0 * base + (rem[1] || 0);
+
+                  // n is how many times the divisor goes into the current remainder.
+                  n = mathfloor(rem0 / yc0);
+
+                  //  Algorithm:
+                  //  product = divisor multiplied by trial digit (n).
+                  //  Compare product and remainder.
+                  //  If product is greater than remainder:
+                  //    Subtract divisor from product, decrement trial digit.
+                  //  Subtract product from remainder.
+                  //  If product was less than remainder at the last compare:
+                  //    Compare new remainder and divisor.
+                  //    If remainder is greater than divisor:
+                  //      Subtract divisor from remainder, increment trial digit.
+
+                  if (n > 1) {
+
+                    // n may be > base only when base is 3.
+                    if (n >= base) n = base - 1;
+
+                    // product = divisor * trial digit.
+                    prod = multiply(yc, n, base);
+                    prodL = prod.length;
+                    remL = rem.length;
+
+                    // Compare product and remainder.
+                    // If product > remainder then trial digit n too high.
+                    // n is 1 too high about 5% of the time, and is not known to have
+                    // ever been more than 1 too high.
+                    while (compare(prod, rem, prodL, remL) == 1) {
+                      n--;
+
+                      // Subtract divisor from product.
+                      subtract(prod, yL < prodL ? yz : yc, prodL, base);
+                      prodL = prod.length;
+                      cmp = 1;
+                    }
+                  } else {
+
+                    // n is 0 or 1, cmp is -1.
+                    // If n is 0, there is no need to compare yc and rem again below,
+                    // so change cmp to 1 to avoid it.
+                    // If n is 1, leave cmp as -1, so yc and rem are compared again.
+                    if (n == 0) {
+
+                      // divisor < remainder, so n must be at least 1.
+                      cmp = n = 1;
+                    }
+
+                    // product = divisor
+                    prod = yc.slice();
+                    prodL = prod.length;
+                  }
+
+                  if (prodL < remL) prod = [0].concat(prod);
+
+                  // Subtract product from remainder.
+                  subtract(rem, prod, remL, base);
+                  remL = rem.length;
+
+                   // If product was < remainder.
+                  if (cmp == -1) {
+
+                    // Compare divisor and new remainder.
+                    // If divisor < new remainder, subtract divisor from remainder.
+                    // Trial digit n too low.
+                    // n is 1 too low about 5% of the time, and very rarely 2 too low.
+                    while (compare(yc, rem, yL, remL) < 1) {
+                      n++;
+
+                      // Subtract divisor from remainder.
+                      subtract(rem, yL < remL ? yz : yc, remL, base);
+                      remL = rem.length;
+                    }
+                  }
+                } else if (cmp === 0) {
+                  n++;
+                  rem = [0];
+                } // else cmp === 1 and n will be 0
+
+                // Add the next digit, n, to the result array.
+                qc[i++] = n;
+
+                // Update the remainder.
+                if (rem[0]) {
+                  rem[remL++] = xc[xi] || 0;
+                } else {
+                  rem = [xc[xi]];
+                  remL = 1;
+                }
+              } while ((xi++ < xL || rem[0] != null) && s--);
+
+              more = rem[0] != null;
+
+              // Leading zero?
+              if (!qc[0]) qc.splice(0, 1);
+            }
+
+            if (base == BASE) {
+
+              // To calculate q.e, first get the number of digits of qc[0].
+              for (i = 1, s = qc[0]; s >= 10; s /= 10, i++);
+
+              round(q, dp + (q.e = i + e * LOG_BASE - 1) + 1, rm, more);
+
+            // Caller is convertBase.
+            } else {
+              q.e = e;
+              q.r = +more;
+            }
+
+            return q;
+          };
+        })();
+
+
+        /*
+         * Return a string representing the value of BigNumber n in fixed-point or exponential
+         * notation rounded to the specified decimal places or significant digits.
+         *
+         * n: a BigNumber.
+         * i: the index of the last digit required (i.e. the digit that may be rounded up).
+         * rm: the rounding mode.
+         * id: 1 (toExponential) or 2 (toPrecision).
+         */
+        function format(n, i, rm, id) {
+          var c0, e, ne, len, str;
+
+          if (rm == null) rm = ROUNDING_MODE;
+          else intCheck(rm, 0, 8);
+
+          if (!n.c) return n.toString();
+
+          c0 = n.c[0];
+          ne = n.e;
+
+          if (i == null) {
+            str = coeffToString(n.c);
+            str = id == 1 || id == 2 && (ne <= TO_EXP_NEG || ne >= TO_EXP_POS)
+             ? toExponential(str, ne)
+             : toFixedPoint(str, ne, '0');
+          } else {
+            n = round(new BigNumber(n), i, rm);
+
+            // n.e may have changed if the value was rounded up.
+            e = n.e;
+
+            str = coeffToString(n.c);
+            len = str.length;
+
+            // toPrecision returns exponential notation if the number of significant digits
+            // specified is less than the number of digits necessary to represent the integer
+            // part of the value in fixed-point notation.
+
+            // Exponential notation.
+            if (id == 1 || id == 2 && (i <= e || e <= TO_EXP_NEG)) {
+
+              // Append zeros?
+              for (; len < i; str += '0', len++);
+              str = toExponential(str, e);
+
+            // Fixed-point notation.
+            } else {
+              i -= ne;
+              str = toFixedPoint(str, e, '0');
+
+              // Append zeros?
+              if (e + 1 > len) {
+                if (--i > 0) for (str += '.'; i--; str += '0');
+              } else {
+                i += e - len;
+                if (i > 0) {
+                  if (e + 1 == len) str += '.';
+                  for (; i--; str += '0');
+                }
+              }
+            }
+          }
+
+          return n.s < 0 && c0 ? '-' + str : str;
+        }
+
+
+        // Handle BigNumber.max and BigNumber.min.
+        function maxOrMin(args, method) {
+          var n,
+            i = 1,
+            m = new BigNumber(args[0]);
+
+          for (; i < args.length; i++) {
+            n = new BigNumber(args[i]);
+
+            // If any number is NaN, return NaN.
+            if (!n.s) {
+              m = n;
+              break;
+            } else if (method.call(m, n)) {
+              m = n;
+            }
+          }
+
+          return m;
+        }
+
+
+        /*
+         * Strip trailing zeros, calculate base 10 exponent and check against MIN_EXP and MAX_EXP.
+         * Called by minus, plus and times.
+         */
+        function normalise(n, c, e) {
+          var i = 1,
+            j = c.length;
+
+           // Remove trailing zeros.
+          for (; !c[--j]; c.pop());
+
+          // Calculate the base 10 exponent. First get the number of digits of c[0].
+          for (j = c[0]; j >= 10; j /= 10, i++);
+
+          // Overflow?
+          if ((e = i + e * LOG_BASE - 1) > MAX_EXP) {
+
+            // Infinity.
+            n.c = n.e = null;
+
+          // Underflow?
+          } else if (e < MIN_EXP) {
+
+            // Zero.
+            n.c = [n.e = 0];
+          } else {
+            n.e = e;
+            n.c = c;
+          }
+
+          return n;
+        }
+
+
+        // Handle values that fail the validity test in BigNumber.
+        parseNumeric = (function () {
+          var basePrefix = /^(-?)0([xbo])(?=\w[\w.]*$)/i,
+            dotAfter = /^([^.]+)\.$/,
+            dotBefore = /^\.([^.]+)$/,
+            isInfinityOrNaN = /^-?(Infinity|NaN)$/,
+            whitespaceOrPlus = /^\s*\+(?=[\w.])|^\s+|\s+$/g;
+
+          return function (x, str, isNum, b) {
+            var base,
+              s = isNum ? str : str.replace(whitespaceOrPlus, '');
+
+            // No exception on ±Infinity or NaN.
+            if (isInfinityOrNaN.test(s)) {
+              x.s = isNaN(s) ? null : s < 0 ? -1 : 1;
+            } else {
+              if (!isNum) {
+
+                // basePrefix = /^(-?)0([xbo])(?=\w[\w.]*$)/i
+                s = s.replace(basePrefix, function (m, p1, p2) {
+                  base = (p2 = p2.toLowerCase()) == 'x' ? 16 : p2 == 'b' ? 2 : 8;
+                  return !b || b == base ? p1 : m;
+                });
+
+                if (b) {
+                  base = b;
+
+                  // E.g. '1.' to '1', '.1' to '0.1'
+                  s = s.replace(dotAfter, '$1').replace(dotBefore, '0.$1');
+                }
+
+                if (str != s) return new BigNumber(s, base);
+              }
+
+              // '[BigNumber Error] Not a number: {n}'
+              // '[BigNumber Error] Not a base {b} number: {n}'
+              if (BigNumber.DEBUG) {
+                throw Error
+                  (bignumberError + 'Not a' + (b ? ' base ' + b : '') + ' number: ' + str);
+              }
+
+              // NaN
+              x.s = null;
+            }
+
+            x.c = x.e = null;
+          }
+        })();
+
+
+        /*
+         * Round x to sd significant digits using rounding mode rm. Check for over/under-flow.
+         * If r is truthy, it is known that there are more digits after the rounding digit.
+         */
+        function round(x, sd, rm, r) {
+          var d, i, j, k, n, ni, rd,
+            xc = x.c,
+            pows10 = POWS_TEN;
+
+          // if x is not Infinity or NaN...
+          if (xc) {
+
+            // rd is the rounding digit, i.e. the digit after the digit that may be rounded up.
+            // n is a base 1e14 number, the value of the element of array x.c containing rd.
+            // ni is the index of n within x.c.
+            // d is the number of digits of n.
+            // i is the index of rd within n including leading zeros.
+            // j is the actual index of rd within n (if < 0, rd is a leading zero).
+            out: {
+
+              // Get the number of digits of the first element of xc.
+              for (d = 1, k = xc[0]; k >= 10; k /= 10, d++);
+              i = sd - d;
+
+              // If the rounding digit is in the first element of xc...
+              if (i < 0) {
+                i += LOG_BASE;
+                j = sd;
+                n = xc[ni = 0];
+
+                // Get the rounding digit at index j of n.
+                rd = n / pows10[d - j - 1] % 10 | 0;
+              } else {
+                ni = mathceil((i + 1) / LOG_BASE);
+
+                if (ni >= xc.length) {
+
+                  if (r) {
+
+                    // Needed by sqrt.
+                    for (; xc.length <= ni; xc.push(0));
+                    n = rd = 0;
+                    d = 1;
+                    i %= LOG_BASE;
+                    j = i - LOG_BASE + 1;
+                  } else {
+                    break out;
+                  }
+                } else {
+                  n = k = xc[ni];
+
+                  // Get the number of digits of n.
+                  for (d = 1; k >= 10; k /= 10, d++);
+
+                  // Get the index of rd within n.
+                  i %= LOG_BASE;
+
+                  // Get the index of rd within n, adjusted for leading zeros.
+                  // The number of leading zeros of n is given by LOG_BASE - d.
+                  j = i - LOG_BASE + d;
+
+                  // Get the rounding digit at index j of n.
+                  rd = j < 0 ? 0 : n / pows10[d - j - 1] % 10 | 0;
+                }
+              }
+
+              r = r || sd < 0 ||
+
+              // Are there any non-zero digits after the rounding digit?
+              // The expression  n % pows10[d - j - 1]  returns all digits of n to the right
+              // of the digit at j, e.g. if n is 908714 and j is 2, the expression gives 714.
+               xc[ni + 1] != null || (j < 0 ? n : n % pows10[d - j - 1]);
+
+              r = rm < 4
+               ? (rd || r) && (rm == 0 || rm == (x.s < 0 ? 3 : 2))
+               : rd > 5 || rd == 5 && (rm == 4 || r || rm == 6 &&
+
+                // Check whether the digit to the left of the rounding digit is odd.
+                ((i > 0 ? j > 0 ? n / pows10[d - j] : 0 : xc[ni - 1]) % 10) & 1 ||
+                 rm == (x.s < 0 ? 8 : 7));
+
+              if (sd < 1 || !xc[0]) {
+                xc.length = 0;
+
+                if (r) {
+
+                  // Convert sd to decimal places.
+                  sd -= x.e + 1;
+
+                  // 1, 0.1, 0.01, 0.001, 0.0001 etc.
+                  xc[0] = pows10[(LOG_BASE - sd % LOG_BASE) % LOG_BASE];
+                  x.e = -sd || 0;
+                } else {
+
+                  // Zero.
+                  xc[0] = x.e = 0;
+                }
+
+                return x;
+              }
+
+              // Remove excess digits.
+              if (i == 0) {
+                xc.length = ni;
+                k = 1;
+                ni--;
+              } else {
+                xc.length = ni + 1;
+                k = pows10[LOG_BASE - i];
+
+                // E.g. 56700 becomes 56000 if 7 is the rounding digit.
+                // j > 0 means i > number of leading zeros of n.
+                xc[ni] = j > 0 ? mathfloor(n / pows10[d - j] % pows10[j]) * k : 0;
+              }
+
+              // Round up?
+              if (r) {
+
+                for (; ;) {
+
+                  // If the digit to be rounded up is in the first element of xc...
+                  if (ni == 0) {
+
+                    // i will be the length of xc[0] before k is added.
+                    for (i = 1, j = xc[0]; j >= 10; j /= 10, i++);
+                    j = xc[0] += k;
+                    for (k = 1; j >= 10; j /= 10, k++);
+
+                    // if i != k the length has increased.
+                    if (i != k) {
+                      x.e++;
+                      if (xc[0] == BASE) xc[0] = 1;
+                    }
+
+                    break;
+                  } else {
+                    xc[ni] += k;
+                    if (xc[ni] != BASE) break;
+                    xc[ni--] = 0;
+                    k = 1;
+                  }
+                }
+              }
+
+              // Remove trailing zeros.
+              for (i = xc.length; xc[--i] === 0; xc.pop());
+            }
+
+            // Overflow? Infinity.
+            if (x.e > MAX_EXP) {
+              x.c = x.e = null;
+
+            // Underflow? Zero.
+            } else if (x.e < MIN_EXP) {
+              x.c = [x.e = 0];
+            }
+          }
+
+          return x;
+        }
+
+
+        function valueOf(n) {
+          var str,
+            e = n.e;
+
+          if (e === null) return n.toString();
+
+          str = coeffToString(n.c);
+
+          str = e <= TO_EXP_NEG || e >= TO_EXP_POS
+            ? toExponential(str, e)
+            : toFixedPoint(str, e, '0');
+
+          return n.s < 0 ? '-' + str : str;
+        }
+
+
+        // PROTOTYPE/INSTANCE METHODS
+
+
+        /*
+         * Return a new BigNumber whose value is the absolute value of this BigNumber.
+         */
+        P.absoluteValue = P.abs = function () {
+          var x = new BigNumber(this);
+          if (x.s < 0) x.s = 1;
+          return x;
+        };
+
+
+        /*
+         * Return
+         *   1 if the value of this BigNumber is greater than the value of BigNumber(y, b),
+         *   -1 if the value of this BigNumber is less than the value of BigNumber(y, b),
+         *   0 if they have the same value,
+         *   or null if the value of either is NaN.
+         */
+        P.comparedTo = function (y, b) {
+          return compare(this, new BigNumber(y, b));
+        };
+
+
+        /*
+         * If dp is undefined or null or true or false, return the number of decimal places of the
+         * value of this BigNumber, or null if the value of this BigNumber is ±Infinity or NaN.
+         *
+         * Otherwise, if dp is a number, return a new BigNumber whose value is the value of this
+         * BigNumber rounded to a maximum of dp decimal places using rounding mode rm, or
+         * ROUNDING_MODE if rm is omitted.
+         *
+         * [dp] {number} Decimal places: integer, 0 to MAX inclusive.
+         * [rm] {number} Rounding mode. Integer, 0 to 8 inclusive.
+         *
+         * '[BigNumber Error] Argument {not a primitive number|not an integer|out of range}: {dp|rm}'
+         */
+        P.decimalPlaces = P.dp = function (dp, rm) {
+          var c, n, v,
+            x = this;
+
+          if (dp != null) {
+            intCheck(dp, 0, MAX);
+            if (rm == null) rm = ROUNDING_MODE;
+            else intCheck(rm, 0, 8);
+
+            return round(new BigNumber(x), dp + x.e + 1, rm);
+          }
+
+          if (!(c = x.c)) return null;
+          n = ((v = c.length - 1) - bitFloor(this.e / LOG_BASE)) * LOG_BASE;
+
+          // Subtract the number of trailing zeros of the last number.
+          if (v = c[v]) for (; v % 10 == 0; v /= 10, n--);
+          if (n < 0) n = 0;
+
+          return n;
+        };
+
+
+        /*
+         *  n / 0 = I
+         *  n / N = N
+         *  n / I = 0
+         *  0 / n = 0
+         *  0 / 0 = N
+         *  0 / N = N
+         *  0 / I = 0
+         *  N / n = N
+         *  N / 0 = N
+         *  N / N = N
+         *  N / I = N
+         *  I / n = I
+         *  I / 0 = I
+         *  I / N = N
+         *  I / I = N
+         *
+         * Return a new BigNumber whose value is the value of this BigNumber divided by the value of
+         * BigNumber(y, b), rounded according to DECIMAL_PLACES and ROUNDING_MODE.
+         */
+        P.dividedBy = P.div = function (y, b) {
+          return div(this, new BigNumber(y, b), DECIMAL_PLACES, ROUNDING_MODE);
+        };
+
+
+        /*
+         * Return a new BigNumber whose value is the integer part of dividing the value of this
+         * BigNumber by the value of BigNumber(y, b).
+         */
+        P.dividedToIntegerBy = P.idiv = function (y, b) {
+          return div(this, new BigNumber(y, b), 0, 1);
+        };
+
+
+        /*
+         * Return a BigNumber whose value is the value of this BigNumber exponentiated by n.
+         *
+         * If m is present, return the result modulo m.
+         * If n is negative round according to DECIMAL_PLACES and ROUNDING_MODE.
+         * If POW_PRECISION is non-zero and m is not present, round to POW_PRECISION using ROUNDING_MODE.
+         *
+         * The modular power operation works efficiently when x, n, and m are integers, otherwise it
+         * is equivalent to calculating x.exponentiatedBy(n).modulo(m) with a POW_PRECISION of 0.
+         *
+         * n {number|string|BigNumber} The exponent. An integer.
+         * [m] {number|string|BigNumber} The modulus.
+         *
+         * '[BigNumber Error] Exponent not an integer: {n}'
+         */
+        P.exponentiatedBy = P.pow = function (n, m) {
+          var half, isModExp, i, k, more, nIsBig, nIsNeg, nIsOdd, y,
+            x = this;
+
+          n = new BigNumber(n);
+
+          // Allow NaN and ±Infinity, but not other non-integers.
+          if (n.c && !n.isInteger()) {
+            throw Error
+              (bignumberError + 'Exponent not an integer: ' + valueOf(n));
+          }
+
+          if (m != null) m = new BigNumber(m);
+
+          // Exponent of MAX_SAFE_INTEGER is 15.
+          nIsBig = n.e > 14;
+
+          // If x is NaN, ±Infinity, ±0 or ±1, or n is ±Infinity, NaN or ±0.
+          if (!x.c || !x.c[0] || x.c[0] == 1 && !x.e && x.c.length == 1 || !n.c || !n.c[0]) {
+
+            // The sign of the result of pow when x is negative depends on the evenness of n.
+            // If +n overflows to ±Infinity, the evenness of n would be not be known.
+            y = new BigNumber(Math.pow(+valueOf(x), nIsBig ? 2 - isOdd(n) : +valueOf(n)));
+            return m ? y.mod(m) : y;
+          }
+
+          nIsNeg = n.s < 0;
+
+          if (m) {
+
+            // x % m returns NaN if abs(m) is zero, or m is NaN.
+            if (m.c ? !m.c[0] : !m.s) return new BigNumber(NaN);
+
+            isModExp = !nIsNeg && x.isInteger() && m.isInteger();
+
+            if (isModExp) x = x.mod(m);
+
+          // Overflow to ±Infinity: >=2**1e10 or >=1.0000024**1e15.
+          // Underflow to ±0: <=0.79**1e10 or <=0.9999975**1e15.
+          } else if (n.e > 9 && (x.e > 0 || x.e < -1 || (x.e == 0
+            // [1, 240000000]
+            ? x.c[0] > 1 || nIsBig && x.c[1] >= 24e7
+            // [80000000000000]  [99999750000000]
+            : x.c[0] < 8e13 || nIsBig && x.c[0] <= 9999975e7))) {
+
+            // If x is negative and n is odd, k = -0, else k = 0.
+            k = x.s < 0 && isOdd(n) ? -0 : 0;
+
+            // If x >= 1, k = ±Infinity.
+            if (x.e > -1) k = 1 / k;
+
+            // If n is negative return ±0, else return ±Infinity.
+            return new BigNumber(nIsNeg ? 1 / k : k);
+
+          } else if (POW_PRECISION) {
+
+            // Truncating each coefficient array to a length of k after each multiplication
+            // equates to truncating significant digits to POW_PRECISION + [28, 41],
+            // i.e. there will be a minimum of 28 guard digits retained.
+            k = mathceil(POW_PRECISION / LOG_BASE + 2);
+          }
+
+          if (nIsBig) {
+            half = new BigNumber(0.5);
+            if (nIsNeg) n.s = 1;
+            nIsOdd = isOdd(n);
+          } else {
+            i = Math.abs(+valueOf(n));
+            nIsOdd = i % 2;
+          }
+
+          y = new BigNumber(ONE);
+
+          // Performs 54 loop iterations for n of 9007199254740991.
+          for (; ;) {
+
+            if (nIsOdd) {
+              y = y.times(x);
+              if (!y.c) break;
+
+              if (k) {
+                if (y.c.length > k) y.c.length = k;
+              } else if (isModExp) {
+                y = y.mod(m);    //y = y.minus(div(y, m, 0, MODULO_MODE).times(m));
+              }
+            }
+
+            if (i) {
+              i = mathfloor(i / 2);
+              if (i === 0) break;
+              nIsOdd = i % 2;
+            } else {
+              n = n.times(half);
+              round(n, n.e + 1, 1);
+
+              if (n.e > 14) {
+                nIsOdd = isOdd(n);
+              } else {
+                i = +valueOf(n);
+                if (i === 0) break;
+                nIsOdd = i % 2;
+              }
+            }
+
+            x = x.times(x);
+
+            if (k) {
+              if (x.c && x.c.length > k) x.c.length = k;
+            } else if (isModExp) {
+              x = x.mod(m);    //x = x.minus(div(x, m, 0, MODULO_MODE).times(m));
+            }
+          }
+
+          if (isModExp) return y;
+          if (nIsNeg) y = ONE.div(y);
+
+          return m ? y.mod(m) : k ? round(y, POW_PRECISION, ROUNDING_MODE, more) : y;
+        };
+
+
+        /*
+         * Return a new BigNumber whose value is the value of this BigNumber rounded to an integer
+         * using rounding mode rm, or ROUNDING_MODE if rm is omitted.
+         *
+         * [rm] {number} Rounding mode. Integer, 0 to 8 inclusive.
+         *
+         * '[BigNumber Error] Argument {not a primitive number|not an integer|out of range}: {rm}'
+         */
+        P.integerValue = function (rm) {
+          var n = new BigNumber(this);
+          if (rm == null) rm = ROUNDING_MODE;
+          else intCheck(rm, 0, 8);
+          return round(n, n.e + 1, rm);
+        };
+
+
+        /*
+         * Return true if the value of this BigNumber is equal to the value of BigNumber(y, b),
+         * otherwise return false.
+         */
+        P.isEqualTo = P.eq = function (y, b) {
+          return compare(this, new BigNumber(y, b)) === 0;
+        };
+
+
+        /*
+         * Return true if the value of this BigNumber is a finite number, otherwise return false.
+         */
+        P.isFinite = function () {
+          return !!this.c;
+        };
+
+
+        /*
+         * Return true if the value of this BigNumber is greater than the value of BigNumber(y, b),
+         * otherwise return false.
+         */
+        P.isGreaterThan = P.gt = function (y, b) {
+          return compare(this, new BigNumber(y, b)) > 0;
+        };
+
+
+        /*
+         * Return true if the value of this BigNumber is greater than or equal to the value of
+         * BigNumber(y, b), otherwise return false.
+         */
+        P.isGreaterThanOrEqualTo = P.gte = function (y, b) {
+          return (b = compare(this, new BigNumber(y, b))) === 1 || b === 0;
+
+        };
+
+
+        /*
+         * Return true if the value of this BigNumber is an integer, otherwise return false.
+         */
+        P.isInteger = function () {
+          return !!this.c && bitFloor(this.e / LOG_BASE) > this.c.length - 2;
+        };
+
+
+        /*
+         * Return true if the value of this BigNumber is less than the value of BigNumber(y, b),
+         * otherwise return false.
+         */
+        P.isLessThan = P.lt = function (y, b) {
+          return compare(this, new BigNumber(y, b)) < 0;
+        };
+
+
+        /*
+         * Return true if the value of this BigNumber is less than or equal to the value of
+         * BigNumber(y, b), otherwise return false.
+         */
+        P.isLessThanOrEqualTo = P.lte = function (y, b) {
+          return (b = compare(this, new BigNumber(y, b))) === -1 || b === 0;
+        };
+
+
+        /*
+         * Return true if the value of this BigNumber is NaN, otherwise return false.
+         */
+        P.isNaN = function () {
+          return !this.s;
+        };
+
+
+        /*
+         * Return true if the value of this BigNumber is negative, otherwise return false.
+         */
+        P.isNegative = function () {
+          return this.s < 0;
+        };
+
+
+        /*
+         * Return true if the value of this BigNumber is positive, otherwise return false.
+         */
+        P.isPositive = function () {
+          return this.s > 0;
+        };
+
+
+        /*
+         * Return true if the value of this BigNumber is 0 or -0, otherwise return false.
+         */
+        P.isZero = function () {
+          return !!this.c && this.c[0] == 0;
+        };
+
+
+        /*
+         *  n - 0 = n
+         *  n - N = N
+         *  n - I = -I
+         *  0 - n = -n
+         *  0 - 0 = 0
+         *  0 - N = N
+         *  0 - I = -I
+         *  N - n = N
+         *  N - 0 = N
+         *  N - N = N
+         *  N - I = N
+         *  I - n = I
+         *  I - 0 = I
+         *  I - N = N
+         *  I - I = N
+         *
+         * Return a new BigNumber whose value is the value of this BigNumber minus the value of
+         * BigNumber(y, b).
+         */
+        P.minus = function (y, b) {
+          var i, j, t, xLTy,
+            x = this,
+            a = x.s;
+
+          y = new BigNumber(y, b);
+          b = y.s;
+
+          // Either NaN?
+          if (!a || !b) return new BigNumber(NaN);
+
+          // Signs differ?
+          if (a != b) {
+            y.s = -b;
+            return x.plus(y);
+          }
+
+          var xe = x.e / LOG_BASE,
+            ye = y.e / LOG_BASE,
+            xc = x.c,
+            yc = y.c;
+
+          if (!xe || !ye) {
+
+            // Either Infinity?
+            if (!xc || !yc) return xc ? (y.s = -b, y) : new BigNumber(yc ? x : NaN);
+
+            // Either zero?
+            if (!xc[0] || !yc[0]) {
+
+              // Return y if y is non-zero, x if x is non-zero, or zero if both are zero.
+              return yc[0] ? (y.s = -b, y) : new BigNumber(xc[0] ? x :
+
+               // IEEE 754 (2008) 6.3: n - n = -0 when rounding to -Infinity
+               ROUNDING_MODE == 3 ? -0 : 0);
+            }
+          }
+
+          xe = bitFloor(xe);
+          ye = bitFloor(ye);
+          xc = xc.slice();
+
+          // Determine which is the bigger number.
+          if (a = xe - ye) {
+
+            if (xLTy = a < 0) {
+              a = -a;
+              t = xc;
+            } else {
+              ye = xe;
+              t = yc;
+            }
+
+            t.reverse();
+
+            // Prepend zeros to equalise exponents.
+            for (b = a; b--; t.push(0));
+            t.reverse();
+          } else {
+
+            // Exponents equal. Check digit by digit.
+            j = (xLTy = (a = xc.length) < (b = yc.length)) ? a : b;
+
+            for (a = b = 0; b < j; b++) {
+
+              if (xc[b] != yc[b]) {
+                xLTy = xc[b] < yc[b];
+                break;
+              }
+            }
+          }
+
+          // x < y? Point xc to the array of the bigger number.
+          if (xLTy) t = xc, xc = yc, yc = t, y.s = -y.s;
+
+          b = (j = yc.length) - (i = xc.length);
+
+          // Append zeros to xc if shorter.
+          // No need to add zeros to yc if shorter as subtract only needs to start at yc.length.
+          if (b > 0) for (; b--; xc[i++] = 0);
+          b = BASE - 1;
+
+          // Subtract yc from xc.
+          for (; j > a;) {
+
+            if (xc[--j] < yc[j]) {
+              for (i = j; i && !xc[--i]; xc[i] = b);
+              --xc[i];
+              xc[j] += BASE;
+            }
+
+            xc[j] -= yc[j];
+          }
+
+          // Remove leading zeros and adjust exponent accordingly.
+          for (; xc[0] == 0; xc.splice(0, 1), --ye);
+
+          // Zero?
+          if (!xc[0]) {
+
+            // Following IEEE 754 (2008) 6.3,
+            // n - n = +0  but  n - n = -0  when rounding towards -Infinity.
+            y.s = ROUNDING_MODE == 3 ? -1 : 1;
+            y.c = [y.e = 0];
+            return y;
+          }
+
+          // No need to check for Infinity as +x - +y != Infinity && -x - -y != Infinity
+          // for finite x and y.
+          return normalise(y, xc, ye);
+        };
+
+
+        /*
+         *   n % 0 =  N
+         *   n % N =  N
+         *   n % I =  n
+         *   0 % n =  0
+         *  -0 % n = -0
+         *   0 % 0 =  N
+         *   0 % N =  N
+         *   0 % I =  0
+         *   N % n =  N
+         *   N % 0 =  N
+         *   N % N =  N
+         *   N % I =  N
+         *   I % n =  N
+         *   I % 0 =  N
+         *   I % N =  N
+         *   I % I =  N
+         *
+         * Return a new BigNumber whose value is the value of this BigNumber modulo the value of
+         * BigNumber(y, b). The result depends on the value of MODULO_MODE.
+         */
+        P.modulo = P.mod = function (y, b) {
+          var q, s,
+            x = this;
+
+          y = new BigNumber(y, b);
+
+          // Return NaN if x is Infinity or NaN, or y is NaN or zero.
+          if (!x.c || !y.s || y.c && !y.c[0]) {
+            return new BigNumber(NaN);
+
+          // Return x if y is Infinity or x is zero.
+          } else if (!y.c || x.c && !x.c[0]) {
+            return new BigNumber(x);
+          }
+
+          if (MODULO_MODE == 9) {
+
+            // Euclidian division: q = sign(y) * floor(x / abs(y))
+            // r = x - qy    where  0 <= r < abs(y)
+            s = y.s;
+            y.s = 1;
+            q = div(x, y, 0, 3);
+            y.s = s;
+            q.s *= s;
+          } else {
+            q = div(x, y, 0, MODULO_MODE);
+          }
+
+          y = x.minus(q.times(y));
+
+          // To match JavaScript %, ensure sign of zero is sign of dividend.
+          if (!y.c[0] && MODULO_MODE == 1) y.s = x.s;
+
+          return y;
+        };
+
+
+        /*
+         *  n * 0 = 0
+         *  n * N = N
+         *  n * I = I
+         *  0 * n = 0
+         *  0 * 0 = 0
+         *  0 * N = N
+         *  0 * I = N
+         *  N * n = N
+         *  N * 0 = N
+         *  N * N = N
+         *  N * I = N
+         *  I * n = I
+         *  I * 0 = N
+         *  I * N = N
+         *  I * I = I
+         *
+         * Return a new BigNumber whose value is the value of this BigNumber multiplied by the value
+         * of BigNumber(y, b).
+         */
+        P.multipliedBy = P.times = function (y, b) {
+          var c, e, i, j, k, m, xcL, xlo, xhi, ycL, ylo, yhi, zc,
+            base, sqrtBase,
+            x = this,
+            xc = x.c,
+            yc = (y = new BigNumber(y, b)).c;
+
+          // Either NaN, ±Infinity or ±0?
+          if (!xc || !yc || !xc[0] || !yc[0]) {
+
+            // Return NaN if either is NaN, or one is 0 and the other is Infinity.
+            if (!x.s || !y.s || xc && !xc[0] && !yc || yc && !yc[0] && !xc) {
+              y.c = y.e = y.s = null;
+            } else {
+              y.s *= x.s;
+
+              // Return ±Infinity if either is ±Infinity.
+              if (!xc || !yc) {
+                y.c = y.e = null;
+
+              // Return ±0 if either is ±0.
+              } else {
+                y.c = [0];
+                y.e = 0;
+              }
+            }
+
+            return y;
+          }
+
+          e = bitFloor(x.e / LOG_BASE) + bitFloor(y.e / LOG_BASE);
+          y.s *= x.s;
+          xcL = xc.length;
+          ycL = yc.length;
+
+          // Ensure xc points to longer array and xcL to its length.
+          if (xcL < ycL) zc = xc, xc = yc, yc = zc, i = xcL, xcL = ycL, ycL = i;
+
+          // Initialise the result array with zeros.
+          for (i = xcL + ycL, zc = []; i--; zc.push(0));
+
+          base = BASE;
+          sqrtBase = SQRT_BASE;
+
+          for (i = ycL; --i >= 0;) {
+            c = 0;
+            ylo = yc[i] % sqrtBase;
+            yhi = yc[i] / sqrtBase | 0;
+
+            for (k = xcL, j = i + k; j > i;) {
+              xlo = xc[--k] % sqrtBase;
+              xhi = xc[k] / sqrtBase | 0;
+              m = yhi * xlo + xhi * ylo;
+              xlo = ylo * xlo + ((m % sqrtBase) * sqrtBase) + zc[j] + c;
+              c = (xlo / base | 0) + (m / sqrtBase | 0) + yhi * xhi;
+              zc[j--] = xlo % base;
+            }
+
+            zc[j] = c;
+          }
+
+          if (c) {
+            ++e;
+          } else {
+            zc.splice(0, 1);
+          }
+
+          return normalise(y, zc, e);
+        };
+
+
+        /*
+         * Return a new BigNumber whose value is the value of this BigNumber negated,
+         * i.e. multiplied by -1.
+         */
+        P.negated = function () {
+          var x = new BigNumber(this);
+          x.s = -x.s || null;
+          return x;
+        };
+
+
+        /*
+         *  n + 0 = n
+         *  n + N = N
+         *  n + I = I
+         *  0 + n = n
+         *  0 + 0 = 0
+         *  0 + N = N
+         *  0 + I = I
+         *  N + n = N
+         *  N + 0 = N
+         *  N + N = N
+         *  N + I = N
+         *  I + n = I
+         *  I + 0 = I
+         *  I + N = N
+         *  I + I = I
+         *
+         * Return a new BigNumber whose value is the value of this BigNumber plus the value of
+         * BigNumber(y, b).
+         */
+        P.plus = function (y, b) {
+          var t,
+            x = this,
+            a = x.s;
+
+          y = new BigNumber(y, b);
+          b = y.s;
+
+          // Either NaN?
+          if (!a || !b) return new BigNumber(NaN);
+
+          // Signs differ?
+           if (a != b) {
+            y.s = -b;
+            return x.minus(y);
+          }
+
+          var xe = x.e / LOG_BASE,
+            ye = y.e / LOG_BASE,
+            xc = x.c,
+            yc = y.c;
+
+          if (!xe || !ye) {
+
+            // Return ±Infinity if either ±Infinity.
+            if (!xc || !yc) return new BigNumber(a / 0);
+
+            // Either zero?
+            // Return y if y is non-zero, x if x is non-zero, or zero if both are zero.
+            if (!xc[0] || !yc[0]) return yc[0] ? y : new BigNumber(xc[0] ? x : a * 0);
+          }
+
+          xe = bitFloor(xe);
+          ye = bitFloor(ye);
+          xc = xc.slice();
+
+          // Prepend zeros to equalise exponents. Faster to use reverse then do unshifts.
+          if (a = xe - ye) {
+            if (a > 0) {
+              ye = xe;
+              t = yc;
+            } else {
+              a = -a;
+              t = xc;
+            }
+
+            t.reverse();
+            for (; a--; t.push(0));
+            t.reverse();
+          }
+
+          a = xc.length;
+          b = yc.length;
+
+          // Point xc to the longer array, and b to the shorter length.
+          if (a - b < 0) t = yc, yc = xc, xc = t, b = a;
+
+          // Only start adding at yc.length - 1 as the further digits of xc can be ignored.
+          for (a = 0; b;) {
+            a = (xc[--b] = xc[b] + yc[b] + a) / BASE | 0;
+            xc[b] = BASE === xc[b] ? 0 : xc[b] % BASE;
+          }
+
+          if (a) {
+            xc = [a].concat(xc);
+            ++ye;
+          }
+
+          // No need to check for zero, as +x + +y != 0 && -x + -y != 0
+          // ye = MAX_EXP + 1 possible
+          return normalise(y, xc, ye);
+        };
+
+
+        /*
+         * If sd is undefined or null or true or false, return the number of significant digits of
+         * the value of this BigNumber, or null if the value of this BigNumber is ±Infinity or NaN.
+         * If sd is true include integer-part trailing zeros in the count.
+         *
+         * Otherwise, if sd is a number, return a new BigNumber whose value is the value of this
+         * BigNumber rounded to a maximum of sd significant digits using rounding mode rm, or
+         * ROUNDING_MODE if rm is omitted.
+         *
+         * sd {number|boolean} number: significant digits: integer, 1 to MAX inclusive.
+         *                     boolean: whether to count integer-part trailing zeros: true or false.
+         * [rm] {number} Rounding mode. Integer, 0 to 8 inclusive.
+         *
+         * '[BigNumber Error] Argument {not a primitive number|not an integer|out of range}: {sd|rm}'
+         */
+        P.precision = P.sd = function (sd, rm) {
+          var c, n, v,
+            x = this;
+
+          if (sd != null && sd !== !!sd) {
+            intCheck(sd, 1, MAX);
+            if (rm == null) rm = ROUNDING_MODE;
+            else intCheck(rm, 0, 8);
+
+            return round(new BigNumber(x), sd, rm);
+          }
+
+          if (!(c = x.c)) return null;
+          v = c.length - 1;
+          n = v * LOG_BASE + 1;
+
+          if (v = c[v]) {
+
+            // Subtract the number of trailing zeros of the last element.
+            for (; v % 10 == 0; v /= 10, n--);
+
+            // Add the number of digits of the first element.
+            for (v = c[0]; v >= 10; v /= 10, n++);
+          }
+
+          if (sd && x.e + 1 > n) n = x.e + 1;
+
+          return n;
+        };
+
+
+        /*
+         * Return a new BigNumber whose value is the value of this BigNumber shifted by k places
+         * (powers of 10). Shift to the right if n > 0, and to the left if n < 0.
+         *
+         * k {number} Integer, -MAX_SAFE_INTEGER to MAX_SAFE_INTEGER inclusive.
+         *
+         * '[BigNumber Error] Argument {not a primitive number|not an integer|out of range}: {k}'
+         */
+        P.shiftedBy = function (k) {
+          intCheck(k, -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER);
+          return this.times('1e' + k);
+        };
+
+
+        /*
+         *  sqrt(-n) =  N
+         *  sqrt(N) =  N
+         *  sqrt(-I) =  N
+         *  sqrt(I) =  I
+         *  sqrt(0) =  0
+         *  sqrt(-0) = -0
+         *
+         * Return a new BigNumber whose value is the square root of the value of this BigNumber,
+         * rounded according to DECIMAL_PLACES and ROUNDING_MODE.
+         */
+        P.squareRoot = P.sqrt = function () {
+          var m, n, r, rep, t,
+            x = this,
+            c = x.c,
+            s = x.s,
+            e = x.e,
+            dp = DECIMAL_PLACES + 4,
+            half = new BigNumber('0.5');
+
+          // Negative/NaN/Infinity/zero?
+          if (s !== 1 || !c || !c[0]) {
+            return new BigNumber(!s || s < 0 && (!c || c[0]) ? NaN : c ? x : 1 / 0);
+          }
+
+          // Initial estimate.
+          s = Math.sqrt(+valueOf(x));
+
+          // Math.sqrt underflow/overflow?
+          // Pass x to Math.sqrt as integer, then adjust the exponent of the result.
+          if (s == 0 || s == 1 / 0) {
+            n = coeffToString(c);
+            if ((n.length + e) % 2 == 0) n += '0';
+            s = Math.sqrt(+n);
+            e = bitFloor((e + 1) / 2) - (e < 0 || e % 2);
+
+            if (s == 1 / 0) {
+              n = '5e' + e;
+            } else {
+              n = s.toExponential();
+              n = n.slice(0, n.indexOf('e') + 1) + e;
+            }
+
+            r = new BigNumber(n);
+          } else {
+            r = new BigNumber(s + '');
+          }
+
+          // Check for zero.
+          // r could be zero if MIN_EXP is changed after the this value was created.
+          // This would cause a division by zero (x/t) and hence Infinity below, which would cause
+          // coeffToString to throw.
+          if (r.c[0]) {
+            e = r.e;
+            s = e + dp;
+            if (s < 3) s = 0;
+
+            // Newton-Raphson iteration.
+            for (; ;) {
+              t = r;
+              r = half.times(t.plus(div(x, t, dp, 1)));
+
+              if (coeffToString(t.c).slice(0, s) === (n = coeffToString(r.c)).slice(0, s)) {
+
+                // The exponent of r may here be one less than the final result exponent,
+                // e.g 0.0009999 (e-4) --> 0.001 (e-3), so adjust s so the rounding digits
+                // are indexed correctly.
+                if (r.e < e) --s;
+                n = n.slice(s - 3, s + 1);
+
+                // The 4th rounding digit may be in error by -1 so if the 4 rounding digits
+                // are 9999 or 4999 (i.e. approaching a rounding boundary) continue the
+                // iteration.
+                if (n == '9999' || !rep && n == '4999') {
+
+                  // On the first iteration only, check to see if rounding up gives the
+                  // exact result as the nines may infinitely repeat.
+                  if (!rep) {
+                    round(t, t.e + DECIMAL_PLACES + 2, 0);
+
+                    if (t.times(t).eq(x)) {
+                      r = t;
+                      break;
+                    }
+                  }
+
+                  dp += 4;
+                  s += 4;
+                  rep = 1;
+                } else {
+
+                  // If rounding digits are null, 0{0,4} or 50{0,3}, check for exact
+                  // result. If not, then there are further digits and m will be truthy.
+                  if (!+n || !+n.slice(1) && n.charAt(0) == '5') {
+
+                    // Truncate to the first rounding digit.
+                    round(r, r.e + DECIMAL_PLACES + 2, 1);
+                    m = !r.times(r).eq(x);
+                  }
+
+                  break;
+                }
+              }
+            }
+          }
+
+          return round(r, r.e + DECIMAL_PLACES + 1, ROUNDING_MODE, m);
+        };
+
+
+        /*
+         * Return a string representing the value of this BigNumber in exponential notation and
+         * rounded using ROUNDING_MODE to dp fixed decimal places.
+         *
+         * [dp] {number} Decimal places. Integer, 0 to MAX inclusive.
+         * [rm] {number} Rounding mode. Integer, 0 to 8 inclusive.
+         *
+         * '[BigNumber Error] Argument {not a primitive number|not an integer|out of range}: {dp|rm}'
+         */
+        P.toExponential = function (dp, rm) {
+          if (dp != null) {
+            intCheck(dp, 0, MAX);
+            dp++;
+          }
+          return format(this, dp, rm, 1);
+        };
+
+
+        /*
+         * Return a string representing the value of this BigNumber in fixed-point notation rounding
+         * to dp fixed decimal places using rounding mode rm, or ROUNDING_MODE if rm is omitted.
+         *
+         * Note: as with JavaScript's number type, (-0).toFixed(0) is '0',
+         * but e.g. (-0.00001).toFixed(0) is '-0'.
+         *
+         * [dp] {number} Decimal places. Integer, 0 to MAX inclusive.
+         * [rm] {number} Rounding mode. Integer, 0 to 8 inclusive.
+         *
+         * '[BigNumber Error] Argument {not a primitive number|not an integer|out of range}: {dp|rm}'
+         */
+        P.toFixed = function (dp, rm) {
+          if (dp != null) {
+            intCheck(dp, 0, MAX);
+            dp = dp + this.e + 1;
+          }
+          return format(this, dp, rm);
+        };
+
+
+        /*
+         * Return a string representing the value of this BigNumber in fixed-point notation rounded
+         * using rm or ROUNDING_MODE to dp decimal places, and formatted according to the properties
+         * of the format or FORMAT object (see BigNumber.set).
+         *
+         * The formatting object may contain some or all of the properties shown below.
+         *
+         * FORMAT = {
+         *   prefix: '',
+         *   groupSize: 3,
+         *   secondaryGroupSize: 0,
+         *   groupSeparator: ',',
+         *   decimalSeparator: '.',
+         *   fractionGroupSize: 0,
+         *   fractionGroupSeparator: '\xA0',      // non-breaking space
+         *   suffix: ''
+         * };
+         *
+         * [dp] {number} Decimal places. Integer, 0 to MAX inclusive.
+         * [rm] {number} Rounding mode. Integer, 0 to 8 inclusive.
+         * [format] {object} Formatting options. See FORMAT pbject above.
+         *
+         * '[BigNumber Error] Argument {not a primitive number|not an integer|out of range}: {dp|rm}'
+         * '[BigNumber Error] Argument not an object: {format}'
+         */
+        P.toFormat = function (dp, rm, format) {
+          var str,
+            x = this;
+
+          if (format == null) {
+            if (dp != null && rm && typeof rm == 'object') {
+              format = rm;
+              rm = null;
+            } else if (dp && typeof dp == 'object') {
+              format = dp;
+              dp = rm = null;
+            } else {
+              format = FORMAT;
+            }
+          } else if (typeof format != 'object') {
+            throw Error
+              (bignumberError + 'Argument not an object: ' + format);
+          }
+
+          str = x.toFixed(dp, rm);
+
+          if (x.c) {
+            var i,
+              arr = str.split('.'),
+              g1 = +format.groupSize,
+              g2 = +format.secondaryGroupSize,
+              groupSeparator = format.groupSeparator || '',
+              intPart = arr[0],
+              fractionPart = arr[1],
+              isNeg = x.s < 0,
+              intDigits = isNeg ? intPart.slice(1) : intPart,
+              len = intDigits.length;
+
+            if (g2) i = g1, g1 = g2, g2 = i, len -= i;
+
+            if (g1 > 0 && len > 0) {
+              i = len % g1 || g1;
+              intPart = intDigits.substr(0, i);
+              for (; i < len; i += g1) intPart += groupSeparator + intDigits.substr(i, g1);
+              if (g2 > 0) intPart += groupSeparator + intDigits.slice(i);
+              if (isNeg) intPart = '-' + intPart;
+            }
+
+            str = fractionPart
+             ? intPart + (format.decimalSeparator || '') + ((g2 = +format.fractionGroupSize)
+              ? fractionPart.replace(new RegExp('\\d{' + g2 + '}\\B', 'g'),
+               '$&' + (format.fractionGroupSeparator || ''))
+              : fractionPart)
+             : intPart;
+          }
+
+          return (format.prefix || '') + str + (format.suffix || '');
+        };
+
+
+        /*
+         * Return an array of two BigNumbers representing the value of this BigNumber as a simple
+         * fraction with an integer numerator and an integer denominator.
+         * The denominator will be a positive non-zero value less than or equal to the specified
+         * maximum denominator. If a maximum denominator is not specified, the denominator will be
+         * the lowest value necessary to represent the number exactly.
+         *
+         * [md] {number|string|BigNumber} Integer >= 1, or Infinity. The maximum denominator.
+         *
+         * '[BigNumber Error] Argument {not an integer|out of range} : {md}'
+         */
+        P.toFraction = function (md) {
+          var d, d0, d1, d2, e, exp, n, n0, n1, q, r, s,
+            x = this,
+            xc = x.c;
+
+          if (md != null) {
+            n = new BigNumber(md);
+
+            // Throw if md is less than one or is not an integer, unless it is Infinity.
+            if (!n.isInteger() && (n.c || n.s !== 1) || n.lt(ONE)) {
+              throw Error
+                (bignumberError + 'Argument ' +
+                  (n.isInteger() ? 'out of range: ' : 'not an integer: ') + valueOf(n));
+            }
+          }
+
+          if (!xc) return new BigNumber(x);
+
+          d = new BigNumber(ONE);
+          n1 = d0 = new BigNumber(ONE);
+          d1 = n0 = new BigNumber(ONE);
+          s = coeffToString(xc);
+
+          // Determine initial denominator.
+          // d is a power of 10 and the minimum max denominator that specifies the value exactly.
+          e = d.e = s.length - x.e - 1;
+          d.c[0] = POWS_TEN[(exp = e % LOG_BASE) < 0 ? LOG_BASE + exp : exp];
+          md = !md || n.comparedTo(d) > 0 ? (e > 0 ? d : n1) : n;
+
+          exp = MAX_EXP;
+          MAX_EXP = 1 / 0;
+          n = new BigNumber(s);
+
+          // n0 = d1 = 0
+          n0.c[0] = 0;
+
+          for (; ;)  {
+            q = div(n, d, 0, 1);
+            d2 = d0.plus(q.times(d1));
+            if (d2.comparedTo(md) == 1) break;
+            d0 = d1;
+            d1 = d2;
+            n1 = n0.plus(q.times(d2 = n1));
+            n0 = d2;
+            d = n.minus(q.times(d2 = d));
+            n = d2;
+          }
+
+          d2 = div(md.minus(d0), d1, 0, 1);
+          n0 = n0.plus(d2.times(n1));
+          d0 = d0.plus(d2.times(d1));
+          n0.s = n1.s = x.s;
+          e = e * 2;
+
+          // Determine which fraction is closer to x, n0/d0 or n1/d1
+          r = div(n1, d1, e, ROUNDING_MODE).minus(x).abs().comparedTo(
+              div(n0, d0, e, ROUNDING_MODE).minus(x).abs()) < 1 ? [n1, d1] : [n0, d0];
+
+          MAX_EXP = exp;
+
+          return r;
+        };
+
+
+        /*
+         * Return the value of this BigNumber converted to a number primitive.
+         */
+        P.toNumber = function () {
+          return +valueOf(this);
+        };
+
+
+        /*
+         * Return a string representing the value of this BigNumber rounded to sd significant digits
+         * using rounding mode rm or ROUNDING_MODE. If sd is less than the number of digits
+         * necessary to represent the integer part of the value in fixed-point notation, then use
+         * exponential notation.
+         *
+         * [sd] {number} Significant digits. Integer, 1 to MAX inclusive.
+         * [rm] {number} Rounding mode. Integer, 0 to 8 inclusive.
+         *
+         * '[BigNumber Error] Argument {not a primitive number|not an integer|out of range}: {sd|rm}'
+         */
+        P.toPrecision = function (sd, rm) {
+          if (sd != null) intCheck(sd, 1, MAX);
+          return format(this, sd, rm, 2);
+        };
+
+
+        /*
+         * Return a string representing the value of this BigNumber in base b, or base 10 if b is
+         * omitted. If a base is specified, including base 10, round according to DECIMAL_PLACES and
+         * ROUNDING_MODE. If a base is not specified, and this BigNumber has a positive exponent
+         * that is equal to or greater than TO_EXP_POS, or a negative exponent equal to or less than
+         * TO_EXP_NEG, return exponential notation.
+         *
+         * [b] {number} Integer, 2 to ALPHABET.length inclusive.
+         *
+         * '[BigNumber Error] Base {not a primitive number|not an integer|out of range}: {b}'
+         */
+        P.toString = function (b) {
+          var str,
+            n = this,
+            s = n.s,
+            e = n.e;
+
+          // Infinity or NaN?
+          if (e === null) {
+            if (s) {
+              str = 'Infinity';
+              if (s < 0) str = '-' + str;
+            } else {
+              str = 'NaN';
+            }
+          } else {
+            if (b == null) {
+              str = e <= TO_EXP_NEG || e >= TO_EXP_POS
+               ? toExponential(coeffToString(n.c), e)
+               : toFixedPoint(coeffToString(n.c), e, '0');
+            } else if (b === 10 && alphabetHasNormalDecimalDigits) {
+              n = round(new BigNumber(n), DECIMAL_PLACES + e + 1, ROUNDING_MODE);
+              str = toFixedPoint(coeffToString(n.c), n.e, '0');
+            } else {
+              intCheck(b, 2, ALPHABET.length, 'Base');
+              str = convertBase(toFixedPoint(coeffToString(n.c), e, '0'), 10, b, s, true);
+            }
+
+            if (s < 0 && n.c[0]) str = '-' + str;
+          }
+
+          return str;
+        };
+
+
+        /*
+         * Return as toString, but do not accept a base argument, and include the minus sign for
+         * negative zero.
+         */
+        P.valueOf = P.toJSON = function () {
+          return valueOf(this);
+        };
+
+
+        P._isBigNumber = true;
+
+        if (configObject != null) BigNumber.set(configObject);
+
+        return BigNumber;
+      }
+
+
+      // PRIVATE HELPER FUNCTIONS
+
+      // These functions don't need access to variables,
+      // e.g. DECIMAL_PLACES, in the scope of the `clone` function above.
+
+
+      function bitFloor(n) {
+        var i = n | 0;
+        return n > 0 || n === i ? i : i - 1;
+      }
+
+
+      // Return a coefficient array as a string of base 10 digits.
+      function coeffToString(a) {
+        var s, z,
+          i = 1,
+          j = a.length,
+          r = a[0] + '';
+
+        for (; i < j;) {
+          s = a[i++] + '';
+          z = LOG_BASE - s.length;
+          for (; z--; s = '0' + s);
+          r += s;
+        }
+
+        // Determine trailing zeros.
+        for (j = r.length; r.charCodeAt(--j) === 48;);
+
+        return r.slice(0, j + 1 || 1);
+      }
+
+
+      // Compare the value of BigNumbers x and y.
+      function compare(x, y) {
+        var a, b,
+          xc = x.c,
+          yc = y.c,
+          i = x.s,
+          j = y.s,
+          k = x.e,
+          l = y.e;
+
+        // Either NaN?
+        if (!i || !j) return null;
+
+        a = xc && !xc[0];
+        b = yc && !yc[0];
+
+        // Either zero?
+        if (a || b) return a ? b ? 0 : -j : i;
+
+        // Signs differ?
+        if (i != j) return i;
+
+        a = i < 0;
+        b = k == l;
+
+        // Either Infinity?
+        if (!xc || !yc) return b ? 0 : !xc ^ a ? 1 : -1;
+
+        // Compare exponents.
+        if (!b) return k > l ^ a ? 1 : -1;
+
+        j = (k = xc.length) < (l = yc.length) ? k : l;
+
+        // Compare digit by digit.
+        for (i = 0; i < j; i++) if (xc[i] != yc[i]) return xc[i] > yc[i] ^ a ? 1 : -1;
+
+        // Compare lengths.
+        return k == l ? 0 : k > l ^ a ? 1 : -1;
+      }
+
+
+      /*
+       * Check that n is a primitive number, an integer, and in range, otherwise throw.
+       */
+      function intCheck(n, min, max, name) {
+        if (n < min || n > max || n !== mathfloor(n)) {
+          throw Error
+           (bignumberError + (name || 'Argument') + (typeof n == 'number'
+             ? n < min || n > max ? ' out of range: ' : ' not an integer: '
+             : ' not a primitive number: ') + String(n));
+        }
+      }
+
+
+      // Assumes finite n.
+      function isOdd(n) {
+        var k = n.c.length - 1;
+        return bitFloor(n.e / LOG_BASE) == k && n.c[k] % 2 != 0;
+      }
+
+
+      function toExponential(str, e) {
+        return (str.length > 1 ? str.charAt(0) + '.' + str.slice(1) : str) +
+         (e < 0 ? 'e' : 'e+') + e;
+      }
+
+
+      function toFixedPoint(str, e, z) {
+        var len, zs;
+
+        // Negative exponent?
+        if (e < 0) {
+
+          // Prepend zeros.
+          for (zs = z + '.'; ++e; zs += z);
+          str = zs + str;
+
+        // Positive exponent
+        } else {
+          len = str.length;
+
+          // Append zeros.
+          if (++e > len) {
+            for (zs = z, e -= len; --e; zs += z);
+            str += zs;
+          } else if (e < len) {
+            str = str.slice(0, e) + '.' + str.slice(e);
+          }
+        }
+
+        return str;
+      }
+
+
+      // EXPORT
+
+
+      BigNumber = clone();
+      BigNumber['default'] = BigNumber.BigNumber = BigNumber;
+
+      // AMD.
+      if (module.exports) {
+        module.exports = BigNumber;
+
+      // Browser.
+      } else {
+        if (!globalObject) {
+          globalObject = typeof self != 'undefined' && self ? self : window;
+        }
+
+        globalObject.BigNumber = BigNumber;
+      }
+    })(commonjsGlobal);
+    });
+
+    function create2DMatrix(rows, cols, val) {
+        let matrix = new Array(rows);
+
+        for (let i = 0; i < matrix.length; i++) {
+    		matrix[i] = new Array(cols);
+    		for (let j = 0; j < matrix[i].length; j++) {
+    			matrix[i][j] = val;
+    		}
+        }
+        return matrix;
+    }
+
+    function kValueBinaryToBase(value, base) {
+        let valueBigNumber;
+        let valueBigNumberString;
+        bignumber.BigNumber.config({ ALPHABET: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_~' });
+       
+        if (base === 'b64') {
+            valueBigNumber = new bignumber.BigNumber(value, 2).times(17);
+            valueBigNumberString = valueBigNumber.toString(64);
+        } else if (base === 'dec') {
+            valueBigNumber = new bignumber.BigNumber(value, 2).times(17);
+            valueBigNumberString = valueBigNumber.toString(10);
+        } else if (base === 'bin') {
+            valueBigNumberString = value;
+        } else { /* shouldn't be possible */
+            valueBigNumberString = '!ERROR!'; 
+        }
+
+        return valueBigNumberString;
+    }
+    function kValueBaseToBinary(value, base) {
+        let valueBinaryString;
+        bignumber.BigNumber.config({ ALPHABET: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_~' });
+        
+        if (base === 'b64') {
+            valueBinaryString = new bignumber.BigNumber(value, 64).div(17).toString(2).padStart(1802, 0);
+        } else if (base === 'dec') {
+            valueBinaryString = new bignumber.BigNumber(value, 10).div(17).toString(2).padStart(1802, 0);
+        } else if (base === 'bin') {
+            valueBinaryString = value;
+        } else { /* shouldn't be possible */
+            valueBinaryString = '!ERROR!'; 
+        }
+
+        return valueBinaryString;
+    }
+    function stabilizeFunction(func, delay) {
+        let timer;
+
+        return function () {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(context, args), delay);
+        };
+    }
+    function findTouchIndexById(arrayToSearh, idToFind) {
+        for (let i = 0; i < arrayToSearh.length; i++) {
+            const id = arrayToSearh[i].pointerId;
+            if (id == idToFind) {
+                return i;
+            }
+        }
+        /* not found */
+        return -1;
+    }
+
+    function copyCanvasTouch({ pointerId, layerX, layerY }) {
+        return { pointerId, layerX, layerY };
+    }
+
+    function getPixelsOnTheLine(x1, y1, x2, y2, pixelSize) {
+        // Array to be returned in the end
+        const pixelArray = [];
+        let arrayLast = 0;
+        // PseudoPixel coordinates
+        let pixelCoordinates;
+        let pixelX = 20;
+        let pixelY = 20;
+        // Iterators, counters required by algorithm
+        let x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
+        // Calculate line deltas
+        dx = x2 - x1;
+        dy = y2 - y1;
+        // Create a positive copy of deltas (makes iterating easier)
+        dx1 = Math.abs(dx);
+        dy1 = Math.abs(dy);
+        // Calculate error intervals for both axis
+        px = 2 * dy1 - dx1;
+        py = 2 * dx1 - dy1;
+        // The line is X-axis dominant
+        if (dy1 <= dx1) {
+            // Line is drawn left to right
+            if (dx >= 0) {
+                x = x1; y = y1; xe = x2;
+            } else { 
+                // Line is drawn right to left (swap ends)
+                x = x2; y = y2; xe = x1;
+            }
+            // Rasterize the line
+            for (i = 0; x < xe; i++) {
+                x = x + 1;
+                // Deal with octants...
+                if (px < 0) {
+                    px = px + 2 * dy1;
+                } else {
+                    if ((dx < 0 && dy < 0) || (dx > 0 && dy > 0)) {
+                        y = y + 1;
+                    } else {
+                        y = y - 1;
+                    }
+                    px = px + 2 * (dy1 - dx1);
+                }
+                // Draw pixel from line span at
+                // currently rasterized position
+                pixelX = Math.floor(x / pixelSize);
+                pixelY = Math.floor(y / pixelSize);
+                pixelCoordinates = [pixelX, pixelY];
+                arrayLast = pixelArray.length - 1;
+                if (pixelArray.length > 0) {
+                    if (pixelX != pixelArray[arrayLast][0] || pixelY != pixelArray[arrayLast][1])
+                        pixelArray.push(pixelCoordinates);
+                } else {
+                    pixelArray.push(pixelCoordinates);
+                }
+            }
+        } else {
+            // The line is Y-axis dominant
+            // Line is drawn bottom to top
+            if (dy >= 0) {
+                x = x1; y = y1; ye = y2;
+            } else {
+                // Line is drawn top to bottom
+                x = x2; y = y2; ye = y1;
+            }
+             // Rasterize the line
+            for (i = 0; y < ye; i++) {
+                y = y + 1;
+                // Deal with octants...
+                if (py <= 0) {
+                    py = py + 2 * dx1;
+                } else {
+                    if ((dx < 0 && dy<0) || (dx > 0 && dy > 0)) {
+                        x = x + 1;
+                    } else {
+                        x = x - 1;
+                    }
+                    py = py + 2 * (dx1 - dy1);
+                }
+                // Draw pixel from line span at
+                // currently rasterized position
+                pixelX = Math.floor(x / pixelSize);
+                pixelY = Math.floor(y / pixelSize);
+                pixelCoordinates = [pixelX, pixelY];
+                arrayLast = pixelArray.length - 1;
+                if (pixelArray.length > 0) {
+                    if (pixelX != pixelArray[arrayLast][0] || pixelY != pixelArray[arrayLast][1])
+                        pixelArray.push(pixelCoordinates);
+                } else {
+                    pixelArray.push(pixelCoordinates);
+                }
+            }
+        }
+        return pixelArray;
+    }
+
+    const subscriber_queue = [];
+    /**
+     * Create a `Writable` store that allows both updating and reading by subscription.
+     * @param {*=}value initial value
+     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
+     */
+    function writable(value, start = noop) {
+        let stop;
+        const subscribers = new Set();
+        function set(new_value) {
+            if (safe_not_equal(value, new_value)) {
+                value = new_value;
+                if (stop) { // store is ready
+                    const run_queue = !subscriber_queue.length;
+                    for (const subscriber of subscribers) {
+                        subscriber[1]();
+                        subscriber_queue.push(subscriber, value);
+                    }
+                    if (run_queue) {
+                        for (let i = 0; i < subscriber_queue.length; i += 2) {
+                            subscriber_queue[i][0](subscriber_queue[i + 1]);
+                        }
+                        subscriber_queue.length = 0;
+                    }
+                }
+            }
+        }
+        function update(fn) {
+            set(fn(value));
+        }
+        function subscribe(run, invalidate = noop) {
+            const subscriber = [run, invalidate];
+            subscribers.add(subscriber);
+            if (subscribers.size === 1) {
+                stop = start(set) || noop;
+            }
+            run(value);
+            return () => {
+                subscribers.delete(subscriber);
+                if (subscribers.size === 0) {
+                    stop();
+                    stop = null;
+                }
+            };
+        }
+        return { set, update, subscribe };
+    }
+
+    const kValueStringBin = writable('0');
+    const CanvasMode = writable(false);
+    const BrushMode = writable(true);
+
+    /* src/demo/CanvasMatrix.svelte generated by Svelte v3.48.0 */
+    const file$4 = "src/demo/CanvasMatrix.svelte";
+
+    function get_each_context$2(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[16] = list[i];
+    	child_ctx[18] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_1$1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[16] = list[i];
+    	child_ctx[20] = i;
+    	return child_ctx;
+    }
+
+    // (205:3) {#each Array(17) as _, indexPix (indexPix)}
+    function create_each_block_1$1(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "id", "pixel-" + /*indexCol*/ ctx[18] + "-" + /*indexPix*/ ctx[20]);
+    			attr_dev(div, "class", "matrix-pixel svelte-1rnb9sj");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$4, 205, 4, 7355);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1$1.name,
+    		type: "each",
+    		source: "(205:3) {#each Array(17) as _, indexPix (indexPix)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (203:1) {#each Array(106) as _, indexCol (indexCol)}
+    function create_each_block$2(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let each_value_1 = Array(17);
+    	validate_each_argument(each_value_1);
+    	const get_key = ctx => /*indexPix*/ ctx[20];
+    	validate_each_keys(ctx, each_value_1, get_each_context_1$1, get_key);
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		let child_ctx = get_each_context_1$1(ctx, each_value_1, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_1$1(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(div, "class", "matrix-column svelte-1rnb9sj");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$4, 203, 2, 7219);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*Array, pixelSize*/ 1) {
+    				each_value_1 = Array(17);
+    				validate_each_argument(each_value_1);
+    				validate_each_keys(ctx, each_value_1, get_each_context_1$1, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div, destroy_block, create_each_block_1$1, null, get_each_context_1$1);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$2.name,
+    		type: "each",
+    		source: "(203:1) {#each Array(106) as _, indexCol (indexCol)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (218:4) {:else}
+    function create_else_block$1(ctx) {
+    	let div;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "matrix-dummy-canvas svelte-1rnb9sj");
+    			set_style(div, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "touch-action", "auto");
+    			add_location(div, file$4, 219, 8, 8204);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			if (!mounted) {
+    				dispose = listen_dev(div, "click", /*click_handler*/ ctx[12], false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block$1.name,
+    		type: "else",
+    		source: "(218:4) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (211:1) {#if isInCanvasMode}
+    function create_if_block$1(ctx) {
+    	let canvas;
+    	let b;
+    	let i;
+    	let canvas_width_value;
+    	let canvas_height_value;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			canvas = element("canvas");
+    			b = element("b");
+    			i = element("i");
+    			i.textContent = "Your browser does not support canvas element.";
+    			add_location(i, file$4, 215, 19, 8045);
+    			add_location(b, file$4, 215, 16, 8042);
+    			attr_dev(canvas, "id", "canvas");
+    			attr_dev(canvas, "class", "matrix-canvas svelte-1rnb9sj");
+    			attr_dev(canvas, "width", canvas_width_value = 106 * /*pixelSize*/ ctx[0]);
+    			attr_dev(canvas, "height", canvas_height_value = 17 * /*pixelSize*/ ctx[0]);
+    			set_style(canvas, "touch-action", "none");
+    			add_location(canvas, file$4, 212, 8, 7635);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, canvas, anchor);
+    			append_dev(canvas, b);
+    			append_dev(b, i);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(canvas, "pointerdown", /*handleCanvasPointerDown*/ ctx[2], false, false, false),
+    					listen_dev(canvas, "pointermove", /*handleCanvasPointerMove*/ ctx[3], false, false, false),
+    					listen_dev(canvas, "pointerup", /*handleCanvasPointerUp*/ ctx[4], false, false, false),
+    					listen_dev(canvas, "pointerleave", /*handleCanvasPointerLeave*/ ctx[5], false, false, false),
+    					listen_dev(canvas, "pointercancel", /*handleCanvasPointerCancel*/ ctx[6], false, false, false),
+    					listen_dev(canvas, "dragstart", /*handleCanvasDragStart*/ ctx[7], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*pixelSize*/ 1 && canvas_width_value !== (canvas_width_value = 106 * /*pixelSize*/ ctx[0])) {
+    				attr_dev(canvas, "width", canvas_width_value);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1 && canvas_height_value !== (canvas_height_value = 17 * /*pixelSize*/ ctx[0])) {
+    				attr_dev(canvas, "height", canvas_height_value);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(canvas);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$1.name,
+    		type: "if",
+    		source: "(211:1) {#if isInCanvasMode}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$6(ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value = Array(106);
+    	validate_each_argument(each_value);
+    	const get_key = ctx => /*indexCol*/ ctx[18];
+    	validate_each_keys(ctx, each_value, get_each_context$2, get_key);
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		let child_ctx = get_each_context$2(ctx, each_value, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block$2(key, child_ctx));
+    	}
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*isInCanvasMode*/ ctx[1]) return create_if_block$1;
+    		return create_else_block$1;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			if_block.c();
+    			attr_dev(div, "id", "matrix");
+    			attr_dev(div, "class", "matrix svelte-1rnb9sj");
+    			set_style(div, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$4, 201, 0, 7075);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    			if_block.m(div, null);
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value = Array(106);
+    				validate_each_argument(each_value);
+    				validate_each_keys(ctx, each_value, get_each_context$2, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, div, destroy_block, create_each_block$2, t, get_each_context$2);
+    			}
+
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(div, null);
+    				}
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		i: noop,
+    		o: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+
+    			if_block.d();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$6.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$6($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('CanvasMatrix', slots, []);
+    	let { pixelSize } = $$props;
+
+    	/* create 2D array and populate it with '0's */
+    	let kValueArray = create2DMatrix(106, 17, '0');
+
+    	const ongoingTouches = [];
+    	let isInCanvasMode = false;
+    	let isValueUpToDate = true;
+    	let isPointerDown = false;
+    	let isInBrushMode = true;
+    	let kValueString = '';
+
+    	onMount(() => {
+    		/* paint whatever was there in the first place */
+    		kValueStringBin.subscribe(value => {
+    			$$invalidate(11, kValueString = value);
+    			let pixelCol = 0;
+    			let pixelRow = 0;
+    			let pixelID = '';
+
+    			for (let i = 0, j = 0, k = 0; i < value.length; (i++, j++, k++)) {
+    				if (j === 17) {
+    					pixelCol++;
+    					j = 0;
+    					k = 0;
+    				}
+
+    				pixelRow = k;
+    				pixelID = `pixel-${pixelCol}-${pixelRow}`;
+
+    				if (value[i] === '1') {
+    					document.getElementById(pixelID).style.backgroundColor = "#000000";
+    					$$invalidate(8, kValueArray[pixelCol][pixelRow] = '1', kValueArray);
+    				} else {
+    					document.getElementById(pixelID).style.backgroundColor = "#999999";
+    					$$invalidate(8, kValueArray[pixelCol][pixelRow] = '0', kValueArray);
+    				}
+    			}
+    		});
+    	});
+
+    	/* actually painting, can you imagine?! */
+    	CanvasMode.subscribe(value => {
+    		$$invalidate(1, isInCanvasMode = value);
+    	});
+
+    	BrushMode.subscribe(value => {
+    		isInBrushMode = value;
+    	});
+
+    	function matrixFillPixel(x, y) {
+    		let pixelCol = x;
+    		let pixelRow = 16 - y; /* 16 to reverse */
+    		let pixelID = `pixel-${pixelCol}-${pixelRow}`;
+    		let pixelElement = document.getElementById(pixelID);
+
+    		if (isInBrushMode) {
+    			$$invalidate(8, kValueArray[pixelCol][pixelRow] = '1', kValueArray);
+    			pixelElement.style.backgroundColor = "#383838";
+
+    			setTimeout(
+    				() => {
+    					pixelElement.style.backgroundColor = "#1a1a1a";
+    				},
+    				25
+    			);
+
+    			setTimeout(
+    				() => {
+    					pixelElement.style.backgroundColor = "#000000";
+    				},
+    				100
+    			);
+    		} else {
+    			$$invalidate(8, kValueArray[pixelCol][pixelRow] = '0', kValueArray);
+    			pixelElement.style.backgroundColor = "#ffffff";
+
+    			setTimeout(
+    				() => {
+    					pixelElement.style.backgroundColor = "#dddddd";
+    				},
+    				25
+    			);
+
+    			setTimeout(
+    				() => {
+    					pixelElement.style.backgroundColor = "#999999";
+    				},
+    				100
+    			);
+    		}
+    	}
+
+    	/* wake up babe, new events just dropped! */
+    	function handleCanvasPointerDown(e) {
+    		//console.log(`pointerdown: id = ${e.pointerId}.`);
+    		ongoingTouches.push(copyCanvasTouch(e));
+
+    		$$invalidate(10, isPointerDown = true);
+
+    		/* calculate the PseudoPixel coordinates */
+    		let pixelCol = Math.floor(e.layerX / pixelSize);
+
+    		let pixelRow = Math.floor(e.layerY / pixelSize);
+
+    		//console.log(`start drawing at: ${pixelCol}, ${pixelRow}.`);
+    		matrixFillPixel(pixelCol, pixelRow);
+    	}
+
+    	function handleCanvasPointerMove(e) {
+    		if (!isPointerDown) return;
+
+    		/* find the touchID that is being continued here */
+    		const index = findTouchIndexById(ongoingTouches, e.pointerId);
+
+    		if (index < 0) ; else {
+    			//console.log(`continuing ongoing touch: index = ${index}.`);
+    			/* get an array of all PseudoPixels on the traversed line */
+    			let pixelArray = getPixelsOnTheLine(ongoingTouches[index].layerX, ongoingTouches[index].layerY, e.layerX, e.layerY, pixelSize); //console.log(`can't figure out which touch to continue`);
+
+    			/* fill the line */
+    			if (pixelArray.length > 0) {
+    				//console.log(`drawing line from: ${pixelArray[0]}.`);
+    				for (let i = 0; i < pixelArray.length; i++) {
+    					let pixelCol = pixelArray[i][0];
+    					let pixelRow = pixelArray[i][1];
+
+    					if (pixelCol > 105 || pixelRow > 16 || pixelRow < 0 || pixelCol < 0) {
+    						//console.log(`canceled: ${pixelCol}, ${pixelRow} out of bounds!`);
+    						$$invalidate(10, isPointerDown = false);
+
+    						break;
+    					}
+
+    					matrixFillPixel(pixelCol, pixelRow);
+    				}
+    			} //console.log(`drawing line to: ${pixelArray[pixelArray.length - 1]}.`);
+
+    			/* swap in the new touch record */
+    			ongoingTouches.splice(index, 1, copyCanvasTouch(e));
+    		}
+    	}
+
+    	function handleCanvasPointerUp(e) {
+    		//console.log(`pointerup: id = ${e.pointerId}`);
+    		$$invalidate(10, isPointerDown = false);
+
+    		/* find the touchID that is being ended here */
+    		const index = findTouchIndexById(ongoingTouches, e.pointerId);
+
+    		if (index < 0) ; else {
+    			//console.log(`ending ongoing touch: index =  ${index}.`);
+    			/* remove it, we're done */
+    			ongoingTouches.splice(index, 1); //console.log(`can't figure out which touch to end`);
+
+    			$$invalidate(10, isPointerDown = false);
+    		}
+    	}
+
+    	function handleCanvasPointerLeave(e) {
+    		//console.log(`pointerleave: id = ${e.pointerId}`);
+    		$$invalidate(10, isPointerDown = false);
+
+    		/* find the touchID that is being ended here */
+    		const index = findTouchIndexById(ongoingTouches, e.pointerId);
+
+    		if (index < 0) ; else {
+    			//console.log(`ending ongoing touch: index =  ${index}.`);
+    			/* remove it, we're done */
+    			ongoingTouches.splice(index, 1); //console.log(`can't figure out which touch to end`);
+    		}
+    	}
+
+    	function handleCanvasPointerCancel(e) {
+    		//console.log(`pointercancel: id = ${e.pointerId}`);
+    		$$invalidate(10, isPointerDown = false);
+
+    		/* find the touchID that is being ended here */
+    		const index = findTouchIndexById(ongoingTouches, e.pointerId);
+
+    		if (index < 0) ; else {
+    			//console.log(`ending touch: index =  ${index}.`);
+    			/* remove it, we're done */
+    			ongoingTouches.splice(index, 1); //console.log(`can't figure out which touch to end`);
+    		}
+    	}
+
+    	function handleCanvasDragStart(e) {
+    		$$invalidate(10, isPointerDown = false);
+    		e.preventDefault();
+    	}
+    	const writable_props = ['pixelSize'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasMatrix> was created with unknown prop '${key}'`);
+    	});
+
+    	function click_handler(event) {
+    		bubble.call(this, $$self, event);
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		create2DMatrix,
+    		getPixelsOnTheLine,
+    		findTouchIndexById,
+    		copyCanvasTouch,
+    		BrushMode,
+    		CanvasMode,
+    		kValueStringBin,
+    		onMount,
+    		pixelSize,
+    		kValueArray,
+    		ongoingTouches,
+    		isInCanvasMode,
+    		isValueUpToDate,
+    		isPointerDown,
+    		isInBrushMode,
+    		kValueString,
+    		matrixFillPixel,
+    		handleCanvasPointerDown,
+    		handleCanvasPointerMove,
+    		handleCanvasPointerUp,
+    		handleCanvasPointerLeave,
+    		handleCanvasPointerCancel,
+    		handleCanvasDragStart
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    		if ('kValueArray' in $$props) $$invalidate(8, kValueArray = $$props.kValueArray);
+    		if ('isInCanvasMode' in $$props) $$invalidate(1, isInCanvasMode = $$props.isInCanvasMode);
+    		if ('isValueUpToDate' in $$props) $$invalidate(9, isValueUpToDate = $$props.isValueUpToDate);
+    		if ('isPointerDown' in $$props) $$invalidate(10, isPointerDown = $$props.isPointerDown);
+    		if ('isInBrushMode' in $$props) isInBrushMode = $$props.isInBrushMode;
+    		if ('kValueString' in $$props) $$invalidate(11, kValueString = $$props.kValueString);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*isPointerDown, isValueUpToDate, kValueArray, kValueString*/ 3840) {
+    			/* create final string of k's binary value */
+    			if (isPointerDown === true) {
+    				$$invalidate(9, isValueUpToDate = false);
+    			} else {
+    				if (isValueUpToDate === false) {
+    					$$invalidate(11, kValueString = '');
+
+    					for (let i = 0; i < kValueArray.length; i++) {
+    						for (let j = 0; j < kValueArray[i].length; j++) {
+    							$$invalidate(11, kValueString += kValueArray[i][j]);
+    						}
+    					}
+
+    					/* export the final binary string for others to access */
+    					kValueStringBin.update(n => kValueString);
+
+    					$$invalidate(9, isValueUpToDate = true);
+    				}
+    			}
+    		}
+    	};
+
+    	return [
+    		pixelSize,
+    		isInCanvasMode,
+    		handleCanvasPointerDown,
+    		handleCanvasPointerMove,
+    		handleCanvasPointerUp,
+    		handleCanvasPointerLeave,
+    		handleCanvasPointerCancel,
+    		handleCanvasDragStart,
+    		kValueArray,
+    		isValueUpToDate,
+    		isPointerDown,
+    		kValueString,
+    		click_handler
+    	];
+    }
+
+    class CanvasMatrix extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$6, create_fragment$6, safe_not_equal, { pixelSize: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "CanvasMatrix",
+    			options,
+    			id: create_fragment$6.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*pixelSize*/ ctx[0] === undefined && !('pixelSize' in props)) {
+    			console.warn("<CanvasMatrix> was created without expected prop 'pixelSize'");
+    		}
+    	}
+
+    	get pixelSize() {
+    		throw new Error("<CanvasMatrix>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set pixelSize(value) {
+    		throw new Error("<CanvasMatrix>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src/demo/CanvasDecore.svelte generated by Svelte v3.48.0 */
+    const file$3 = "src/demo/CanvasDecore.svelte";
+
+    function get_each_context$1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_2(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_3(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_4(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_5(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_6(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_7(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_8(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_9(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_10(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_11(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_12(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_13(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_14(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_15(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
+    	return child_ctx;
+    }
+
+    // (11:16) {#each Array(3) as _, index (index)}
+    function create_each_block_15(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-outer-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 11, 20, 593);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_15.name,
+    		type: "each",
+    		source: "(11:16) {#each Array(3) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (9:8) {#each Array(116) as _, index (index)}
+    function create_each_block_14(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_15 = Array(3);
+    	validate_each_argument(each_value_15);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_15, get_each_context_15, get_key);
+
+    	for (let i = 0; i < each_value_15.length; i += 1) {
+    		let child_ctx = get_each_context_15(ctx, each_value_15, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_15(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-outer-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 9, 12, 430);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_15 = Array(3);
+    				validate_each_argument(each_value_15);
+    				validate_each_keys(ctx, each_value_15, get_each_context_15, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_15, each_1_lookup, div, destroy_block, create_each_block_15, t, get_each_context_15);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_14.name,
+    		type: "each",
+    		source: "(9:8) {#each Array(116) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (21:16) {#each Array(21) as _, index (index)}
+    function create_each_block_13(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-outer-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 21, 20, 1074);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_13.name,
+    		type: "each",
+    		source: "(21:16) {#each Array(21) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (19:8) {#each Array(3) as _, index (index)}
+    function create_each_block_12(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_13 = Array(21);
+    	validate_each_argument(each_value_13);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_13, get_each_context_13, get_key);
+
+    	for (let i = 0; i < each_value_13.length; i += 1) {
+    		let child_ctx = get_each_context_13(ctx, each_value_13, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_13(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-outer-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 19, 12, 909);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_13 = Array(21);
+    				validate_each_argument(each_value_13);
+    				validate_each_keys(ctx, each_value_13, get_each_context_13, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_13, each_1_lookup, div, destroy_block, create_each_block_13, t, get_each_context_13);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_12.name,
+    		type: "each",
+    		source: "(19:8) {#each Array(3) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (32:20) {#each Array(2) as _, index (index)}
+    function create_each_block_11(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-inner-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 32, 24, 1669);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_11.name,
+    		type: "each",
+    		source: "(32:20) {#each Array(2) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (30:12) {#each Array(110) as _, index (index)}
+    function create_each_block_10(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_11 = Array(2);
+    	validate_each_argument(each_value_11);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_11, get_each_context_11, get_key);
+
+    	for (let i = 0; i < each_value_11.length; i += 1) {
+    		let child_ctx = get_each_context_11(ctx, each_value_11, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_11(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-inner-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 30, 16, 1498);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_11 = Array(2);
+    				validate_each_argument(each_value_11);
+    				validate_each_keys(ctx, each_value_11, get_each_context_11, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_11, each_1_lookup, div, destroy_block, create_each_block_11, t, get_each_context_11);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_10.name,
+    		type: "each",
+    		source: "(30:12) {#each Array(110) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (42:20) {#each Array(17) as _, index (index)}
+    function create_each_block_9(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-inner-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 42, 24, 2186);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_9.name,
+    		type: "each",
+    		source: "(42:20) {#each Array(17) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (40:12) {#each Array(2) as _, index (index)}
+    function create_each_block_8(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_9 = Array(17);
+    	validate_each_argument(each_value_9);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_9, get_each_context_9, get_key);
+
+    	for (let i = 0; i < each_value_9.length; i += 1) {
+    		let child_ctx = get_each_context_9(ctx, each_value_9, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_9(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-inner-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 40, 16, 2013);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_9 = Array(17);
+    				validate_each_argument(each_value_9);
+    				validate_each_keys(ctx, each_value_9, get_each_context_9, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_9, each_1_lookup, div, destroy_block, create_each_block_9, t, get_each_context_9);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_8.name,
+    		type: "each",
+    		source: "(40:12) {#each Array(2) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (56:20) {#each Array(17) as _, index (index)}
+    function create_each_block_7(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-inner-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 56, 24, 2894);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_7.name,
+    		type: "each",
+    		source: "(56:20) {#each Array(17) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (54:12) {#each Array(2) as _, index (index)}
+    function create_each_block_6(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_7 = Array(17);
+    	validate_each_argument(each_value_7);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_7, get_each_context_7, get_key);
+
+    	for (let i = 0; i < each_value_7.length; i += 1) {
+    		let child_ctx = get_each_context_7(ctx, each_value_7, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_7(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-inner-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 54, 16, 2721);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_7 = Array(17);
+    				validate_each_argument(each_value_7);
+    				validate_each_keys(ctx, each_value_7, get_each_context_7, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_7, each_1_lookup, div, destroy_block, create_each_block_7, t, get_each_context_7);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_6.name,
+    		type: "each",
+    		source: "(54:12) {#each Array(2) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (66:20) {#each Array(2) as _, index (index)}
+    function create_each_block_5(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-inner-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 66, 24, 3411);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_5.name,
+    		type: "each",
+    		source: "(66:20) {#each Array(2) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (64:12) {#each Array(110) as _, index (index)}
+    function create_each_block_4(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_5 = Array(2);
+    	validate_each_argument(each_value_5);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_5, get_each_context_5, get_key);
+
+    	for (let i = 0; i < each_value_5.length; i += 1) {
+    		let child_ctx = get_each_context_5(ctx, each_value_5, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_5(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-inner-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 64, 16, 3240);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_5 = Array(2);
+    				validate_each_argument(each_value_5);
+    				validate_each_keys(ctx, each_value_5, get_each_context_5, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_5, each_1_lookup, div, destroy_block, create_each_block_5, t, get_each_context_5);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_4.name,
+    		type: "each",
+    		source: "(64:12) {#each Array(110) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (77:16) {#each Array(21) as _, index (index)}
+    function create_each_block_3(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-outer-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 77, 20, 3920);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_3.name,
+    		type: "each",
+    		source: "(77:16) {#each Array(21) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (75:8) {#each Array(3) as _, index (index)}
+    function create_each_block_2(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_3 = Array(21);
+    	validate_each_argument(each_value_3);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_3, get_each_context_3, get_key);
+
+    	for (let i = 0; i < each_value_3.length; i += 1) {
+    		let child_ctx = get_each_context_3(ctx, each_value_3, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_3(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-outer-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 75, 12, 3755);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_3 = Array(21);
+    				validate_each_argument(each_value_3);
+    				validate_each_keys(ctx, each_value_3, get_each_context_3, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_3, each_1_lookup, div, destroy_block, create_each_block_3, t, get_each_context_3);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_2.name,
+    		type: "each",
+    		source: "(75:8) {#each Array(3) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (87:16) {#each Array(3) as _, index (index)}
+    function create_each_block_1(key_1, ctx) {
+    	let div;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "decore-outer-pixel svelte-18izcba");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 87, 20, 4401);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(87:16) {#each Array(3) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (85:8) {#each Array(116) as _, index (index)}
+    function create_each_block$1(key_1, ctx) {
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let t;
+    	let each_value_1 = Array(3);
+    	validate_each_argument(each_value_1);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		let child_ctx = get_each_context_1(ctx, each_value_1, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_1(key, child_ctx));
+    	}
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t = space();
+    			attr_dev(div, "class", "decore-outer-column");
+    			set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div, file$3, 85, 12, 4238);
+    			this.first = div;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(div, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				each_value_1 = Array(3);
+    				validate_each_argument(each_value_1);
+    				validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div, destroy_block, create_each_block_1, t, get_each_context_1);
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 1) {
+    				set_style(div, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$1.name,
+    		type: "each",
+    		source: "(85:8) {#each Array(116) as _, index (index)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$5(ctx) {
+    	let div10;
+    	let div0;
+    	let each_blocks_7 = [];
+    	let each0_lookup = new Map();
+    	let t0;
+    	let div1;
+    	let each_blocks_6 = [];
+    	let each1_lookup = new Map();
+    	let t1;
+    	let div7;
+    	let div2;
+    	let each_blocks_5 = [];
+    	let each2_lookup = new Map();
+    	let t2;
+    	let div3;
+    	let each_blocks_4 = [];
+    	let each3_lookup = new Map();
+    	let t3;
+    	let div4;
+    	let canvasmatrix;
+    	let t4;
+    	let div5;
+    	let each_blocks_3 = [];
+    	let each4_lookup = new Map();
+    	let t5;
+    	let div6;
+    	let each_blocks_2 = [];
+    	let each5_lookup = new Map();
+    	let t6;
+    	let div8;
+    	let each_blocks_1 = [];
+    	let each6_lookup = new Map();
+    	let t7;
+    	let div9;
+    	let each_blocks = [];
+    	let each7_lookup = new Map();
+    	let current;
+    	let each_value_14 = Array(116);
+    	validate_each_argument(each_value_14);
+    	const get_key = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_14, get_each_context_14, get_key);
+
+    	for (let i = 0; i < each_value_14.length; i += 1) {
+    		let child_ctx = get_each_context_14(ctx, each_value_14, i);
+    		let key = get_key(child_ctx);
+    		each0_lookup.set(key, each_blocks_7[i] = create_each_block_14(key, child_ctx));
+    	}
+
+    	let each_value_12 = Array(3);
+    	validate_each_argument(each_value_12);
+    	const get_key_1 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_12, get_each_context_12, get_key_1);
+
+    	for (let i = 0; i < each_value_12.length; i += 1) {
+    		let child_ctx = get_each_context_12(ctx, each_value_12, i);
+    		let key = get_key_1(child_ctx);
+    		each1_lookup.set(key, each_blocks_6[i] = create_each_block_12(key, child_ctx));
+    	}
+
+    	let each_value_10 = Array(110);
+    	validate_each_argument(each_value_10);
+    	const get_key_2 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_10, get_each_context_10, get_key_2);
+
+    	for (let i = 0; i < each_value_10.length; i += 1) {
+    		let child_ctx = get_each_context_10(ctx, each_value_10, i);
+    		let key = get_key_2(child_ctx);
+    		each2_lookup.set(key, each_blocks_5[i] = create_each_block_10(key, child_ctx));
+    	}
+
+    	let each_value_8 = Array(2);
+    	validate_each_argument(each_value_8);
+    	const get_key_3 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_8, get_each_context_8, get_key_3);
+
+    	for (let i = 0; i < each_value_8.length; i += 1) {
+    		let child_ctx = get_each_context_8(ctx, each_value_8, i);
+    		let key = get_key_3(child_ctx);
+    		each3_lookup.set(key, each_blocks_4[i] = create_each_block_8(key, child_ctx));
+    	}
+
+    	canvasmatrix = new CanvasMatrix({
+    			props: { pixelSize: /*pixelSize*/ ctx[0] },
+    			$$inline: true
+    		});
+
+    	canvasmatrix.$on("click", /*click_handler*/ ctx[1]);
+    	let each_value_6 = Array(2);
+    	validate_each_argument(each_value_6);
+    	const get_key_4 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_6, get_each_context_6, get_key_4);
+
+    	for (let i = 0; i < each_value_6.length; i += 1) {
+    		let child_ctx = get_each_context_6(ctx, each_value_6, i);
+    		let key = get_key_4(child_ctx);
+    		each4_lookup.set(key, each_blocks_3[i] = create_each_block_6(key, child_ctx));
+    	}
+
+    	let each_value_4 = Array(110);
+    	validate_each_argument(each_value_4);
+    	const get_key_5 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_4, get_each_context_4, get_key_5);
+
+    	for (let i = 0; i < each_value_4.length; i += 1) {
+    		let child_ctx = get_each_context_4(ctx, each_value_4, i);
+    		let key = get_key_5(child_ctx);
+    		each5_lookup.set(key, each_blocks_2[i] = create_each_block_4(key, child_ctx));
+    	}
+
+    	let each_value_2 = Array(3);
+    	validate_each_argument(each_value_2);
+    	const get_key_6 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value_2, get_each_context_2, get_key_6);
+
+    	for (let i = 0; i < each_value_2.length; i += 1) {
+    		let child_ctx = get_each_context_2(ctx, each_value_2, i);
+    		let key = get_key_6(child_ctx);
+    		each6_lookup.set(key, each_blocks_1[i] = create_each_block_2(key, child_ctx));
+    	}
+
+    	let each_value = Array(116);
+    	validate_each_argument(each_value);
+    	const get_key_7 = ctx => /*index*/ ctx[4];
+    	validate_each_keys(ctx, each_value, get_each_context$1, get_key_7);
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		let child_ctx = get_each_context$1(ctx, each_value, i);
+    		let key = get_key_7(child_ctx);
+    		each7_lookup.set(key, each_blocks[i] = create_each_block$1(key, child_ctx));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			div10 = element("div");
+    			div0 = element("div");
+
+    			for (let i = 0; i < each_blocks_7.length; i += 1) {
+    				each_blocks_7[i].c();
+    			}
+
+    			t0 = space();
+    			div1 = element("div");
+
+    			for (let i = 0; i < each_blocks_6.length; i += 1) {
+    				each_blocks_6[i].c();
+    			}
+
+    			t1 = space();
+    			div7 = element("div");
+    			div2 = element("div");
+
+    			for (let i = 0; i < each_blocks_5.length; i += 1) {
+    				each_blocks_5[i].c();
+    			}
+
+    			t2 = space();
+    			div3 = element("div");
+
+    			for (let i = 0; i < each_blocks_4.length; i += 1) {
+    				each_blocks_4[i].c();
+    			}
+
+    			t3 = space();
+    			div4 = element("div");
+    			create_component(canvasmatrix.$$.fragment);
+    			t4 = space();
+    			div5 = element("div");
+
+    			for (let i = 0; i < each_blocks_3.length; i += 1) {
+    				each_blocks_3[i].c();
+    			}
+
+    			t5 = space();
+    			div6 = element("div");
+
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				each_blocks_2[i].c();
+    			}
+
+    			t6 = space();
+    			div8 = element("div");
+
+    			for (let i = 0; i < each_blocks_1.length; i += 1) {
+    				each_blocks_1[i].c();
+    			}
+
+    			t7 = space();
+    			div9 = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(div0, "class", "decore-outer-top svelte-18izcba");
+    			set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div0, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div0, file$3, 7, 4, 278);
+    			attr_dev(div1, "class", "decore-outer-left svelte-18izcba");
+    			set_style(div1, "width", 3 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div1, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div1, file$3, 17, 4, 759);
+    			attr_dev(div2, "class", "decore-inner-top svelte-18izcba");
+    			set_style(div2, "width", 110 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div2, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div2, file$3, 28, 8, 1338);
+    			attr_dev(div3, "class", "decore-inner-left svelte-18izcba");
+    			set_style(div3, "width", 2 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div3, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div3, file$3, 38, 8, 1855);
+    			attr_dev(div4, "class", "child-component-container svelte-18izcba");
+    			set_style(div4, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div4, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div4, file$3, 48, 8, 2372);
+    			attr_dev(div5, "class", "decore-inner-right svelte-18izcba");
+    			set_style(div5, "width", 2 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div5, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div5, file$3, 52, 8, 2562);
+    			attr_dev(div6, "class", "decore-inner-bot svelte-18izcba");
+    			set_style(div6, "width", 110 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div6, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div6, file$3, 62, 8, 3080);
+    			attr_dev(div7, "class", "decore-inner svelte-18izcba");
+    			set_style(div7, "width", 110 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div7, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div7, file$3, 27, 4, 1240);
+    			attr_dev(div8, "class", "decore-outer-right svelte-18izcba");
+    			set_style(div8, "width", 3 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div8, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div8, file$3, 73, 4, 3604);
+    			attr_dev(div9, "class", "decore-outer-bot svelte-18izcba");
+    			set_style(div9, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div9, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div9, file$3, 83, 4, 4086);
+    			attr_dev(div10, "class", "decore svelte-18izcba");
+    			set_style(div10, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div10, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div10, file$3, 6, 0, 190);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div10, anchor);
+    			append_dev(div10, div0);
+
+    			for (let i = 0; i < each_blocks_7.length; i += 1) {
+    				each_blocks_7[i].m(div0, null);
+    			}
+
+    			append_dev(div10, t0);
+    			append_dev(div10, div1);
+
+    			for (let i = 0; i < each_blocks_6.length; i += 1) {
+    				each_blocks_6[i].m(div1, null);
+    			}
+
+    			append_dev(div10, t1);
+    			append_dev(div10, div7);
+    			append_dev(div7, div2);
+
+    			for (let i = 0; i < each_blocks_5.length; i += 1) {
+    				each_blocks_5[i].m(div2, null);
+    			}
+
+    			append_dev(div7, t2);
+    			append_dev(div7, div3);
+
+    			for (let i = 0; i < each_blocks_4.length; i += 1) {
+    				each_blocks_4[i].m(div3, null);
+    			}
+
+    			append_dev(div7, t3);
+    			append_dev(div7, div4);
+    			mount_component(canvasmatrix, div4, null);
+    			append_dev(div7, t4);
+    			append_dev(div7, div5);
+
+    			for (let i = 0; i < each_blocks_3.length; i += 1) {
+    				each_blocks_3[i].m(div5, null);
+    			}
+
+    			append_dev(div7, t5);
+    			append_dev(div7, div6);
+
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				each_blocks_2[i].m(div6, null);
+    			}
+
+    			append_dev(div10, t6);
+    			append_dev(div10, div8);
+
+    			for (let i = 0; i < each_blocks_1.length; i += 1) {
+    				each_blocks_1[i].m(div8, null);
+    			}
+
+    			append_dev(div10, t7);
+    			append_dev(div10, div9);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div9, null);
+    			}
+
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_14 = Array(116);
+    				validate_each_argument(each_value_14);
+    				validate_each_keys(ctx, each_value_14, get_each_context_14, get_key);
+    				each_blocks_7 = update_keyed_each(each_blocks_7, dirty, get_key, 1, ctx, each_value_14, each0_lookup, div0, destroy_block, create_each_block_14, null, get_each_context_14);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div0, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_12 = Array(3);
+    				validate_each_argument(each_value_12);
+    				validate_each_keys(ctx, each_value_12, get_each_context_12, get_key_1);
+    				each_blocks_6 = update_keyed_each(each_blocks_6, dirty, get_key_1, 1, ctx, each_value_12, each1_lookup, div1, destroy_block, create_each_block_12, null, get_each_context_12);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div1, "width", 3 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div1, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_10 = Array(110);
+    				validate_each_argument(each_value_10);
+    				validate_each_keys(ctx, each_value_10, get_each_context_10, get_key_2);
+    				each_blocks_5 = update_keyed_each(each_blocks_5, dirty, get_key_2, 1, ctx, each_value_10, each2_lookup, div2, destroy_block, create_each_block_10, null, get_each_context_10);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div2, "width", 110 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div2, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_8 = Array(2);
+    				validate_each_argument(each_value_8);
+    				validate_each_keys(ctx, each_value_8, get_each_context_8, get_key_3);
+    				each_blocks_4 = update_keyed_each(each_blocks_4, dirty, get_key_3, 1, ctx, each_value_8, each3_lookup, div3, destroy_block, create_each_block_8, null, get_each_context_8);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div3, "width", 2 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div3, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			const canvasmatrix_changes = {};
+    			if (dirty & /*pixelSize*/ 1) canvasmatrix_changes.pixelSize = /*pixelSize*/ ctx[0];
+    			canvasmatrix.$set(canvasmatrix_changes);
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div4, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div4, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_6 = Array(2);
+    				validate_each_argument(each_value_6);
+    				validate_each_keys(ctx, each_value_6, get_each_context_6, get_key_4);
+    				each_blocks_3 = update_keyed_each(each_blocks_3, dirty, get_key_4, 1, ctx, each_value_6, each4_lookup, div5, destroy_block, create_each_block_6, null, get_each_context_6);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div5, "width", 2 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div5, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_4 = Array(110);
+    				validate_each_argument(each_value_4);
+    				validate_each_keys(ctx, each_value_4, get_each_context_4, get_key_5);
+    				each_blocks_2 = update_keyed_each(each_blocks_2, dirty, get_key_5, 1, ctx, each_value_4, each5_lookup, div6, destroy_block, create_each_block_4, null, get_each_context_4);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div6, "width", 110 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div6, "height", 2 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div7, "width", 110 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div7, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value_2 = Array(3);
+    				validate_each_argument(each_value_2);
+    				validate_each_keys(ctx, each_value_2, get_each_context_2, get_key_6);
+    				each_blocks_1 = update_keyed_each(each_blocks_1, dirty, get_key_6, 1, ctx, each_value_2, each6_lookup, div8, destroy_block, create_each_block_2, null, get_each_context_2);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div8, "width", 3 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div8, "height", 21 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*pixelSize, Array*/ 1) {
+    				each_value = Array(116);
+    				validate_each_argument(each_value);
+    				validate_each_keys(ctx, each_value, get_each_context$1, get_key_7);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key_7, 1, ctx, each_value, each7_lookup, div9, destroy_block, create_each_block$1, null, get_each_context$1);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div9, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div9, "height", 3 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div10, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div10, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(canvasmatrix.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(canvasmatrix.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div10);
+
+    			for (let i = 0; i < each_blocks_7.length; i += 1) {
+    				each_blocks_7[i].d();
+    			}
+
+    			for (let i = 0; i < each_blocks_6.length; i += 1) {
+    				each_blocks_6[i].d();
+    			}
+
+    			for (let i = 0; i < each_blocks_5.length; i += 1) {
+    				each_blocks_5[i].d();
+    			}
+
+    			for (let i = 0; i < each_blocks_4.length; i += 1) {
+    				each_blocks_4[i].d();
+    			}
+
+    			destroy_component(canvasmatrix);
+
+    			for (let i = 0; i < each_blocks_3.length; i += 1) {
+    				each_blocks_3[i].d();
+    			}
+
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				each_blocks_2[i].d();
+    			}
+
+    			for (let i = 0; i < each_blocks_1.length; i += 1) {
+    				each_blocks_1[i].d();
+    			}
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$5.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$5($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('CanvasDecore', slots, []);
+    	let { pixelSize } = $$props;
+    	const writable_props = ['pixelSize'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasDecore> was created with unknown prop '${key}'`);
+    	});
+
+    	function click_handler(event) {
+    		bubble.call(this, $$self, event);
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    	};
+
+    	$$self.$capture_state = () => ({ CanvasMatrix, pixelSize });
+
+    	$$self.$inject_state = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [pixelSize, click_handler];
+    }
+
+    class CanvasDecore extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$5, create_fragment$5, safe_not_equal, { pixelSize: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "CanvasDecore",
+    			options,
+    			id: create_fragment$5.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*pixelSize*/ ctx[0] === undefined && !('pixelSize' in props)) {
+    			console.warn("<CanvasDecore> was created without expected prop 'pixelSize'");
+    		}
+    	}
+
+    	get pixelSize() {
+    		throw new Error("<CanvasDecore>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set pixelSize(value) {
+    		throw new Error("<CanvasDecore>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src/demo/CanvasContainer.svelte generated by Svelte v3.48.0 */
+    const file$2 = "src/demo/CanvasContainer.svelte";
+
+    function create_fragment$4(ctx) {
+    	let div21;
+    	let div0;
+    	let t0;
+    	let div1;
+    	let t1;
+    	let div2;
+    	let t2;
+    	let div3;
+    	let t3;
+    	let div4;
+    	let canvasdecore;
+    	let t4;
+    	let div12;
+    	let div5;
+    	let t5;
+    	let div6;
+    	let t6;
+    	let div11;
+    	let div7;
+    	let b0;
+    	let t8;
+    	let div10;
+    	let div8;
+    	let b1;
+    	let i0;
+    	let t10;
+    	let div9;
+    	let b2;
+    	let i1;
+    	let t12;
+    	let div20;
+    	let div13;
+    	let t13;
+    	let div14;
+    	let t14;
+    	let div19;
+    	let div15;
+    	let b3;
+    	let t16;
+    	let div18;
+    	let div16;
+    	let b4;
+    	let i2;
+    	let t18;
+    	let div17;
+    	let b5;
+    	let i3;
+    	let current;
+
+    	canvasdecore = new CanvasDecore({
+    			props: { pixelSize: /*pixelSize*/ ctx[0] },
+    			$$inline: true
+    		});
+
+    	canvasdecore.$on("click", /*click_handler*/ ctx[1]);
+
+    	const block = {
+    		c: function create() {
+    			div21 = element("div");
+    			div0 = element("div");
+    			t0 = space();
+    			div1 = element("div");
+    			t1 = space();
+    			div2 = element("div");
+    			t2 = space();
+    			div3 = element("div");
+    			t3 = space();
+    			div4 = element("div");
+    			create_component(canvasdecore.$$.fragment);
+    			t4 = space();
+    			div12 = element("div");
+    			div5 = element("div");
+    			t5 = space();
+    			div6 = element("div");
+    			t6 = space();
+    			div11 = element("div");
+    			div7 = element("div");
+    			b0 = element("b");
+    			b0.textContent = "Y";
+    			t8 = space();
+    			div10 = element("div");
+    			div8 = element("div");
+    			b1 = element("b");
+    			i0 = element("i");
+    			i0.textContent = "k";
+    			t10 = space();
+    			div9 = element("div");
+    			b2 = element("b");
+    			i1 = element("i");
+    			i1.textContent = "k+17";
+    			t12 = space();
+    			div20 = element("div");
+    			div13 = element("div");
+    			t13 = space();
+    			div14 = element("div");
+    			t14 = space();
+    			div19 = element("div");
+    			div15 = element("div");
+    			b3 = element("b");
+    			b3.textContent = "X";
+    			t16 = space();
+    			div18 = element("div");
+    			div16 = element("div");
+    			b4 = element("b");
+    			i2 = element("i");
+    			i2.textContent = "0";
+    			t18 = space();
+    			div17 = element("div");
+    			b5 = element("b");
+    			i3 = element("i");
+    			i3.textContent = "106";
+    			attr_dev(div0, "class", "container-top-gradient svelte-ky55ju");
+    			set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div0, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div0, file$2, 7, 4, 281);
+    			attr_dev(div1, "class", "container-left-gradient svelte-ky55ju");
+    			set_style(div1, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div1, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div1, file$2, 8, 4, 390);
+    			attr_dev(div2, "class", "container-right-gradient svelte-ky55ju");
+    			set_style(div2, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div2, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div2, file$2, 9, 4, 499);
+    			attr_dev(div3, "class", "container-bot-gradient svelte-ky55ju");
+    			set_style(div3, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div3, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div3, file$2, 10, 4, 609);
+    			attr_dev(div4, "class", "child-component-container svelte-ky55ju");
+    			set_style(div4, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div4, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div4, file$2, 12, 4, 719);
+    			attr_dev(div5, "class", "container-axis-y-arrow-body svelte-ky55ju");
+    			add_location(div5, file$2, 18, 8, 1079);
+    			attr_dev(div6, "class", "container-axis-y-arrow-head svelte-ky55ju");
+    			set_style(div6, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div6, "height", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div6, "top", /*pixelSize*/ ctx[0] / 5 + "px");
+    			add_location(div6, file$2, 19, 2, 1129);
+    			add_location(b0, file$2, 21, 145, 1509);
+    			attr_dev(div7, "class", "container-axis-y-arrow-rest-name svelte-ky55ju");
+    			set_style(div7, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			set_style(div7, "right", /*pixelSize*/ ctx[0] * -1.5 + "px");
+    			set_style(div7, "top", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div7, file$2, 21, 12, 1376);
+    			add_location(i0, file$2, 23, 162, 1807);
+    			add_location(b1, file$2, 23, 159, 1804);
+    			attr_dev(div8, "class", "container-axis-y-arrow-rest-dash-first svelte-ky55ju");
+    			set_style(div8, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			set_style(div8, "right", /*pixelSize*/ ctx[0] / 2 + "px");
+    			set_style(div8, "bottom", /*pixelSize*/ ctx[0] / 5 + "px");
+    			add_location(div8, file$2, 23, 16, 1661);
+    			add_location(i1, file$2, 24, 159, 1985);
+    			add_location(b2, file$2, 24, 156, 1982);
+    			attr_dev(div9, "class", "container-axis-y-arrow-rest-dash-last svelte-ky55ju");
+    			set_style(div9, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			set_style(div9, "right", /*pixelSize*/ ctx[0] / 2 + "px");
+    			set_style(div9, "top", /*pixelSize*/ ctx[0] * -1 + "px");
+    			add_location(div9, file$2, 24, 16, 1842);
+    			attr_dev(div10, "class", "container-axis-y-arrow-rest-dash svelte-ky55ju");
+    			set_style(div10, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div10, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div10, file$2, 22, 12, 1537);
+    			attr_dev(div11, "class", "container-axis-y-arrow-rest svelte-ky55ju");
+    			set_style(div11, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div11, "height", 22 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div11, file$2, 20, 8, 1261);
+    			attr_dev(div12, "class", "container-axis-y svelte-ky55ju");
+    			set_style(div12, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div12, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div12, file$2, 17, 4, 979);
+    			attr_dev(div13, "class", "container-axis-x-arrow-body svelte-ky55ju");
+    			add_location(div13, file$2, 31, 8, 2240);
+    			attr_dev(div14, "class", "container-axis-x-arrow-head svelte-ky55ju");
+    			set_style(div14, "width", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div14, "height", /*pixelSize*/ ctx[0] + "px");
+    			set_style(div14, "right", /*pixelSize*/ ctx[0] / 5 + "px");
+    			add_location(div14, file$2, 32, 8, 2297);
+    			add_location(b3, file$2, 34, 149, 2684);
+    			attr_dev(div15, "class", "container-axis-x-arrow-rest-name svelte-ky55ju");
+    			set_style(div15, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			set_style(div15, "right", /*pixelSize*/ ctx[0] * 1.3 + "px");
+    			set_style(div15, "top", /*pixelSize*/ ctx[0] * -2 + "px");
+    			add_location(div15, file$2, 34, 12, 2547);
+    			add_location(i2, file$2, 36, 134, 2955);
+    			add_location(b4, file$2, 36, 131, 2952);
+    			attr_dev(div16, "class", "container-axis-x-arrow-rest-dash-first svelte-ky55ju");
+    			set_style(div16, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			set_style(div16, "left", /*pixelSize*/ ctx[0] / 5 + "px");
+    			add_location(div16, file$2, 36, 16, 2837);
+    			add_location(i3, file$2, 37, 135, 3109);
+    			add_location(b5, file$2, 37, 132, 3106);
+    			attr_dev(div17, "class", "container-axis-x-arrow-rest-dash-last svelte-ky55ju");
+    			set_style(div17, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			set_style(div17, "right", /*pixelSize*/ ctx[0] * -1 + "px");
+    			add_location(div17, file$2, 37, 16, 2990);
+    			attr_dev(div18, "class", "container-axis-x-arrow-rest-dash svelte-ky55ju");
+    			set_style(div18, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div18, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div18, file$2, 35, 12, 2712);
+    			attr_dev(div19, "class", "container-axis-x-arrow-rest svelte-ky55ju");
+    			set_style(div19, "width", 111 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div19, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div19, file$2, 33, 8, 2431);
+    			attr_dev(div20, "class", "container-axis-x svelte-ky55ju");
+    			set_style(div20, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div20, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div20, file$2, 30, 4, 2139);
+    			attr_dev(div21, "class", "container svelte-ky55ju");
+    			set_style(div21, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div21, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div21, file$2, 6, 0, 190);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div21, anchor);
+    			append_dev(div21, div0);
+    			append_dev(div21, t0);
+    			append_dev(div21, div1);
+    			append_dev(div21, t1);
+    			append_dev(div21, div2);
+    			append_dev(div21, t2);
+    			append_dev(div21, div3);
+    			append_dev(div21, t3);
+    			append_dev(div21, div4);
+    			mount_component(canvasdecore, div4, null);
+    			append_dev(div21, t4);
+    			append_dev(div21, div12);
+    			append_dev(div12, div5);
+    			append_dev(div12, t5);
+    			append_dev(div12, div6);
+    			append_dev(div12, t6);
+    			append_dev(div12, div11);
+    			append_dev(div11, div7);
+    			append_dev(div7, b0);
+    			append_dev(div11, t8);
+    			append_dev(div11, div10);
+    			append_dev(div10, div8);
+    			append_dev(div8, b1);
+    			append_dev(b1, i0);
+    			append_dev(div10, t10);
+    			append_dev(div10, div9);
+    			append_dev(div9, b2);
+    			append_dev(b2, i1);
+    			append_dev(div21, t12);
+    			append_dev(div21, div20);
+    			append_dev(div20, div13);
+    			append_dev(div20, t13);
+    			append_dev(div20, div14);
+    			append_dev(div20, t14);
+    			append_dev(div20, div19);
+    			append_dev(div19, div15);
+    			append_dev(div15, b3);
+    			append_dev(div19, t16);
+    			append_dev(div19, div18);
+    			append_dev(div18, div16);
+    			append_dev(div16, b4);
+    			append_dev(b4, i2);
+    			append_dev(div18, t18);
+    			append_dev(div18, div17);
+    			append_dev(div17, b5);
+    			append_dev(b5, i3);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div0, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div1, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div1, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div2, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div2, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div3, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div3, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			const canvasdecore_changes = {};
+    			if (dirty & /*pixelSize*/ 1) canvasdecore_changes.pixelSize = /*pixelSize*/ ctx[0];
+    			canvasdecore.$set(canvasdecore_changes);
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div4, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div4, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div6, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div6, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div6, "top", /*pixelSize*/ ctx[0] / 5 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div7, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div7, "right", /*pixelSize*/ ctx[0] * -1.5 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div7, "top", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div8, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div8, "right", /*pixelSize*/ ctx[0] / 2 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div8, "bottom", /*pixelSize*/ ctx[0] / 5 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div9, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div9, "right", /*pixelSize*/ ctx[0] / 2 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div9, "top", /*pixelSize*/ ctx[0] * -1 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div10, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div10, "height", 17 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div11, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div11, "height", 22 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div12, "width", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div12, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div14, "width", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div14, "height", /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div14, "right", /*pixelSize*/ ctx[0] / 5 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div15, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div15, "right", /*pixelSize*/ ctx[0] * 1.3 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div15, "top", /*pixelSize*/ ctx[0] * -2 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div16, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div16, "left", /*pixelSize*/ ctx[0] / 5 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div17, "font-size", /*pixelSize*/ ctx[0] / 10 + "em");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div17, "right", /*pixelSize*/ ctx[0] * -1 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div18, "width", 106 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div18, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div19, "width", 111 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div19, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div20, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div20, "height", 5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div21, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div21, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(canvasdecore.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(canvasdecore.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div21);
+    			destroy_component(canvasdecore);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$4.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$4($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('CanvasContainer', slots, []);
+    	let { pixelSize } = $$props;
+    	const writable_props = ['pixelSize'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasContainer> was created with unknown prop '${key}'`);
+    	});
+
+    	function click_handler(event) {
+    		bubble.call(this, $$self, event);
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    	};
+
+    	$$self.$capture_state = () => ({ CanvasDecore, pixelSize });
+
+    	$$self.$inject_state = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [pixelSize, click_handler];
+    }
+
+    class CanvasContainer extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$4, create_fragment$4, safe_not_equal, { pixelSize: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "CanvasContainer",
+    			options,
+    			id: create_fragment$4.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*pixelSize*/ ctx[0] === undefined && !('pixelSize' in props)) {
+    			console.warn("<CanvasContainer> was created without expected prop 'pixelSize'");
+    		}
+    	}
+
+    	get pixelSize() {
+    		throw new Error("<CanvasContainer>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set pixelSize(value) {
+    		throw new Error("<CanvasContainer>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    let kValuePatterns = [
+        { id: 0, text: 'Custom', value: '0' },
+        { id: 1, text: 'Tuppers default', value: '00110010101000100001010101011111000010010010100000000000000000000000000000001000000000000000101000000000000010001000000000000000000000001111111111111111110000000000000000100000111100000000000000001000000000000011100000000000000000100000000000001110000000000000000000000000000000011000000000000001001000000000000010010000000000000011000000000000000000000000000000001100000000000000100100000000000001001000000000000011111100000000000000000000000000011111110000000111000000011100110000000000000110000000000000000011111111111111110100000000000000001011111010000000000000000101011000001100101001000001000111010001100010000000000000000111111111111111100000000000000000000000011001000000000000101001000000000001001010000000000010001000100000000000000001000000000000000000000000000000011111000000000000000000000000000001100100000000000000111000000000000000000000000001111111100000000010000000000000000100101000000000000000100000000000010010100000000000100000000000000001111111100000000000000000000000000000001000000000000000010000000000000000000000000000000111000000000000000010000000000000011100000000000000001000000000000001100000000000000000000000000000000111000000000000001010000000000000011100000000000000000000000000000001110000000000000010100000000000000111110000000000000000000000000000111100000000000110000110000000000000000000000000011111111000000000100000000000000001010110000000000000010000000000000100011000000000001000000000000000011111111000000000000000000000000001000000000000000001100000000000000000000000000000000001111100000000000000000000000000000110010000000000000011100000000000000000000000000110000110001000000011110000001100000000000000000000000000000000001100100000000000010100100000000000100101000001100001000100001100111000000011100100001111111000001000000000000000011111111111111111' },
+        { id: 2, text: 'Tuppers mirrored', value: '11111111111111111000000000000000010000011111110000100111000000011100110000100010000110000010100100000000000100101000000000000100110000000000000000000000000000000000110000001111000000010001100001100000000000000000000000000111000000000000001001100000000000000000000000000000111110000000000000000000000000000000000110000000000000000010000000000000000000000000011111111000000000000000010000000000011000100000000000001000000000000001101010000000000000000100000000011111111000000000000000000000000001100001100000000000111100000000000000000000000000001111100000000000000101000000000000001110000000000000000000000000000000111000000000000001010000000000000011100000000000000000000000000000000110000000000000010000000000000000111000000000000001000000000000000011100000000000000000000000000000001000000000000000010000000000000000000000000000000111111110000000000000000100000000000101001000000000000100000000000000010100100000000000000001000000000111111110000000000000000000000000011100000000000000100110000000000000000000000000000011111000000000000000000000000000000010000000000000000100010001000000000001010010000000000010010100000000000010011000000000000000000000000111111111111111100000000000000001000110001011100010000010010100110000011010100000000000000001011111010000000000000000101111111111111111000000000000000001100000000000001100111000000011100000001111111000000000000000000000000000111111000000000000010010000000000000100100000000000000110000000000000000000000000000000011000000000000001001000000000000010010000000000000011000000000000000000000000000000001110000000000000100000000000000000111000000000000010000000000000000111100000100000000000000001111111111111111110000000000000000000000010001000000000000010100000000000000010000000000000000000000000000000101001001000011111010101010000100010101001100' },
+        { id: 3, text: 'Hello there', value: '11111111111111111100000000000000011000000000000000110000000000000001111111100011111111111111000111111111111110001111111111111100011111111111111000111111111111110001111111100000000000000011000000000000000110000000000000001111111111111111111111111111111111111100000001111111110000000001111111000000000001111110000000000011111100011001000111111000110010001111110000100000011111100001000000111111100010000011111111100100001111111111111111111111111111111111111111110000000000000001100000000000000011000000000000000111111111111111111111111111111111111000000000000000110000000000000001100000000000000011111111111111111111111111111111111111000000011111111100000000011111110000000000011111100000100000111111000111110001111110001111100011111100011111000111111000001000001111110000000000011111110000000001111111110000000111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110011111100000000000001111000000000000001110000000000000011100011111100111111000111111001111111111111111111111111111111111111111000000000000000110000000000000001100000000000000011111111000011111111111111100011111111111111000111111111111110001111111111111000011111100000000000111111000000000001111110000000000111111111111111111111111111111111111111111100000001111111110000000001111111000000000001111110000000000011111100011001000111111000110010001111110000100000011111100001000000111111100010000011111111100100001111111111111111111111111111111111111111110000000000011111100000000000111111000000000001111111111111100011111111111111000111111111111110001111111111111100011111111111111111111111110000000111111111000000000111111100000000000111111000000000001111110001100100011111100011001000111111000010000001111110000100000011111110001000001111111110010000111111111111111111111111' },
+
+        { id: 4, text: 'PAATA HEA!', value: '00110010101000100001010101011111000010010010100000000000000000000000000000001000000000000000101000000000000010001000000000000000000000001111111111111111110000000000000000100000111100000000000000001000000000000011100000000000000000100000000000001110000000000000000000000000000000011000000000000001001000000000000010010000000000000011000000000000000000000000000000001100000000000000100100000000000001001000000000000011111100000000000000000000000000011111110000000111000000011100110000000000000110000000000000000011111111111111110100000000000000001011111010000000000000000101011000001100101001000001000111010001100010000000000000000111111111111111100000000000000000000000011001000000000000101001000000000001001010000000000010001000100000000000000001000000000000000000000000000000011111011111100000000000000101000001100100001110000000111000000000000000000111110001111111100001010010000000011111000100101000000000000000100001111100010010100000010100100000000111110001111111100000000000000000000000100000001000111111000000010000000010000000000000000000000111000111110000000010000001010000011100011111000000001000000000000001100000000000000000000000000000000111000111111000001010000001000000011100011111110000000000000000000001110001111110000010100010010100000111110100101000000000000000000000111100011111000110000110000101000000000001111100011111111000000000100000000101111001010110000000000000010000010111100100011000000000001000000001011110011111111000000000000000000000000001000000000000000001100000000000000000000000000000000001111100000000000000000000000000000110010000000000000011100000000000000000000000000110000110001000000011110000001100000000000000000000000000000000001100100000000000010100100000000000100101000001100001000100001100111000000011100100001111111000001000000000000000011111111111111111'},
+        { id: 5, text: 'MIKHA HEA!', value: '11111111111111111000000000000000010000011111110000100111000000011100110000100010000110000010100100000000000100101000000000000100110000000000000000000000000000000000110000001111000000010001100001100000000000000000000000000111000000000000001001100001111110000000000000000100111110000111111000000000000000010000000110011111000000000010000000000000000001000010011111111011111100000000010100001000011000100000000000001000011111100001101010000100000000000101110110011111111000000000000000000111111001100001100001000000111100011111100000000000000000001111100001111100000101000000010100001110000111110000000000000000000000111000000000000001010000000000000011100001111110000000000000010000000110001111111000010000000000000000111000011111100001000000100101000011100001001010000000000000000000001000000111110000010000000001010000000000011111000111111110000000000000000101011110000101001000000000000100000101111000010100100000000000000001010111100111111110000000000000000000000000011100000000000000100110000000000000000000000000000011111000000000000000000000000000000010000000000000000100010001000000000001010010000000000010010100000000000010011000000000000000000000000111111111111111100000000000000001000110001011100010000010010100110000011010100000000000000001011111010000000000000000101111111111111111000000000000000001100000000000001100111000000011100000001111111000000000000000000000000000111111000000000000010010000000000000100100000000000000110000000000000000000000000000000011000000000000001001000000000000010010000000000000011000000000000000000000000000000001110000000000000100000000000000000111000000000000010000000000000000111100000100000000000000001111111111111111110000000000000000000000010001000000000000010100000000000000010000000000000000000000000000000101001001000011111010101010000100010101001100'},
+        { id: 6, text: 'HAVE I?!!!', value: '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111110000000000001100000000000000011000000000000111111110000000000000000000000000011100000000000000001111000000000000001001100000000000010011000000000001111000000000001110000000000000000000000111111110000001111001100100011100010011001011000000100000010110000000000000000011100011000011000000111001001000000000000001100001111111100100100010011001110000110100110010000000001000000111100000000000000001111000000000000001001100000000000010011010000001001111000111111111110000001000000100000000000000000011111110000000001000000000000000010000000011111111011111110000000110000000000000110001000110000010000100010010000011001001000100000001101100010011111111000000000000000000000000101110000011111111000111100000000010000100110000000000001001111111111000111100100110010111000001001100100000000010000001011111111000000000100000011111111100100001010000001000111100010000100000000000011110001111111100000000010011001000000000100110010000001001000000110110001000000000000010010000000000000011000000000000000000000000111000000000000110000000000001111000000000000000011000000000000000001110000000000000000000000000001111110000000000100000010000000001000000100000000001111110000000000000000000000000000111111100000000010000000000000000100000000000000000111111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'},
+        { id: 7, text: 'Have i?', value: '00000000111111000000000111000011000000011000000011000001100000000011000110000000000110011000000000011001100000000001100011000000000011000011000000000011000011000000000011000011000000000110000011000000011000000011100001100000000001111110000000000000000000000000000000000000000000000111111110000000000001100000000000000011000000000000111111110000000000000000000000000011100000000000000001111000000000000001001100000000000010011000000000001111000000000001110000000000000000000000111111110000001111001100100011100010011001011000000100000010110000000000000000011100011000011000000111001001000000000000001100001111111100100100010011001110000110100110010000000001000000111100000000000000001111000000000000001001100000000000010011010000001001111000111111111110000001000000100000000000000000011111110000000001000000000000000010000000011111111011111110000000110000000000000110001000110000010000100010010000011001001000100000001101100010011111111000000000000000000000000101110000011111111000111100000000010000100110000000000001001111111111000111100100110010111000001001100100000000010000001011111111000000000100000011111111100100001010000001000111100010000100000000000011110001111111100000000010011001000000000100110010000001001000000110110001000000000000010010000000000000011000000000000000000000000111000000000000110000000000001111000000000000000011000000000000000001110000000000000000000000000001111110000000000100000010000000001000000100000000001111110000000000000000000000000000111111100000000010000000000000000100000000000000000111111100000000000000000000000000000000000000000011111100000000011100001100000001100000001100000110000000001100011000000000011001100000000001100110000000000110001100000000001100001100000000001100001100000000001100001100000000011000001100000001100000001110000110000000000111111000'},
+    ];
+
+    /* src/demo/CanvasButtonsBar.svelte generated by Svelte v3.48.0 */
+    const file$1 = "src/demo/CanvasButtonsBar.svelte";
+
+    function get_each_context(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[13] = list[i];
+    	return child_ctx;
+    }
+
+    // (117:24) {#each kValuePatterns as kValuePattern}
+    function create_each_block(ctx) {
+    	let option;
+    	let t0_value = /*kValuePattern*/ ctx[13].text + "";
+    	let t0;
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			option = element("option");
+    			t0 = text(t0_value);
+    			t1 = space();
+    			option.__value = /*kValuePattern*/ ctx[13].id;
+    			option.value = option.__value;
+    			add_location(option, file$1, 117, 28, 6066);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, option, anchor);
+    			append_dev(option, t0);
+    			append_dev(option, t1);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(option);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(117:24) {#each kValuePatterns as kValuePattern}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$3(ctx) {
+    	let div5;
+    	let div0;
+    	let canvascontainer;
+    	let t0;
+    	let div4;
+    	let div1;
+    	let button0;
+    	let i;
+    	let t1;
+    	let sub;
+    	let t2;
+    	let t3;
+    	let textarea;
+    	let t4;
+    	let div3;
+    	let button1;
+    	let t5;
+    	let t6;
+    	let button2;
+    	let t7;
+    	let t8;
+    	let button3;
+    	let t9;
+    	let t10;
+    	let div2;
+    	let button5;
+    	let button4;
+    	let t11;
+    	let t12;
+    	let button6;
+    	let select;
+    	let t13;
+    	let button8;
+    	let button7;
+    	let t14;
+    	let current;
+    	let mounted;
+    	let dispose;
+
+    	canvascontainer = new CanvasContainer({
+    			props: { pixelSize: /*pixelSize*/ ctx[0] },
+    			$$inline: true
+    		});
+
+    	canvascontainer.$on("click", /*click_handler*/ ctx[9]);
+    	let each_value = kValuePatterns;
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			div5 = element("div");
+    			div0 = element("div");
+    			create_component(canvascontainer.$$.fragment);
+    			t0 = space();
+    			div4 = element("div");
+    			div1 = element("div");
+    			button0 = element("button");
+    			i = element("i");
+    			t1 = text("k");
+    			sub = element("sub");
+    			t2 = text(/*kValueBase*/ ctx[3]);
+    			t3 = space();
+    			textarea = element("textarea");
+    			t4 = space();
+    			div3 = element("div");
+    			button1 = element("button");
+    			t5 = text("Comment");
+    			t6 = space();
+    			button2 = element("button");
+    			t7 = text("Paste");
+    			t8 = space();
+    			button3 = element("button");
+    			t9 = text("Copy");
+    			t10 = space();
+    			div2 = element("div");
+    			button5 = element("button");
+    			button4 = element("button");
+    			t11 = text("Tutorial");
+    			t12 = space();
+    			button6 = element("button");
+    			select = element("select");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t13 = space();
+    			button8 = element("button");
+    			button7 = element("button");
+    			t14 = text("Clear!");
+    			attr_dev(div0, "class", "child-component-container svelte-b4cm5k");
+    			set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div0, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div0, file$1, 98, 4, 3364);
+    			add_location(sub, file$1, 103, 165, 3899);
+    			add_location(i, file$1, 103, 161, 3895);
+    			attr_dev(button0, "type", "button");
+    			set_style(button0, "font-size", 2 * /*pixelSize*/ ctx[0] - 4 + "px");
+    			set_style(button0, "width", 8 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(button0, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			attr_dev(button0, "class", "svelte-b4cm5k");
+    			add_location(button0, file$1, 103, 12, 3746);
+    			attr_dev(textarea, "id", "textarea");
+    			set_style(textarea, "line-height", 2.5 * /*pixelSize*/ ctx[0] - 1 + "px");
+    			set_style(textarea, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			set_style(textarea, "width", 88 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(textarea, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			attr_dev(textarea, "class", "svelte-b4cm5k");
+    			add_location(textarea, file$1, 104, 12, 3948);
+    			attr_dev(div1, "class", "k-buttons-value svelte-b4cm5k");
+    			set_style(div1, "width", 96 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div1, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div1, file$1, 102, 8, 3640);
+    			attr_dev(button1, "class", "k-buttons-action-comment svelte-b4cm5k");
+    			attr_dev(button1, "type", "button");
+    			set_style(button1, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			set_style(button1, "width", 12 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(button1, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(button1, file$1, 107, 12, 4314);
+    			attr_dev(button2, "class", "k-buttons-action-paste svelte-b4cm5k");
+    			attr_dev(button2, "type", "button");
+    			set_style(button2, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			set_style(button2, "width", 12 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(button2, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(button2, file$1, 108, 12, 4536);
+    			attr_dev(button3, "class", "k-buttons-action-copy svelte-b4cm5k");
+    			attr_dev(button3, "type", "button");
+    			set_style(button3, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			set_style(button3, "width", 12 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(button3, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(button3, file$1, 109, 12, 4742);
+    			attr_dev(button4, "class", "k-buttons-action-options-tutorial-button svelte-b4cm5k");
+    			attr_dev(button4, "type", "button");
+    			set_style(button4, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			set_style(button4, "width", 13.5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(button4, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(button4, file$1, 112, 20, 5243);
+    			attr_dev(button5, "class", "k-buttons-action-options-tutorial svelte-b4cm5k");
+    			attr_dev(button5, "type", "button");
+    			set_style(button5, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(button5, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(button5, file$1, 111, 16, 5063);
+    			attr_dev(select, "id", "kvalueselector");
+    			attr_dev(select, "class", "k-buttons-action-options-select-selector svelte-b4cm5k");
+    			set_style(select, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			set_style(select, "width", 13.5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(select, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			if (/*kValuePatternSelected*/ ctx[1] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[11].call(select));
+    			add_location(select, file$1, 115, 20, 5762);
+    			attr_dev(button6, "class", "k-buttons-action-options-select svelte-b4cm5k");
+    			attr_dev(button6, "type", "button");
+    			set_style(button6, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			set_style(button6, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(button6, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(button6, file$1, 114, 16, 5512);
+    			attr_dev(button7, "class", "k-buttons-action-options-clear-confirm svelte-b4cm5k");
+    			attr_dev(button7, "type", "button");
+    			set_style(button7, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			set_style(button7, "width", 13.5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(button7, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(button7, file$1, 124, 20, 6472);
+    			attr_dev(button8, "class", "k-buttons-action-options-clear svelte-b4cm5k");
+    			attr_dev(button8, "type", "button");
+    			set_style(button8, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(button8, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(button8, file$1, 123, 16, 6295);
+    			attr_dev(div2, "class", "k-buttons-action-options svelte-b4cm5k");
+    			set_style(div2, "width", 50 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div2, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div2, file$1, 110, 12, 4945);
+    			attr_dev(div3, "class", "k-buttons-action svelte-b4cm5k");
+    			set_style(div3, "width", 96 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div3, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div3, file$1, 106, 9, 4208);
+    			attr_dev(div4, "class", "k-buttons svelte-b4cm5k");
+    			set_style(div4, "width", 96 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div4, "height", 6 * /*pixelSize*/ ctx[0] + "px");
+    			add_location(div4, file$1, 101, 4, 3547);
+    			attr_dev(div5, "class", "buttons svelte-b4cm5k");
+    			set_style(div5, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div5, "height", 33 * /*pixelSize*/ ctx[0] + "px");
+    			set_style(div5, "padding-top", /*pixelSize*/ ctx[0] + "px");
+    			add_location(div5, file$1, 97, 0, 3247);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div5, anchor);
+    			append_dev(div5, div0);
+    			mount_component(canvascontainer, div0, null);
+    			append_dev(div5, t0);
+    			append_dev(div5, div4);
+    			append_dev(div4, div1);
+    			append_dev(div1, button0);
+    			append_dev(button0, i);
+    			append_dev(i, t1);
+    			append_dev(i, sub);
+    			append_dev(sub, t2);
+    			append_dev(div1, t3);
+    			append_dev(div1, textarea);
+    			set_input_value(textarea, /*kValueTextAreaString*/ ctx[2]);
+    			append_dev(div4, t4);
+    			append_dev(div4, div3);
+    			append_dev(div3, button1);
+    			append_dev(button1, t5);
+    			append_dev(div3, t6);
+    			append_dev(div3, button2);
+    			append_dev(button2, t7);
+    			append_dev(div3, t8);
+    			append_dev(div3, button3);
+    			append_dev(button3, t9);
+    			append_dev(div3, t10);
+    			append_dev(div3, div2);
+    			append_dev(div2, button5);
+    			append_dev(button5, button4);
+    			append_dev(button4, t11);
+    			append_dev(div2, t12);
+    			append_dev(div2, button6);
+    			append_dev(button6, select);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(select, null);
+    			}
+
+    			select_option(select, /*kValuePatternSelected*/ ctx[1]);
+    			append_dev(div2, t13);
+    			append_dev(div2, button8);
+    			append_dev(button8, button7);
+    			append_dev(button7, t14);
+    			current = true;
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(button0, "click", /*kValueDisplayButton*/ ctx[4], false, false, false),
+    					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[10]),
+    					listen_dev(textarea, "input", /*kValueChangeHandler*/ ctx[8], false, false, false),
+    					listen_dev(button1, "click", buttonsClickComment, false, false, false),
+    					listen_dev(button2, "click", /*buttonsClickPaste*/ ctx[5], false, false, false),
+    					listen_dev(button3, "click", buttonsClickCopy, false, false, false),
+    					listen_dev(button4, "click", buttonsClickOptionsTutorial, false, false, false),
+    					listen_dev(button5, "click", buttonsClickOptions, false, false, false),
+    					listen_dev(select, "change", /*select_change_handler*/ ctx[11]),
+    					listen_dev(button6, "click", buttonsClickOptions, false, false, false),
+    					listen_dev(button6, "change", /*buttonsClickOptionsSelect*/ ctx[6], false, false, false),
+    					listen_dev(button7, "click", /*buttonsClickOptionsClear*/ ctx[7], false, false, false),
+    					listen_dev(button8, "click", buttonsClickOptions, false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, [dirty]) {
+    			const canvascontainer_changes = {};
+    			if (dirty & /*pixelSize*/ 1) canvascontainer_changes.pixelSize = /*pixelSize*/ ctx[0];
+    			canvascontainer.$set(canvascontainer_changes);
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div0, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div0, "height", 27 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*kValueBase*/ 8) set_data_dev(t2, /*kValueBase*/ ctx[3]);
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button0, "font-size", 2 * /*pixelSize*/ ctx[0] - 4 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button0, "width", 8 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button0, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(textarea, "line-height", 2.5 * /*pixelSize*/ ctx[0] - 1 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(textarea, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(textarea, "width", 88 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(textarea, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*kValueTextAreaString*/ 4) {
+    				set_input_value(textarea, /*kValueTextAreaString*/ ctx[2]);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div1, "width", 96 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div1, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button1, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button1, "width", 12 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button1, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button2, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button2, "width", 12 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button2, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button3, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button3, "width", 12 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button3, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button4, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button4, "width", 13.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button4, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button5, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button5, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*kValuePatterns*/ 0) {
+    				each_value = kValuePatterns;
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(select, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(select, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(select, "width", 13.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(select, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (dirty & /*kValuePatternSelected, kValuePatterns*/ 2) {
+    				select_option(select, /*kValuePatternSelected*/ ctx[1]);
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button6, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button6, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button6, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button7, "font-size", 2 * /*pixelSize*/ ctx[0] - 6 + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button7, "width", 13.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button7, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button8, "width", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(button8, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div2, "width", 50 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div2, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div3, "width", 96 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div3, "height", 2.5 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div4, "width", 96 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div4, "height", 6 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div5, "width", 116 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div5, "height", 33 * /*pixelSize*/ ctx[0] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 1) {
+    				set_style(div5, "padding-top", /*pixelSize*/ ctx[0] + "px");
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(canvascontainer.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(canvascontainer.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div5);
+    			destroy_component(canvascontainer);
+    			destroy_each(each_blocks, detaching);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$3.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function buttonsClickCopy() {
+    	/* Get the text field */
+    	const textarea = document.getElementById("textarea");
+
+    	/* Select the text field */
+    	textarea.select(); /* For mobile */
+
+    	textarea.setSelectionRange(0, 99999);
+    	navigator.clipboard.writeText(textarea.value);
+    }
+
+    function buttonsClickComment() {
+    	alert('to be added soon');
+    }
+
+    function buttonsClickOptions(e) {
+    	if (!e.target.firstChild.style) return; /* handles an annoyance */
+
+    	if (e.target.firstChild.style.display != "block") {
+    		e.target.firstChild.style.display = "block";
+    		e.target.style.borderRadius = "7px";
+    		e.target.style.transition = "0.25s";
+    		e.target.style.flexGrow = "0.35";
+    	} else {
+    		e.target.firstChild.style.display = "none";
+    		e.target.style.borderRadius = "100%";
+    		e.target.style.flexGrow = "0";
+    	}
+    }
+
+    function buttonsClickOptionsTutorial(e) {
+    	alert("click on canvas and paint!");
+    }
+
+    function instance$3($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('CanvasButtonsBar', slots, []);
+    	let { pixelSize } = $$props;
+    	let kValuePatternSelected = 0;
+    	let kValueTextAreaString = '';
+    	let kValueBinaryString = '';
+    	let kValueBase = 'dec';
+
+    	kValueStringBin.subscribe(value => {
+    		kValueBinaryString = value;
+    		$$invalidate(2, kValueTextAreaString = kValueBinaryToBase(kValueBinaryString, kValueBase));
+    	});
+
+    	function kValueDisplayButton() {
+    		if (kValueBase === 'b64') {
+    			$$invalidate(3, kValueBase = 'dec');
+    		} else if (kValueBase === 'dec') {
+    			$$invalidate(3, kValueBase = 'bin');
+    		} else if (kValueBase === 'bin') {
+    			$$invalidate(3, kValueBase = 'b64');
+    		} else {
+    			/* default */
+    			$$invalidate(3, kValueBase = 'dec');
+    		}
+
+    		$$invalidate(2, kValueTextAreaString = kValueBinaryToBase(kValueBinaryString, kValueBase));
+    	}
+
+    	function buttonsClickPaste() {
+    		if (typeof navigator.clipboard.readText === "function") {
+    			let kValueTemp;
+    			navigator.clipboard.readText().then(clipText => kValueTemp = clipText);
+    			kValueTemp = kValueBaseToBinary(kValueTemp, kValueBase);
+    			kValueStringBin.update(n => kValueTemp);
+    			$$invalidate(1, kValuePatternSelected = 0);
+    		} else {
+    			alert('browser clipboard access refused, please paste manually');
+    		}
+    	}
+
+    	function buttonsClickOptionsSelect(e) {
+    		let kValueTemp = kValuePatterns[kValuePatternSelected].value;
+    		kValueStringBin.update(n => kValueTemp);
+    	}
+
+    	function buttonsClickOptionsClear(e) {
+    		let kValueTemp = '0';
+    		kValueStringBin.update(n => kValueTemp);
+    		$$invalidate(1, kValuePatternSelected = 0);
+    	}
+
+    	/* manual input handler, god save us all! */
+    	function kValueChangeHandler() {
+    		let kValueTemp = kValueBaseToBinary(kValueTextAreaString, kValueBase);
+    		kValueStringBin.update(n => kValueTemp);
+    		$$invalidate(1, kValuePatternSelected = 0);
+    	}
+    	const writable_props = ['pixelSize'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasButtonsBar> was created with unknown prop '${key}'`);
+    	});
+
+    	function click_handler(event) {
+    		bubble.call(this, $$self, event);
+    	}
+
+    	function textarea_input_handler() {
+    		kValueTextAreaString = this.value;
+    		$$invalidate(2, kValueTextAreaString);
+    	}
+
+    	function select_change_handler() {
+    		kValuePatternSelected = select_value(this);
+    		$$invalidate(1, kValuePatternSelected);
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		kValueBinaryToBase,
+    		kValueBaseToBinary,
+    		CanvasContainer,
+    		kValuePatterns,
+    		kValueStringBin,
+    		pixelSize,
+    		kValuePatternSelected,
+    		kValueTextAreaString,
+    		kValueBinaryString,
+    		kValueBase,
+    		kValueDisplayButton,
+    		buttonsClickCopy,
+    		buttonsClickPaste,
+    		buttonsClickComment,
+    		buttonsClickOptions,
+    		buttonsClickOptionsTutorial,
+    		buttonsClickOptionsSelect,
+    		buttonsClickOptionsClear,
+    		kValueChangeHandler
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('pixelSize' in $$props) $$invalidate(0, pixelSize = $$props.pixelSize);
+    		if ('kValuePatternSelected' in $$props) $$invalidate(1, kValuePatternSelected = $$props.kValuePatternSelected);
+    		if ('kValueTextAreaString' in $$props) $$invalidate(2, kValueTextAreaString = $$props.kValueTextAreaString);
+    		if ('kValueBinaryString' in $$props) kValueBinaryString = $$props.kValueBinaryString;
+    		if ('kValueBase' in $$props) $$invalidate(3, kValueBase = $$props.kValueBase);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [
+    		pixelSize,
+    		kValuePatternSelected,
+    		kValueTextAreaString,
+    		kValueBase,
+    		kValueDisplayButton,
+    		buttonsClickPaste,
+    		buttonsClickOptionsSelect,
+    		buttonsClickOptionsClear,
+    		kValueChangeHandler,
+    		click_handler,
+    		textarea_input_handler,
+    		select_change_handler
+    	];
+    }
+
+    class CanvasButtonsBar extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { pixelSize: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "CanvasButtonsBar",
+    			options,
+    			id: create_fragment$3.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*pixelSize*/ ctx[0] === undefined && !('pixelSize' in props)) {
+    			console.warn("<CanvasButtonsBar> was created without expected prop 'pixelSize'");
+    		}
+    	}
+
+    	get pixelSize() {
+    		throw new Error("<CanvasButtonsBar>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set pixelSize(value) {
+    		throw new Error("<CanvasButtonsBar>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src/demo/CanvasBaseControl.svelte generated by Svelte v3.48.0 */
+    const file = "src/demo/CanvasBaseControl.svelte";
+
+    // (186:4) {:else}
+    function create_else_block(ctx) {
+    	let div;
+    	let canvasbuttonsbar;
+    	let current;
+
+    	canvasbuttonsbar = new CanvasButtonsBar({
+    			props: { pixelSize: /*pixelSize*/ ctx[8] },
+    			$$inline: true
+    		});
+
+    	canvasbuttonsbar.$on("click", /*toggleCanvasMode*/ ctx[9]);
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			create_component(canvasbuttonsbar.$$.fragment);
+    			attr_dev(div, "class", "child-component-container svelte-7kns0e");
+    			set_style(div, "width", 116 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(div, "height", 34 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(div, "transform", "rotate(" + /*windowRotateDeg*/ ctx[6] + "deg) translate(" + /*windowTranslateX*/ ctx[4] + "px, " + /*windowTranslateY*/ ctx[5] + "px)");
+    			add_location(div, file, 186, 8, 7142);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			mount_component(canvasbuttonsbar, div, null);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const canvasbuttonsbar_changes = {};
+    			if (dirty & /*pixelSize*/ 256) canvasbuttonsbar_changes.pixelSize = /*pixelSize*/ ctx[8];
+    			canvasbuttonsbar.$set(canvasbuttonsbar_changes);
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(div, "width", 116 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(div, "height", 34 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*windowRotateDeg, windowTranslateX, windowTranslateY*/ 112) {
+    				set_style(div, "transform", "rotate(" + /*windowRotateDeg*/ ctx[6] + "deg) translate(" + /*windowTranslateX*/ ctx[4] + "px, " + /*windowTranslateY*/ ctx[5] + "px)");
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(canvasbuttonsbar.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(canvasbuttonsbar.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			destroy_component(canvasbuttonsbar);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(186:4) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (173:4) {#if isInCanvasMode}
+    function create_if_block_2(ctx) {
+    	let div0;
+    	let canvascontainer;
+    	let t0;
+    	let t1;
+    	let div1;
+    	let button0;
+    	let t2;
+    	let button1;
+    	let t3;
+    	let button2;
+    	let t4;
+    	let button3;
+    	let current;
+    	let mounted;
+    	let dispose;
+
+    	canvascontainer = new CanvasContainer({
+    			props: { pixelSize: /*pixelSize*/ ctx[8] },
+    			$$inline: true
+    		});
+
+    	canvascontainer.$on("click", /*toggleCanvasMode*/ ctx[9]);
+    	let if_block = /*isInMoveMode*/ ctx[3] && create_if_block_3(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div0 = element("div");
+    			create_component(canvascontainer.$$.fragment);
+    			t0 = space();
+    			if (if_block) if_block.c();
+    			t1 = space();
+    			div1 = element("div");
+    			button0 = element("button");
+    			t2 = space();
+    			button1 = element("button");
+    			t3 = space();
+    			button2 = element("button");
+    			t4 = space();
+    			button3 = element("button");
+    			attr_dev(div0, "class", "child-component-container svelte-7kns0e");
+    			set_style(div0, "width", 116 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(div0, "height", 27 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(div0, "transform", "rotate(" + /*windowRotateDeg*/ ctx[6] + "deg) translate(" + /*windowTranslateX*/ ctx[4] + "px, " + /*windowTranslateY*/ ctx[5] + "px)");
+    			add_location(div0, file, 173, 8, 5815);
+    			attr_dev(button0, "class", "basecontrol-buttons-brush svelte-7kns0e");
+    			attr_dev(button0, "type", "button");
+    			set_style(button0, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(button0, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			add_location(button0, file, 180, 12, 6415);
+    			attr_dev(button1, "class", "basecontrol-buttons-erase svelte-7kns0e");
+    			attr_dev(button1, "type", "button");
+    			set_style(button1, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(button1, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			add_location(button1, file, 181, 12, 6592);
+    			attr_dev(button2, "class", "basecontrol-buttons-move svelte-7kns0e");
+    			attr_dev(button2, "type", "button");
+    			set_style(button2, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(button2, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			add_location(button2, file, 182, 12, 6769);
+    			attr_dev(button3, "class", "basecontrol-buttons-exit svelte-7kns0e");
+    			attr_dev(button3, "type", "button");
+    			set_style(button3, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(button3, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			add_location(button3, file, 183, 12, 6944);
+    			attr_dev(div1, "class", "basecontrol-buttons svelte-7kns0e");
+    			set_style(div1, "width", 12 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(div1, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			add_location(div1, file, 179, 8, 6306);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div0, anchor);
+    			mount_component(canvascontainer, div0, null);
+    			append_dev(div0, t0);
+    			if (if_block) if_block.m(div0, null);
+    			insert_dev(target, t1, anchor);
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, button0);
+    			append_dev(div1, t2);
+    			append_dev(div1, button1);
+    			append_dev(div1, t3);
+    			append_dev(div1, button2);
+    			append_dev(div1, t4);
+    			append_dev(div1, button3);
+    			current = true;
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(button0, "click", /*buttonsClickHandleBrush*/ ctx[10], false, false, false),
+    					listen_dev(button1, "click", /*buttonsClickHandleErase*/ ctx[11], false, false, false),
+    					listen_dev(button2, "click", /*buttonsClickHandleMove*/ ctx[12], false, false, false),
+    					listen_dev(button3, "click", /*buttonsClickHandleExit*/ ctx[13], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			const canvascontainer_changes = {};
+    			if (dirty & /*pixelSize*/ 256) canvascontainer_changes.pixelSize = /*pixelSize*/ ctx[8];
+    			canvascontainer.$set(canvascontainer_changes);
+
+    			if (/*isInMoveMode*/ ctx[3]) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
+    					if_block = create_if_block_3(ctx);
+    					if_block.c();
+    					if_block.m(div0, null);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(div0, "width", 116 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(div0, "height", 27 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*windowRotateDeg, windowTranslateX, windowTranslateY*/ 112) {
+    				set_style(div0, "transform", "rotate(" + /*windowRotateDeg*/ ctx[6] + "deg) translate(" + /*windowTranslateX*/ ctx[4] + "px, " + /*windowTranslateY*/ ctx[5] + "px)");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button0, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button0, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button1, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button1, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button2, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button2, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button3, "width", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(button3, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(div1, "width", 12 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (!current || dirty & /*pixelSize*/ 256) {
+    				set_style(div1, "height", 2.5 * /*pixelSize*/ ctx[8] + "px");
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(canvascontainer.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(canvascontainer.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div0);
+    			destroy_component(canvascontainer);
+    			if (if_block) if_block.d();
+    			if (detaching) detach_dev(t1);
+    			if (detaching) detach_dev(div1);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2.name,
+    		type: "if",
+    		source: "(173:4) {#if isInCanvasMode}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (176:12) {#if isInMoveMode}
+    function create_if_block_3(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "child-component-container-cover svelte-7kns0e");
+    			set_style(div, "width", 116 * /*pixelSize*/ ctx[8] + "px");
+    			set_style(div, "height", 27 * /*pixelSize*/ ctx[8] + "px");
+    			add_location(div, file, 176, 16, 6149);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*pixelSize*/ 256) {
+    				set_style(div, "width", 116 * /*pixelSize*/ ctx[8] + "px");
+    			}
+
+    			if (dirty & /*pixelSize*/ 256) {
+    				set_style(div, "height", 27 * /*pixelSize*/ ctx[8] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_3.name,
+    		type: "if",
+    		source: "(176:12) {#if isInMoveMode}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (215:29) 
+    function create_if_block_1(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			attr_dev(div, "class", "base-resize-fixer svelte-7kns0e");
+    			add_location(div, file, 215, 8, 8460);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(215:29) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (192:4) {#if isDisplayLoader}
+    function create_if_block(ctx) {
+    	let div17;
+    	let div16;
+    	let h1;
+    	let t1;
+    	let div0;
+    	let t2;
+    	let div1;
+    	let t3;
+    	let div2;
+    	let t4;
+    	let div3;
+    	let t5;
+    	let div4;
+    	let t6;
+    	let div5;
+    	let t7;
+    	let div6;
+    	let t8;
+    	let div7;
+    	let t9;
+    	let div8;
+    	let t10;
+    	let div9;
+    	let t11;
+    	let div10;
+    	let t12;
+    	let div11;
+    	let t13;
+    	let div12;
+    	let t14;
+    	let div13;
+    	let t15;
+    	let div14;
+    	let t16;
+    	let div15;
+
+    	const block = {
+    		c: function create() {
+    			div17 = element("div");
+    			div16 = element("div");
+    			h1 = element("h1");
+    			h1.textContent = "Loading...";
+    			t1 = space();
+    			div0 = element("div");
+    			t2 = space();
+    			div1 = element("div");
+    			t3 = space();
+    			div2 = element("div");
+    			t4 = space();
+    			div3 = element("div");
+    			t5 = space();
+    			div4 = element("div");
+    			t6 = space();
+    			div5 = element("div");
+    			t7 = space();
+    			div6 = element("div");
+    			t8 = space();
+    			div7 = element("div");
+    			t9 = space();
+    			div8 = element("div");
+    			t10 = space();
+    			div9 = element("div");
+    			t11 = space();
+    			div10 = element("div");
+    			t12 = space();
+    			div11 = element("div");
+    			t13 = space();
+    			div12 = element("div");
+    			t14 = space();
+    			div13 = element("div");
+    			t15 = space();
+    			div14 = element("div");
+    			t16 = space();
+    			div15 = element("div");
+    			attr_dev(h1, "class", "base-loading-text svelte-7kns0e");
+    			add_location(h1, file, 194, 16, 7621);
+    			attr_dev(div0, "class", "cell d-0 svelte-7kns0e");
+    			add_location(div0, file, 196, 16, 7684);
+    			attr_dev(div1, "class", "cell d-1 svelte-7kns0e");
+    			add_location(div1, file, 197, 16, 7729);
+    			attr_dev(div2, "class", "cell d-2 svelte-7kns0e");
+    			add_location(div2, file, 198, 16, 7774);
+    			attr_dev(div3, "class", "cell d-3 svelte-7kns0e");
+    			add_location(div3, file, 199, 16, 7819);
+    			attr_dev(div4, "class", "cell d-1 svelte-7kns0e");
+    			add_location(div4, file, 200, 16, 7864);
+    			attr_dev(div5, "class", "cell d-2 svelte-7kns0e");
+    			add_location(div5, file, 201, 16, 7909);
+    			attr_dev(div6, "class", "cell d-3 svelte-7kns0e");
+    			add_location(div6, file, 202, 16, 7954);
+    			attr_dev(div7, "class", "cell d-4 svelte-7kns0e");
+    			add_location(div7, file, 203, 16, 7999);
+    			attr_dev(div8, "class", "cell d-2 svelte-7kns0e");
+    			add_location(div8, file, 204, 16, 8044);
+    			attr_dev(div9, "class", "cell d-3 svelte-7kns0e");
+    			add_location(div9, file, 205, 16, 8089);
+    			attr_dev(div10, "class", "cell d-4 svelte-7kns0e");
+    			add_location(div10, file, 206, 16, 8134);
+    			attr_dev(div11, "class", "cell d-5 svelte-7kns0e");
+    			add_location(div11, file, 207, 16, 8179);
+    			attr_dev(div12, "class", "cell d-3 svelte-7kns0e");
+    			add_location(div12, file, 208, 16, 8224);
+    			attr_dev(div13, "class", "cell d-4 svelte-7kns0e");
+    			add_location(div13, file, 209, 16, 8269);
+    			attr_dev(div14, "class", "cell d-5 svelte-7kns0e");
+    			add_location(div14, file, 210, 16, 8314);
+    			attr_dev(div15, "class", "cell d-6 svelte-7kns0e");
+    			add_location(div15, file, 211, 16, 8359);
+    			attr_dev(div16, "class", "base-loading-mosaic svelte-7kns0e");
+    			set_style(div16, "--cell-size", /*loaderCubeSize*/ ctx[7] + "px");
+    			add_location(div16, file, 193, 12, 7530);
+    			attr_dev(div17, "class", "base-loading svelte-7kns0e");
+    			add_location(div17, file, 192, 8, 7491);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div17, anchor);
+    			append_dev(div17, div16);
+    			append_dev(div16, h1);
+    			append_dev(div16, t1);
+    			append_dev(div16, div0);
+    			append_dev(div16, t2);
+    			append_dev(div16, div1);
+    			append_dev(div16, t3);
+    			append_dev(div16, div2);
+    			append_dev(div16, t4);
+    			append_dev(div16, div3);
+    			append_dev(div16, t5);
+    			append_dev(div16, div4);
+    			append_dev(div16, t6);
+    			append_dev(div16, div5);
+    			append_dev(div16, t7);
+    			append_dev(div16, div6);
+    			append_dev(div16, t8);
+    			append_dev(div16, div7);
+    			append_dev(div16, t9);
+    			append_dev(div16, div8);
+    			append_dev(div16, t10);
+    			append_dev(div16, div9);
+    			append_dev(div16, t11);
+    			append_dev(div16, div10);
+    			append_dev(div16, t12);
+    			append_dev(div16, div11);
+    			append_dev(div16, t13);
+    			append_dev(div16, div12);
+    			append_dev(div16, t14);
+    			append_dev(div16, div13);
+    			append_dev(div16, t15);
+    			append_dev(div16, div14);
+    			append_dev(div16, t16);
+    			append_dev(div16, div15);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*loaderCubeSize*/ 128) {
+    				set_style(div16, "--cell-size", /*loaderCubeSize*/ ctx[7] + "px");
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div17);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block.name,
+    		type: "if",
+    		source: "(192:4) {#if isDisplayLoader}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$2(ctx) {
+    	let div;
+    	let current_block_type_index;
+    	let if_block0;
+    	let t;
+    	let current;
+    	const if_block_creators = [create_if_block_2, create_else_block];
+    	const if_blocks = [];
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*isInCanvasMode*/ ctx[2]) return 0;
+    		return 1;
+    	}
+
+    	current_block_type_index = select_block_type(ctx);
+    	if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+
+    	function select_block_type_1(ctx, dirty) {
+    		if (/*isDisplayLoader*/ ctx[0]) return create_if_block;
+    		if (/*isDisplayFixer*/ ctx[1]) return create_if_block_1;
+    	}
+
+    	let current_block_type = select_block_type_1(ctx);
+    	let if_block1 = current_block_type && current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			if_block0.c();
+    			t = space();
+    			if (if_block1) if_block1.c();
+    			attr_dev(div, "class", "basecontrol svelte-7kns0e");
+    			add_location(div, file, 171, 0, 5756);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			if_blocks[current_block_type_index].m(div, null);
+    			append_dev(div, t);
+    			if (if_block1) if_block1.m(div, null);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			let previous_block_index = current_block_type_index;
+    			current_block_type_index = select_block_type(ctx);
+
+    			if (current_block_type_index === previous_block_index) {
+    				if_blocks[current_block_type_index].p(ctx, dirty);
+    			} else {
+    				group_outros();
+
+    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
+    					if_blocks[previous_block_index] = null;
+    				});
+
+    				check_outros();
+    				if_block0 = if_blocks[current_block_type_index];
+
+    				if (!if_block0) {
+    					if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    					if_block0.c();
+    				} else {
+    					if_block0.p(ctx, dirty);
+    				}
+
+    				transition_in(if_block0, 1);
+    				if_block0.m(div, t);
+    			}
+
+    			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block1) {
+    				if_block1.p(ctx, dirty);
+    			} else {
+    				if (if_block1) if_block1.d(1);
+    				if_block1 = current_block_type && current_block_type(ctx);
+
+    				if (if_block1) {
+    					if_block1.c();
+    					if_block1.m(div, null);
+    				}
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(if_block0);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(if_block0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if_blocks[current_block_type_index].d();
+
+    			if (if_block1) {
+    				if_block1.d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$2.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$2($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('CanvasBaseControl', slots, []);
+    	let isDisplayLoader = false;
+    	let isDisplayFixer = false;
+    	let isInCanvasMode = false;
+    	let isInBrushMode = false;
+    	let isInMoveMode = true;
+
+    	/* DOM accessible globals */
+    	let windowTranslateX = 0;
+
+    	let windowTranslateY = 0;
+    	let windowRotateDeg = 0;
+    	let loaderCubeSize = 0;
+    	let pixelSize = 0;
+
+    	function getPixelSize(w, h, min, max) {
+    		/* returns largest acceptable pixel size */
+    		let pSize = w > h ? h : w;
+
+    		pSize = pSize <= max ? pSize : max;
+    		pSize = pSize >= min ? pSize : min;
+
+    		/* gotta trust the guy that calculates it */
+    		$$invalidate(7, loaderCubeSize = 64 * (pSize / 10));
+
+    		/* makes sense init?! */
+    		if (!isInCanvasMode) return pSize; else return max;
+    	}
+
+    	function setPixelSize() {
+    		/* necessary evil */
+    		$$invalidate(1, isDisplayFixer = true);
+
+    		/* get client screen size */
+    		let windowWidth = window.innerWidth;
+
+    		let windowHeight = window.innerHeight;
+
+    		/* variables don't hurt */
+    		let rowPixels = 116;
+
+    		let colPixels = isInCanvasMode ? 27 : 34;
+
+    		/* go default on 'em! */
+    		$$invalidate(4, windowTranslateX = 0);
+
+    		$$invalidate(5, windowTranslateY = 0);
+    		$$invalidate(6, windowRotateDeg = 0);
+
+    		if (window.matchMedia("(orientation: portrait)").matches) {
+    			/* calculate, balance, and set the size of a pixel */
+    			$$invalidate(8, pixelSize = getPixelSize(Math.floor(windowWidth / colPixels), Math.floor(windowHeight / rowPixels), 4, 16));
+
+    			/* adjust placement according to graph to window ratio */
+    			let wipWidth = pixelSize * colPixels;
+
+    			let wipHeight = pixelSize * rowPixels;
+
+    			/* bad influence! */
+    			$$invalidate(6, windowRotateDeg = -90);
+
+    			/* rotate means translate!!! */
+    			if (windowHeight < wipHeight) {
+    				$$invalidate(4, windowTranslateX = wipHeight * -1);
+    			} else {
+    				$$invalidate(4, windowTranslateX = (windowHeight - (windowHeight - wipHeight) / 2) * -1);
+    			}
+
+    			/* isInCanvasMode? */
+    			if (windowWidth > wipWidth) {
+    				/* probably not... */
+    				$$invalidate(5, windowTranslateY = (windowWidth - wipWidth) / 2);
+    			}
+    		} else if (window.matchMedia("(orientation: landscape)").matches) {
+    			/* calculate, balance, and set the size of a pixel */
+    			$$invalidate(8, pixelSize = getPixelSize(Math.floor(windowWidth / rowPixels), Math.floor(windowHeight / colPixels), 4, 16));
+
+    			/* adjust placement according to graph to window ratio */
+    			let wipWidth = pixelSize * rowPixels;
+
+    			let wipHeight = pixelSize * colPixels;
+
+    			if (!isInCanvasMode) {
+    				$$invalidate(4, windowTranslateX = (windowWidth - wipWidth) / 2);
+    				$$invalidate(5, windowTranslateY = (windowHeight - wipHeight) / 2);
+    			}
+    		}
+
+    		if (isDisplayLoader) {
+    			/* hide the pretty display loader */
+    			setTimeout(
+    				() => {
+    					$$invalidate(0, isDisplayLoader = false);
+    				},
+    				Math.random() * 1200 | 600
+    			);
+    		}
+
+    		/* down with the necessary evil! (in 100ms...) */
+    		setTimeout(
+    			() => {
+    				$$invalidate(1, isDisplayFixer = false);
+    			},
+    			300
+    		);
+    	} //console.log(`page loaded: width = ${windowWidth}, height = ${windowHeight}, pixelSize = ${pixelSize}px.`);
+
+    	/* set 330ms delay on function, reset if it is called again before executing */
+    	const stabilizedSetPixelSize = stabilizeFunction(setPixelSize, 150);
+
+    	onMount(() => {
+    		/* mount it and ride it to hell, motherfuckers! */
+    		window.addEventListener('resize', stabilizedSetPixelSize);
+
+    		$$invalidate(0, isDisplayLoader = true);
+    		setPixelSize();
+
+    		return () => {
+    			/* and at this point i'm too afraid to ask... */
+    			window.removeEventListener('resize', stabilizedSetPixelSize);
+    		};
+    	});
+
+    	/* events and handlers */
+    	function toggleCanvasMode(e) {
+    		$$invalidate(2, isInCanvasMode = !isInCanvasMode);
+    		$$invalidate(0, isDisplayLoader = true);
+    		$$invalidate(3, isInMoveMode = true);
+    		setPixelSize();
+    		CanvasMode.update(n => isInCanvasMode);
+    	}
+
+    	function buttonsClickHandleBrush(e) {
+    		$$invalidate(3, isInMoveMode = false);
+    		isInBrushMode = true;
+    		const buttons = e.target.parentElement.children;
+
+    		for (let i = 0; i < buttons.length; i++) {
+    			buttons[i].style.backgroundColor = "#dddddd";
+    			buttons[i].style.borderColor = "#ff0000";
+    		}
+
+    		/* not efficient but who has the time!? */
+    		e.target.style.backgroundColor = "#8b000099";
+
+    		e.target.style.borderColor = "#000000";
+    		BrushMode.update(n => isInBrushMode);
+    	}
+
+    	function buttonsClickHandleErase(e) {
+    		$$invalidate(3, isInMoveMode = false);
+    		isInBrushMode = false;
+    		const buttons = e.target.parentElement.children;
+
+    		for (let i = 0; i < buttons.length; i++) {
+    			buttons[i].style.backgroundColor = "#dddddd";
+    			buttons[i].style.borderColor = "#ff0000";
+    		}
+
+    		/* not efficient but who has the time!? */
+    		e.target.style.backgroundColor = "#8b000099";
+
+    		e.target.style.borderColor = "#000000";
+    		BrushMode.update(n => isInBrushMode);
+    	}
+
+    	function buttonsClickHandleMove(e) {
+    		$$invalidate(3, isInMoveMode = true);
+    		const buttons = e.target.parentElement.children;
+
+    		for (let i = 0; i < buttons.length; i++) {
+    			buttons[i].style.backgroundColor = "#dddddd";
+    			buttons[i].style.borderColor = "#ff0000";
+    		}
+    	}
+
+    	function buttonsClickHandleExit(e) {
+    		toggleCanvasMode();
+    	}
+    	const writable_props = [];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<CanvasBaseControl> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$capture_state = () => ({
+    		CanvasButtonsBar,
+    		CanvasContainer,
+    		CanvasMode,
+    		BrushMode,
+    		stabilizeFunction,
+    		onMount,
+    		isDisplayLoader,
+    		isDisplayFixer,
+    		isInCanvasMode,
+    		isInBrushMode,
+    		isInMoveMode,
+    		windowTranslateX,
+    		windowTranslateY,
+    		windowRotateDeg,
+    		loaderCubeSize,
+    		pixelSize,
+    		getPixelSize,
+    		setPixelSize,
+    		stabilizedSetPixelSize,
+    		toggleCanvasMode,
+    		buttonsClickHandleBrush,
+    		buttonsClickHandleErase,
+    		buttonsClickHandleMove,
+    		buttonsClickHandleExit
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('isDisplayLoader' in $$props) $$invalidate(0, isDisplayLoader = $$props.isDisplayLoader);
+    		if ('isDisplayFixer' in $$props) $$invalidate(1, isDisplayFixer = $$props.isDisplayFixer);
+    		if ('isInCanvasMode' in $$props) $$invalidate(2, isInCanvasMode = $$props.isInCanvasMode);
+    		if ('isInBrushMode' in $$props) isInBrushMode = $$props.isInBrushMode;
+    		if ('isInMoveMode' in $$props) $$invalidate(3, isInMoveMode = $$props.isInMoveMode);
+    		if ('windowTranslateX' in $$props) $$invalidate(4, windowTranslateX = $$props.windowTranslateX);
+    		if ('windowTranslateY' in $$props) $$invalidate(5, windowTranslateY = $$props.windowTranslateY);
+    		if ('windowRotateDeg' in $$props) $$invalidate(6, windowRotateDeg = $$props.windowRotateDeg);
+    		if ('loaderCubeSize' in $$props) $$invalidate(7, loaderCubeSize = $$props.loaderCubeSize);
+    		if ('pixelSize' in $$props) $$invalidate(8, pixelSize = $$props.pixelSize);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [
+    		isDisplayLoader,
+    		isDisplayFixer,
+    		isInCanvasMode,
+    		isInMoveMode,
+    		windowTranslateX,
+    		windowTranslateY,
+    		windowRotateDeg,
+    		loaderCubeSize,
+    		pixelSize,
+    		toggleCanvasMode,
+    		buttonsClickHandleBrush,
+    		buttonsClickHandleErase,
+    		buttonsClickHandleMove,
+    		buttonsClickHandleExit
+    	];
+    }
+
+    class CanvasBaseControl extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, {});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "CanvasBaseControl",
+    			options,
+    			id: create_fragment$2.name
+    		});
+    	}
+    }
+
+    /* src/Demo.svelte generated by Svelte v3.48.0 */
+
+    function create_fragment$1(ctx) {
+    	let demo;
+    	let current;
+    	demo = new CanvasBaseControl({ $$inline: true });
+
+    	const block = {
+    		c: function create() {
+    			create_component(demo.$$.fragment);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(demo, target, anchor);
+    			current = true;
+    		},
+    		p: noop,
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(demo.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(demo.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(demo, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$1.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$1($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('Demo', slots, []);
+    	const writable_props = [];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Demo> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$capture_state = () => ({ Demo: CanvasBaseControl });
+    	return [];
+    }
+
+    class Demo_1 extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, {});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "Demo_1",
+    			options,
+    			id: create_fragment$1.name
+    		});
+    	}
+    }
+
+    /* src/App.svelte generated by Svelte v3.48.0 */
+
+    function create_fragment(ctx) {
+    	let demo;
+    	let current;
+    	demo = new Demo_1({ $$inline: true });
+
+    	const block = {
+    		c: function create() {
+    			create_component(demo.$$.fragment);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(demo, target, anchor);
+    			current = true;
+    		},
+    		p: noop,
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(demo.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(demo.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(demo, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('App', slots, []);
+    	const writable_props = [];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<App> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$capture_state = () => ({ Demo: Demo_1 });
+    	return [];
+    }
+
+    class App extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance, create_fragment, safe_not_equal, {});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "App",
+    			options,
+    			id: create_fragment.name
+    		});
+    	}
+    }
+
+    const app = new App({
+    	target: document.body,
+    });
+
+    return app;
+
+})();
 //# sourceMappingURL=bundle.js.map
