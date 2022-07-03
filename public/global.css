@@ -1,36 +1,38 @@
 :root {
-	/* Matrix */
-	--matrix-box-shadow: #990000;
-	--matrix-pixel-box-shadow: #ffffff;
-	--matrix-pixel-background-color: #999999;
-	--matrix-pixel-box-shadow-hover: #ff0000;
-	--matrix-pixel-background-color-hover: #ffa500;
+	/* greater canvas */
+	--frame-pixel-box-shadow: #ffffff;
+	--frame-pixel-background: #a7a7a7;
+	--canvas-pixel-box-shadow: #ffffff;
+	--canvas-pixel-background: #999999;
+	--canvas-pixel-box-shadow-active: #8b0000;
+	--canvas-pixel-background-active: #111111;
 
-	/* Decore */
-	--decore-box-shadow: #cccccc;
-	--decore-inner-box-shadow: #bbbbbb;
-	--decore-outer-pixel-box-shadow: #ffffff;
-	--decore-outer-pixel-background-color: #aaaaaa;
-	--decore-inner-pixel-box-shadow: #ffffff;
-	--decore-inner-pixel-background-color: #a7a7a7;
+	/* canvas */
+	--canvas-box-shadow: #000000;
+	--canvas-box-shadow-error: #ff0000;
+	--canvas-box-shadow-active: #00ffdd;
+	--canvas-box-shadow-success: #55ff00;
 
-	/* Container */
-	--container-gradient-start: transparent;
-	--container-gradient-finish: #ffffff;
-	--container-decore-arrow-line: #000000;
-	--container-decore-arrow-legend: #000000;
+	/* overlay */
+	--canvas-overlay-gradient-start: transparent;
+	--canvas-overlay-gradient-finish: #ffffff;
+	--canvas-overlay-decore-arrow-line: #000000;
+	--canvas-overlay-decore-arrow-legend: #000000;
+
+	/* buttons, inputs, etc. */
+	--k-tools-background: #dddddd;
+	--k-tools-foreground: #000000;
+	--k-tools-outline: #0064c8;
+	--k-tools-border: #ff0000;
 }
 
 html, body {
 	position: relative;
-/*	width: 100%; 
-	height: 100%; */
 }
 
 body {
-	color: #333;
 	margin: 0;
-	
+	color: #333;
 	box-sizing: border-box;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
@@ -38,6 +40,33 @@ body {
 div {
 	padding: 0;        
 	margin: 0;
+}
+
+input, button, select, textarea {
+	background-color: var(--k-tools-background);
+	border: 1px solid var(--k-tools-border);
+	color: var(--k-tools-foreground);
+	box-sizing: border-box;
+	font-family: inherit;
+	font-size: inherit;
+	border-radius: 7px;
+	outline: none;
+	padding: 0;
+	margin: 0;
+}
+
+input:hover, button:hover, select:hover, textarea:hover {
+	outline: 1px solid var(--k-tools-outline);
+	outline-offset: -1px;
+}
+
+input:focus, button:focus, select:focus, textarea:focus {
+	outline: 1px solid var(--k-tools-outline);
+	outline-offset: -1px;
+}
+
+sub {
+	font-size: 0.6em;
 }
 
 a {
@@ -53,38 +82,10 @@ a:visited {
 	color: #0050a0;
 }
 
-input, button, select, textarea {
-	background-color: #dddddd; /* colors are subject to change */
-	border: 1px solid #ff0000;
-	box-sizing: border-box;
-	font-family: inherit;
-	font-size: inherit;
-	border-radius: 7px;
-	outline: none;
-	padding: 0;
-	margin: 0;
-}
-
-input:hover, button:hover, select:hover, textarea:hover {
-	outline: 1px solid #0064c8;
-	outline-offset: -1px;
-}
-
-input:focus, button:focus, select:focus, textarea:focus {
-	outline: 1px solid #0064c8;
-	outline-offset: -1px;
-}
-
-sub {
-	font-size: 0.6em;
-}
-
 /*
 label {
 	display: block;
 }
-
-
 
 input:disabled {
 	color: #ccc;

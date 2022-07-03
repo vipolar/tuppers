@@ -1,16 +1,10 @@
 import { BigNumber } from "bignumber.js";
 
-export function create2DMatrix(rows, cols, val) {
-    let matrix = new Array(rows);
+export function setCharAt(str, index, chr) {
+    if(index > str.length - 1)
+        return str;
 
-    for (let i = 0; i < matrix.length; i++) {
-		matrix[i] = new Array(cols);
-		for (let j = 0; j < matrix[i].length; j++) {
-			matrix[i][j] = val;
-		}
-    };
-
-    return matrix;
+    return str.substring(0, index) + chr + str.substring(index + 1);
 }
 
 export function kValueBinaryToBase(value, base) {
