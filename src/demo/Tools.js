@@ -7,6 +7,18 @@ export function setCharAt(str, index, chr) {
     return str.substring(0, index) + chr + str.substring(index + 1);
 }
 
+export function kValueValidate(value) {
+    if (value.length !== 1802) 
+        return false;
+
+    for (let i = 0; i < 1802; i++)
+        if (value[i] !== '0' && value[i] !== '1')
+            return false;
+
+    /* value is 1802 bits long and all bits are either 0 or 1 */
+    return true;
+}
+
 export function kValueBinaryToBase(value, base) {
     let valueBigNumber;
     let valueBigNumberString;
@@ -44,7 +56,7 @@ export function kValueBaseToBinary(value, base) {
     return valueBinaryString;
 };
 
-export function stabilizeFunction(func, delay) {
+export function debounceFunction(func, delay) {
     let timer;
 
     return function () {

@@ -1,17 +1,23 @@
 <script>
-    import { kValueBaseToBinary, kValueBinaryToBase, setCharAt, getPixelsOnTheLine, findTouchIndexById, copyCanvasTouch } from './demo/Tools.js'
+    import { setCharAt,
+        kValueValidate,
+        kValueBaseToBinary,
+        kValueBinaryToBase,
+        getPixelsOnTheLine,
+        findTouchIndexById,
+        copyCanvasTouch
+    } from './demo/Tools.js'
 
+    //const kValueBinaryToBaseDebounced = debounceFunction(kValueBinaryToBase, 330);
     let kValueString = 'Click on the canvas and see what happens to me!';
 	let kValueBinary = '0'.repeat(1802);
     let kValueBase = 'dec';
     
     const ongoingTouches = [];
-    let isInCanvasMode = false;
-    let isValueUpToDate = true;
 	let isPointerDown = false;
     let isInBrushMode = true;
-
     let pixelSize = 0;
+
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
     /* needs a tonne of work! */
@@ -29,7 +35,35 @@
         pixelSize = pixelSize >= 4 ? pixelSize : 4;
     }
 
-    function matrixFillPixel(x, y) {
+    /* we do paintin' here yo! */
+    function canvasFillPattern(k) {
+        let pixelCol = 0;
+        let pixelRow = 0;
+        let pixelElement;
+
+        if (k.length !== 1802 || k === kValueBinary)
+            return;
+
+        for (let i = 0; i < 1802; pixelRow++, i++) {
+            if (i > 0 && i % 17 === 0) {
+                pixelRow = 0;
+                pixelCol++;
+            }
+
+            /* a bit heavy on the system but fullproof as hell! */
+            pixelElement = document.getElementById(`pixel-${pixelCol}-${pixelRow}`);
+
+            if (k[i] === '1') {
+                kValueBinary = setCharAt(kValueBinary, pixelCol * 17 + pixelRow, '1');
+                pixelElement.classList.add("canvas-pixel-active");
+            } else {
+                kValueBinary = setCharAt(kValueBinary, pixelCol * 17 + pixelRow, '0');
+                pixelElement.classList.remove("canvas-pixel-active");
+            }
+        }
+    };
+
+    function canvasFillPixel(x, y) {
         let pixelCol = x;
         let pixelRow = 16 - y; /* 16 to reverse */
         let pixelID = `pixel-${pixelCol}-${pixelRow}`;
@@ -43,8 +77,11 @@
             pixelElement.classList.remove("canvas-pixel-active");
 		}
 
-        /* real-time base conversion *heavy* */
-        kValueString = kValueBinaryToBase(kValueBinary, kValueBase);
+        let timer;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            kValueString = kValueBinaryToBase(kValueBinary, kValueBase);
+        }, 100);
     };
     
     /* wake up babe, new events just dropped! */
@@ -62,7 +99,7 @@
         let pixelRow = Math.floor(e.layerY / pixelSize);
         
         //console.log(`start drawing at: ${pixelCol}, ${pixelRow}.`);
-        matrixFillPixel(pixelCol, pixelRow);  
+        canvasFillPixel(pixelCol, pixelRow);  
     };
 
     function handleCanvasPointerMove(e) {
@@ -91,7 +128,7 @@
                         break;
                     }
 
-                    matrixFillPixel(pixelCol, pixelRow);
+                    canvasFillPixel(pixelCol, pixelRow);
                 }
                 //console.log(`drawing line to: ${pixelArray[pixelArray.length - 1]}.`);
             }
@@ -181,22 +218,32 @@
 
     function kValueCopyButton() {
         const targetElement = document.getElementById("textarea");
+        targetElement.classList.remove("canvas-success");
+        targetElement.classList.remove("canvas-error");
         targetElement.classList.add("canvas-active");
         navigator.clipboard.writeText(kValueString);
 
-        setTimeout(() => {targetElement.classList.remove("canvas-active");}, 330);
+        setTimeout(() => { /* clean up after */
+            targetElement.classList.remove("canvas-success");
+            targetElement.classList.remove("canvas-active");
+            targetElement.classList.remove("canvas-error");
+        }, 500);
     };
 
-    function kValuePasteButton() {
-        if (typeof navigator.clipboard.readText === "function") {
-            navigator.clipboard.readText().then(clipText => kValueString = clipText);
-            const targetElement = document.getElementById("textarea");
-            targetElement.classList.add("canvas-success");
-            kValueChangeHandler();
+    function kValuePasteButton(e) {
+        let kValueStringTemp = '';
 
-            setTimeout(() => {targetElement.classList.remove("canvas-success");}, 330);
+        if (typeof navigator.clipboard.readText === "function") {
+            navigator.clipboard.readText().then(clipText => kValueStringTemp = clipText);
+            if (kValueStringTemp.length > 0) {
+                kValueString = kValueStringTemp;
+                kValueChangeHandler();
+            } else {
+                alert('Clipboard is empty or the access to it was denied.');
+            }
         } else {
-            alert('Browser clipboard access refused, please paste manually.');
+            alert('Browser does not support non-manual access to clipboard.');
+            e.target.disabled = true;
         }
     };
 
@@ -204,39 +251,39 @@
         alert('TODO!');
     };
 
-    function kValueChangeHandler() {
-        let kValueBinaryTemp = kValueBaseToBinary(kValueString, kValueBase);
-        let targetElement = document.getElementById('textarea');
-        let kValueError = false;
+    function kValueChangeHandler() {    
+        /* general stuff applicable to every type of events applicable here */
+        const kValueBinaryTemp = kValueBaseToBinary(kValueString, kValueBase);
+        const targetElement = document.getElementById('textarea');
+        const kValueIsValid = kValueValidate(kValueBinaryTemp);
 
-        if (kValueBinaryTemp.length === 1802) {
-            for (let i = 0; i < 1802; i++) {
-                if (kValueBinaryTemp[i] !== '0' && kValueBinaryTemp[i] !== '1') {
-                    kValueError = true;
-                    break;
-                }
-            }
-
-            /* input is good, daddy-O! */
-            if (kValueError === false) {
-                kValueBinary = kValueBinaryTemp;
-            }
+        if (kValueIsValid) {
+            targetElement.classList.remove("canvas-active");
+            targetElement.classList.remove("canvas-error");
+            targetElement.classList.add("canvas-success");
         } else {
-            /* input is bad */
-            kValueError = true;
-        }
-
-        /* don't get too antsy with it if textarea is still focused */
-        if (kValueError && document.activeElement === targetElement) {
+            targetElement.classList.remove("canvas-success");
+            targetElement.classList.remove("canvas-active");
             targetElement.classList.add("canvas-error");
-            return;
-        } else { /* but if it's not... */
-            /* revert to the last good k-value available */
-            kValueString = kValueBinaryToBase(kValueBinary, kValueBase);
         }
+        
+        /* triggered on focusout and paste button events*/
+        if (document.activeElement !== targetElement) {
+            if (kValueIsValid) {
+                /* finally bake in the new binary value (everywhere) */
+                kValueString = kValueBinaryToBase(kValueBinaryTemp, kValueBase);
+                canvasFillPattern(kValueBinaryTemp);
+            } else {
+                /* revert to the last good k-value available */
+                kValueString = kValueBinaryToBase(kValueBinary, kValueBase);
+            }
 
-        /* k-value is good, one way or another */
-        targetElement.classList.remove("canvas-error");
+            setTimeout(() => { /* clean up after */
+                targetElement.classList.remove("canvas-success");
+                targetElement.classList.remove("canvas-active");
+                targetElement.classList.remove("canvas-error");
+            }, 330);
+        }
     };
 </script>
 
