@@ -1,41 +1,38 @@
 <script>
-    import { setCharAt,
-        kValueValidate,
-        kValueBaseToBinary,
-        kValueBinaryToBase,
-        getPixelsOnTheLine,
-        findTouchIndexById,
-        copyCanvasTouch
-    } from './demo/Tools.js'
+    import { kValueValidate, kValueBaseToBinary, kValueBinaryToBase } from './tools/kValue.js'
+    import { setCharAt, findTouchIndexById, copyCanvasTouch } from './tools/rest.js'
+    import { getPixelsOnTheLine } from './tools/algorithms.js'
+    import { onMount } from 'svelte';
+    export let pixelSize = 0;
 
-    //const kValueBinaryToBaseDebounced = debounceFunction(kValueBinaryToBase, 330);
     let kValueString = 'Click on the canvas and see what happens to me!';
 	let kValueBinary = '0'.repeat(1802);
     let kValueBase = 'dec';
-    
+
     const ongoingTouches = [];
 	let isPointerDown = false;
     let isInBrushMode = true;
-    let pixelSize = 0;
+    let timerCanvasFillPixel;
 
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-    /* needs a tonne of work! */
-    if (windowWidth > windowHeight) {
-        let w = Math.floor(windowWidth / 116);
-        let h = Math.floor(windowHeight / 33);
-        pixelSize = w > h ? h : w;
-        pixelSize = pixelSize <= 16 ? pixelSize : 16;
-        pixelSize = pixelSize >= 4 ? pixelSize : 4;
-    } else { /* portrait mode */
-        let w = Math.floor(windowWidth / 33);
-        let h = Math.floor(windowHeight / 116)
-        pixelSize = w > h ? h : w;
-        pixelSize = pixelSize <= 16 ? pixelSize : 16;
-        pixelSize = pixelSize >= 4 ? pixelSize : 4;
-    }
+    let timerCanvasButtonsPositionUpdate;
+    let canvasButtonsPositionRight = 0;
+    let canvasButtonsPositionTop = 0;
 
     /* we do paintin' here yo! */
+    function canvasBrushButton() {
+        const buttons = document.getElementById('canvas-buttons').children;
+        buttons[1].classList.remove("canvas-error");
+        buttons[0].classList.add("canvas-active");
+        isInBrushMode = true;
+    }//TODO
+
+    function canvasEraseButton() {
+        const buttons = document.getElementById('canvas-buttons').children;
+        buttons[0].classList.remove("canvas-active");
+        buttons[1].classList.add("canvas-error");
+        isInBrushMode = false;
+    }
+
     function canvasFillPattern(k) {
         let pixelCol = 0;
         let pixelRow = 0;
@@ -77,14 +74,43 @@
             pixelElement.classList.remove("canvas-pixel-active");
 		}
 
-        let timer;
-        clearTimeout(timer);
-        timer = setTimeout(() => {
+        clearTimeout(timerCanvasFillPixel);
+        timerCanvasFillPixel = setTimeout(() => {
             kValueString = kValueBinaryToBase(kValueBinary, kValueBase);
         }, 100);
     };
     
     /* wake up babe, new events just dropped! */
+    function canvasButtonsPositionUpdate(e) {
+        let rect = document.getElementById("frame").getBoundingClientRect();
+        let maxRight = rect.width - (5 * pixelSize) - (8 * pixelSize);
+        let maxTop = rect.height - (5 * pixelSize) - (4 * pixelSize);
+        
+        clearTimeout(timerCanvasButtonsPositionUpdate);
+        timerCanvasButtonsPositionUpdate = setTimeout(() => {
+            canvasButtonsPositionRight = rect.right - window.innerWidth;
+            if (canvasButtonsPositionRight  <= 0) {
+                canvasButtonsPositionRight = 0;
+            } else if (canvasButtonsPositionRight >= maxRight) {
+                canvasButtonsPositionRight = maxRight;
+            }
+
+            canvasButtonsPositionTop = rect.top * -1;
+            if (canvasButtonsPositionTop <= 0) {
+                canvasButtonsPositionTop = 0;
+            } else if (canvasButtonsPositionTop >= maxTop) {
+                canvasButtonsPositionTop = maxTop;
+            }
+            kValueString = `-top: ${canvasButtonsPositionTop}, -right: ${canvasButtonsPositionRight}`;
+            for (var key in rect) {
+                if(typeof rect[key] !== 'function') {
+                    kValueString  += `, ${ key } : ${ rect[key] }`;
+                }
+            }
+        }, 100);
+    };
+
+    /* handling your dirty little hands */
     function handleCanvasPointerDown(e) {
         //console.log(`pointerdown: id = ${e.pointerId}.`);
         e.target.classList.add("canvas-active");
@@ -248,8 +274,8 @@
     };
 
     function kValueCommentButton() {
-        alert('TODO!');
-    };
+        alert('TODO');
+    }
 
     function kValueChangeHandler() {    
         /* general stuff applicable to every type of events applicable here */
@@ -285,114 +311,120 @@
             }, 330);
         }
     };
+    
+    onMount(() => {	/* keep track of your staff */
+        canvasBrushButton();
+		window.addEventListener('load', canvasButtonsPositionUpdate);
+        window.addEventListener('resize', canvasButtonsPositionUpdate);
+        document.addEventListener('scroll', canvasButtonsPositionUpdate);
+		
+		return () => {
+            window.removeEventListener('load', canvasButtonsPositionUpdate);
+            window.removeEventListener('resize', canvasButtonsPositionUpdate);
+            document.removeEventListener('scroll', canvasButtonsPositionUpdate);
+		}
+	});
 </script>
 
-<div class="container" style="width: {116 * pixelSize}px; height: {34 * pixelSize}px">
-    <div id="frame" class="frame" style="width: {116 * pixelSize}px; height: {27 * pixelSize}px">
-        <div id="greater-canvas" class="greater-canvas" style="--pixelSize: {pixelSize}px;">
-            {#each Array(5) as _, indexCol (indexCol)}
-                <div class="column">
-                    {#each Array(27) as _, indexPix (indexPix)}
-                        <div class="pixel frame-pixel"></div>
-                    {/each}
-                </div>
-            {/each}
-            {#each Array(106) as _, indexCol (indexCol)}
-                <div class="column">
-                    {#each Array(5) as _, indexPix (indexPix)}
-                        <div class="pixel frame-pixel"></div>
-                    {/each}
-                    {#each Array(17) as _, indexPix (indexPix)}
-                        <div id="pixel-{indexCol}-{indexPix}" class="pixel canvas-pixel"></div>
-                    {/each}
-                    {#each Array(5) as _, indexPix (indexPix)}
-                        <div class="pixel frame-pixel"></div>
-                    {/each}
-                </div>
-            {/each}
-            {#each Array(5) as _, indexCol (indexCol)}
-                <div class="column">
-                    {#each Array(27) as _, indexPix (indexPix)}
-                        <div class="pixel frame-pixel"></div>
-                    {/each}
-                </div>
-            {/each}
-        </div>
-
-        <!--actual painting happens here and is translated onto pixels underneath afterwards-->
-        <canvas id="canvas" class="canvas" width="{106 * pixelSize}" height="{17 * pixelSize}" style="top: {5 * pixelSize}px; left: {5 * pixelSize}px;"
-                on:pointerdown={handleCanvasPointerDown} on:pointermove={handleCanvasPointerMove} on:pointerup={handleCanvasPointerUp}
-                on:pointerleave={handleCanvasPointerLeave} on:pointercancel={handleCanvasPointerCancel} on:dragstart={handleCanvasDragStart}>
-                    <b><i>Your browser does not support canvas element.</i></b>
-        </canvas>
-
-        <!--gradient decore for the frame around the canvas-->
-        <div class="canvas-overlay-left-gradient" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px"></div>
-        <div class="canvas-overlay-top-gradient" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px"></div>
-        <div class="canvas-overlay-right-gradient" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px"></div>
-        <div class="canvas-overlay-bot-gradient" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px"></div>
-
-        <!--font-size adjustments might be harmful, need testing on mobile devices-->
-        <div class="canvas-overlay-axis-y" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px">
-            <div class="canvas-overlay-axis-y-arrow-body"></div>
-            <div class="canvas-overlay-axis-y-arrow-head" style="width: {pixelSize}px; height: {pixelSize}px; top: {pixelSize / 5}px"></div>
-            <div class="canvas-overlay-axis-y-arrow-rest" style="width: {5 * pixelSize}px; height: {22 * pixelSize}px">
-                <div class="canvas-overlay-axis-y-arrow-rest-name" style="font-size: {pixelSize / 10}em; right: {pixelSize * -1.5}px; top: {pixelSize}px"><b>Y</b></div> 
-                <div class="canvas-overlay-axis-y-arrow-rest-dash" style="width: {5 * pixelSize}px; height: {17 * pixelSize}px">
-                    <div class="canvas-overlay-axis-y-arrow-rest-dash-first" style="font-size: {pixelSize / 10}em; right: {pixelSize / 2}px; bottom: {pixelSize / 5}px"><b><i>k</i></b></div>
-                    <div class="canvas-overlay-axis-y-arrow-rest-dash-last" style="font-size: {pixelSize / 10}em; right: {pixelSize / 2}px; top: {pixelSize * -1}px"><b><i>k+17</i></b></div>
-                </div>
+<div id="frame" class="frame" style="width: {116 * pixelSize}px; height: {27 * pixelSize}px">
+    <div id="greater-canvas" class="greater-canvas" style="--pixelSize: {pixelSize}px;">
+        {#each Array(5) as _, indexCol (indexCol)}
+            <div class="column">
+                {#each Array(27) as _, indexPix (indexPix)}
+                    <div class="pixel frame-pixel"></div>
+                {/each}
             </div>
-        </div>
+        {/each}
+        {#each Array(106) as _, indexCol (indexCol)}
+            <div class="column">
+                {#each Array(5) as _, indexPix (indexPix)}
+                    <div class="pixel frame-pixel"></div>
+                {/each}
+                {#each Array(17) as _, indexPix (indexPix)}
+                    <div id="pixel-{indexCol}-{indexPix}" class="pixel canvas-pixel"></div>
+                {/each}
+                {#each Array(5) as _, indexPix (indexPix)}
+                    <div class="pixel frame-pixel"></div>
+                {/each}
+            </div>
+        {/each}
+        {#each Array(5) as _, indexCol (indexCol)}
+            <div class="column">
+                {#each Array(27) as _, indexPix (indexPix)}
+                    <div class="pixel frame-pixel"></div>
+                {/each}
+            </div>
+        {/each}
+    </div>
 
-        <!--font-size adjustments might be harmful, need testing on mobile devices-->
-        <div class="canvas-overlay-axis-x" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px">
-            <div class="canvas-overlay-axis-x-arrow-body"></div> 
-            <div class="canvas-overlay-axis-x-arrow-head" style="width: {pixelSize}px; height: {pixelSize}px; right: {pixelSize / 5}px"></div>
-            <div class="canvas-overlay-axis-x-arrow-rest" style="width: {111 * pixelSize}px; height: {5 * pixelSize}px">
-                <div class="canvas-overlay-axis-x-arrow-rest-name" style="font-size: {pixelSize / 10}em; right: {pixelSize * 1.3}px; top: {pixelSize * -2}px"><b>X</b></div> 
-                <div class="canvas-overlay-axis-x-arrow-rest-dash" style="width: {106 * pixelSize}px; height: {5 * pixelSize}px">
-                    <div class="canvas-overlay-axis-x-arrow-rest-dash-first" style="font-size: {pixelSize / 10}em; left: {pixelSize / 5}px"><b><i>0</i></b></div>
-                    <div class="canvas-overlay-axis-x-arrow-rest-dash-last" style="font-size: {pixelSize / 10}em; right: {pixelSize * -1}px"><b><i>106</i></b></div>
-                </div>
+    <!--actual painting happens here and is translated onto pixels underneath afterwards-->
+    <canvas id="canvas" class="canvas" width="{106 * pixelSize}" height="{17 * pixelSize}" style="top: {5 * pixelSize}px; left: {5 * pixelSize}px;"
+            on:pointerdown={handleCanvasPointerDown} on:pointermove={handleCanvasPointerMove} on:pointerup={handleCanvasPointerUp}
+            on:pointerleave={handleCanvasPointerLeave} on:pointercancel={handleCanvasPointerCancel} on:dragstart={handleCanvasDragStart}>
+                <b><i>Your browser does not support canvas element.</i></b>
+    </canvas>
+
+    <!--gradient decore for the frame around the canvas-->
+    <div class="canvas-overlay-left-gradient" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px"></div>
+    <div class="canvas-overlay-top-gradient" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px"></div>
+    <div class="canvas-overlay-right-gradient" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px"></div>
+    <div class="canvas-overlay-bot-gradient" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px"></div>
+
+    <!--font-size adjustments might be harmful, need testing on mobile devices-->
+    <div class="canvas-overlay-axis-y" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px">
+        <div class="canvas-overlay-axis-y-arrow-body"></div>
+        <div class="canvas-overlay-axis-y-arrow-head" style="width: {pixelSize}px; height: {pixelSize}px; top: {pixelSize / 5}px"></div>
+        <div class="canvas-overlay-axis-y-arrow-rest" style="width: {5 * pixelSize}px; height: {22 * pixelSize}px">
+            <div class="canvas-overlay-axis-y-arrow-rest-name" style="font-size: {pixelSize / 10}em; right: {pixelSize * -1.5}px; top: {pixelSize}px"><b>Y</b></div> 
+            <div class="canvas-overlay-axis-y-arrow-rest-dash" style="width: {5 * pixelSize}px; height: {17 * pixelSize}px">
+                <div class="canvas-overlay-axis-y-arrow-rest-dash-first" style="font-size: {pixelSize / 10}em; right: {pixelSize / 2}px; bottom: {pixelSize / 5}px"><b><i>k</i></b></div>
+                <div class="canvas-overlay-axis-y-arrow-rest-dash-last" style="font-size: {pixelSize / 10}em; right: {pixelSize / 2}px; top: {pixelSize * -1}px"><b><i>k+17</i></b></div>
             </div>
         </div>
     </div>
 
-    <!--k-value textarea, buttons and stuff-->
-    <div class="k-buttons" style="width: {96 * pixelSize}px; height: {6 * pixelSize}px; padding-top: {pixelSize / 2}px; padding-bottom: {pixelSize / 2}px;">
-        <div  class="k-buttons-value" style="width: {96 * pixelSize}px; height: {2.5 * pixelSize}px">
-            <button on:click={kValueDisplayButton} type="button" style="font-size: {2 * pixelSize - 4}px; width: {8 * pixelSize}px; height: {2.5 * pixelSize}px"><i>k<sub>{kValueBase}</sub></i></button>
-            <textarea bind:value={kValueString} on:input={kValueChangeHandler} on:focusout={kValueChangeHandler} id="textarea" style="line-height: {2.5 * pixelSize - 1}px; font-size: {2 * pixelSize - 6}px; width: {88 * pixelSize}px; height: {2.5 * pixelSize}px"></textarea>
-        </div>
-         <div class="k-buttons-action" style="width: {96 * pixelSize}px; height: {2.5 * pixelSize}px">
-            <button on:click={kValueCommentButton} class="k-buttons-action-comment" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Comment</button>          
-            <button on:click={kValuePasteButton} class="k-buttons-action-paste" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Paste</button>
-            <button on:click={kValueCopyButton} class="k-buttons-action-copy" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Copy</button>
-            <div class="k-buttons-action-options" style="width: {50 * pixelSize}px; height: {2.5 * pixelSize}px">
-                <button class="k-buttons-action-options-tutorial" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
-                <button class="k-buttons-action-options-select" type="button" style="font-size: {2 * pixelSize - 6}px; width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
-                <button class="k-buttons-action-options-clear" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+    <!--font-size adjustments might be harmful, need testing on mobile devices-->
+    <div class="canvas-overlay-axis-x" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px">
+        <div class="canvas-overlay-axis-x-arrow-body"></div> 
+        <div class="canvas-overlay-axis-x-arrow-head" style="width: {pixelSize}px; height: {pixelSize}px; right: {pixelSize / 5}px"></div>
+        <div class="canvas-overlay-axis-x-arrow-rest" style="width: {111 * pixelSize}px; height: {5 * pixelSize}px">
+            <div class="canvas-overlay-axis-x-arrow-rest-name" style="font-size: {pixelSize / 10}em; right: {pixelSize * 1.3}px; top: {pixelSize * -2}px"><b>X</b></div> 
+            <div class="canvas-overlay-axis-x-arrow-rest-dash" style="width: {106 * pixelSize}px; height: {5 * pixelSize}px">
+                <div class="canvas-overlay-axis-x-arrow-rest-dash-first" style="font-size: {pixelSize / 10}em; left: {pixelSize / 5}px"><b><i>0</i></b></div>
+                <div class="canvas-overlay-axis-x-arrow-rest-dash-last" style="font-size: {pixelSize / 10}em; right: {pixelSize * -1}px"><b><i>106</i></b></div>
             </div>
         </div>
     </div>
 
-    <!--dummy to hoist ignored css classes upon (this classes are not active by default, thus ignored by compiler)-->
-    <div class="canvas-error canvas-active canvas-success canvas-pixel-active" style="display: none;"></div>
+    <!--floating buttons go here!-->
+    <div id="canvas-buttons" class="canvas-buttons" style="width: {8 * pixelSize}px; height: {4 * pixelSize}px; --canvasButtonsPositionRight: {canvasButtonsPositionRight}px; --canvasButtonsPositionTop: {canvasButtonsPositionTop}px;">
+        <button on:click={canvasBrushButton} class="canvas-buttons-brush" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+        <button on:click={canvasEraseButton} class="canvas-buttons-erase" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+    </div>
 </div>
 
-<style>
-    .container {
-        transform-style: preserve-3D;
-        transform-origin: left top;
-        position: absolute;
-        align-self: center;
-        margin-right: auto;
-        margin-left: auto;
-        right: 0;
-        left: 0;
-    }
+<!--k-value textarea, buttons and stuff-->
+<div class="k-buttons" style="width: {96 * pixelSize}px; height: {6 * pixelSize}px; padding-top: {pixelSize / 2}px; padding-bottom: {pixelSize / 2}px;">
+    <div  class="k-buttons-value" style="width: {96 * pixelSize}px; height: {2.5 * pixelSize}px">
+        <button on:click={kValueDisplayButton} type="button" style="font-size: {2 * pixelSize - 4}px; width: {8 * pixelSize}px; height: {2.5 * pixelSize}px"><i>k<sub>{kValueBase}</sub></i></button>
+        <textarea bind:value={kValueString} on:input={kValueChangeHandler} on:focusout={kValueChangeHandler} id="textarea" style="line-height: {2.5 * pixelSize - 1}px; font-size: {2 * pixelSize - 6}px; width: {88 * pixelSize}px; height: {2.5 * pixelSize}px"></textarea>
+    </div>
+        <div class="k-buttons-action" style="width: {96 * pixelSize}px; height: {2.5 * pixelSize}px">
+        <button on:click={kValueCommentButton} class="k-buttons-action-comment" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Comment</button>          
+        <button on:click={kValuePasteButton} class="k-buttons-action-paste" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Paste</button>
+        <button on:click={kValueCopyButton} class="k-buttons-action-copy" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Copy</button>
+        <div class="k-buttons-action-options" style="width: {50 * pixelSize}px; height: {2.5 * pixelSize}px">
+            <button class="k-buttons-action-options-tutorial" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+            <button class="k-buttons-action-options-select" type="button" style="font-size: {2 * pixelSize - 6}px; width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+            <button class="k-buttons-action-options-clear" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+        </div>
+    </div>
+</div>
 
+<!--dummy to hoist ignored css classes upon (this classes are not active by default, thus ignored by compiler)-->
+<div class="canvas-error canvas-active canvas-success canvas-pixel-active" style="display: none;"></div>
+
+<style>
     .frame {
         position: relative;
         display: block;
@@ -579,7 +611,30 @@
         color: var(--canvas-overlay-decore-arrow-legend);
         position: absolute;
         top: 0;
-    }   
+    }
+
+    .canvas-buttons {
+        align-items: flex-end;
+        flex-direction: row;
+        position: fixed;
+        display: flex;
+        transition: all 0.25s;
+        right: var(--canvasButtonsPositionRight);
+        top: var(--canvasButtonsPositionTop);
+    }
+
+    .canvas-buttons-brush {
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE4LjEuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJDYXBhXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMzYuMzggMzYuMzgiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDM2LjM4IDM2LjM4OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8Zz4NCgk8cGF0aCBkPSJNMjEuNzA5LDEwLjU5N2wyLjc4MS0xLjY2MmMtMC4wMi0wLjI3OS0wLjA0Ny0wLjU1My0wLjA3OC0wLjgxOUMyMy43OTgsMi42ODMsMjEuNTExLDAsMjEuNTExLDANCgkJYy01LjI2MiwzLjQ5Ny03LjYxNywxMC4yMjQtNy42MTcsMTAuMjI0bDAuNzcsMi41ODJsLTEuNDI2LTAuNjQ2QzEwLjc3MywxOS4yMzksMTMuNCwyNy4wNCwxMy40LDI3LjA0DQoJCWMwLjIwNywwLjMwOSwwLjQzMiwwLjUyNSwwLjY2MiwwLjY4YzMuMDQ1LTEzLjUwOCw0Ljk5NC0xOC4zODEsNC45OTQtMTguMzgxYy0wLjY4OCwxLjc1NC0yLjUwOCwxMS45NDMtMy42NjQsMTguNjY2DQoJCWMwLjU3Mi0wLjA4MiwxLTAuMzYzLDEtMC4zNjNjOC41NTctOS4zOTEsNy43OTktMTcuMjExLDcuNzk5LTE3LjIxMUMyMy41OTMsMTAuMDg3LDIxLjcwOSwxMC41OTcsMjEuNzA5LDEwLjU5N3oiLz4NCgk8cGF0aCBkPSJNMTQuMDYyLDI3LjcyYy0wLjQzNCwxLjkyLTEuNjk1LDYuMzgxLTIuMTcyLDguNjZsMS4xNjItMS4zNDZjMCwwLDEuMzA1LTMuOTM0LDIuMzQtNy4wMjkNCgkJQzE0Ljk5LDI4LjA2NCwxNC41MTcsMjguMDIxLDE0LjA2MiwyNy43MnoiLz4NCgk8Zz4NCgk8L2c+DQoJPGc+DQoJPC9nPg0KCTxnPg0KCTwvZz4NCgk8Zz4NCgk8L2c+DQoJPGc+DQoJPC9nPg0KCTxnPg0KCTwvZz4NCgk8Zz4NCgk8L2c+DQoJPGc+DQoJPC9nPg0KCTxnPg0KCTwvZz4NCgk8Zz4NCgk8L2c+DQoJPGc+DQoJPC9nPg0KCTxnPg0KCTwvZz4NCgk8Zz4NCgk8L2c+DQoJPGc+DQoJPC9nPg0KCTxnPg0KCTwvZz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjwvc3ZnPg0K);
+        background-size: contain;
+        border-radius: 100%;
+    }
+
+    .canvas-buttons-erase {
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE5LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDUxMiA1MTIiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTI7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxnPg0KCQk8cGF0aCBkPSJNNDk1LjI3NiwxMzMuOTZMMzc3LjAzMiwxNS43MTVjLTE5LjYwNS0xOS42MDgtNTEuMzQtMTkuNjA5LTcwLjk0NiwwTDQwLjM3LDI4MS40MjgNCgkJCWMtMTkuNTU3LDE5LjU2LTE5LjU1Nyw1MS4zODYsMC4wMDEsNzAuOTQ2bDYxLjE1Myw2MS4xNTNjOS40NzUsOS40NzYsMjIuMDc0LDE0LjY5MywzNS40NzMsMTQuNjkzaDExNC4xODgNCgkJCWMxMy40LDAsMjUuOTk4LTUuMjE5LDM1LjQ3My0xNC42OTNsMjUuNjc4LTI1LjY3OHYtMC4wMDFsMTgyLjk0MS0xODIuOTQyQzUxNC44MzcsMTg1LjM0Nyw1MTQuODM3LDE1My41Miw0OTUuMjc2LDEzMy45NnoNCgkJCSBNMjYzLjAwOSwzODkuODc4Yy0zLjE1OCwzLjE1OC03LjM1OCw0Ljg5Ny0xMS44MjQsNC44OTdIMTM2Ljk5N2MtNC40NjcsMC04LjY2Ni0xLjczOS0xMS44MjQtNC44OTdsLTYxLjE1Mi02MS4xNTINCgkJCWMtNi41MjEtNi41MjEtNi41MjEtMTcuMTI5LTAuMDAxLTIzLjY1bDcwLjk0OC03MC45NDhsMTQxLjg5NSwxNDEuODk1TDI2My4wMDksMzg5Ljg3OHogTTQ3MS42MjksMTgxLjI1OGwtMzIuMTEzLDMyLjExMw0KCQkJTDI5Ny42MjIsNzEuNDc1bDMyLjExMy0zMi4xMTNjNi41MjItNi41MjEsMTcuMTI5LTYuNTE5LDIzLjY1LDBsMTE4LjI0NCwxMTguMjQ1DQoJCQlDNDc4LjE0OCwxNjQuMTI4LDQ3OC4xNDgsMTc0LjczNyw0NzEuNjI5LDE4MS4yNTh6Ii8+DQoJPC9nPg0KPC9nPg0KPGc+DQoJPGc+DQoJCTxwYXRoIGQ9Ik00OTUuMjc4LDQ3Ny41NDZIMTYuNzIyQzcuNDg3LDQ3Ny41NDYsMCw0ODUuMDM0LDAsNDk0LjI2OXM3LjQ4NywxNi43MjIsMTYuNzIyLDE2LjcyMmg0NzguNTU1DQoJCQljOS4yMzUsMCwxNi43MjItNy40ODcsMTYuNzIyLTE2LjcyMlM1MDQuNTEzLDQ3Ny41NDYsNDk1LjI3OCw0NzcuNTQ2eiIvPg0KCTwvZz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjwvc3ZnPg0K);
+        background-size: contain;
+        border-radius: 100%;
+        margin-left: 5px;
+    }
 
     .k-buttons {
         position: relative;
