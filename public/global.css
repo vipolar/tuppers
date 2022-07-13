@@ -1,31 +1,3 @@
-:root {
-	/* greater canvas */
-	--frame-pixel-box-shadow: #ffffff;
-	--frame-pixel-background: #a7a7a7;
-	--canvas-pixel-box-shadow: #ffffff;
-	--canvas-pixel-background: #999999;
-	--canvas-pixel-box-shadow-active: #8b0000;
-	--canvas-pixel-background-active: #111111;
-
-	/* canvas */
-	--canvas-box-shadow: #000000;
-	--canvas-box-shadow-error: #ff0000;
-	--canvas-box-shadow-active: #00ffdd;
-	--canvas-box-shadow-success: #55ff00;
-
-	/* overlay */
-	--canvas-overlay-gradient-start: transparent;
-	--canvas-overlay-gradient-finish: #ffffff;
-	--canvas-overlay-decore-arrow-line: #000000;
-	--canvas-overlay-decore-arrow-legend: #000000;
-
-	/* buttons, inputs, etc. */
-	--k-tools-background: #dddddd;
-	--k-tools-foreground: #000000;
-	--k-tools-outline: #0064c8;
-	--k-tools-border: #ff0000;
-}
-
 html, body {
 	position: relative;
 }

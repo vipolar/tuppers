@@ -1,9 +1,8 @@
 <script>
+    import { setCharAt, findTouchIndexById, copyCanvasTouch, debounceFunction, calcLBIR } from './tools/rest.js'
     import { kValueValidate, kValueBaseToBinary, kValueBinaryToBase } from './tools/kValue.js'
-    import { setCharAt, findTouchIndexById, copyCanvasTouch } from './tools/rest.js'
     import { getPixelsOnTheLine } from './tools/algorithms.js'
     import { onMount } from 'svelte';
-    export let pixelSize = 0;
 
     let kValueString = 'Click on the canvas and see what happens to me!';
 	let kValueBinary = '0'.repeat(1802);
@@ -16,7 +15,19 @@
 
     let timerCanvasButtonsPositionUpdate;
     let canvasButtonsPositionRight = 0;
+    let canvasButtonsPositionLeft = 0;
     let canvasButtonsPositionTop = 0;
+
+    let pixelRatio = 0;
+	let pixelHeight = 0;
+	let pixelWidth = 0;
+	let pixelSize = 0;
+
+    let canvasRotateDegree = 0;
+    let canvasLandscapeMQ = 0;
+    let canvasOffsetY = 0;
+	let canvasPadY = 0;
+	let canvasPadX = 0;
 
     /* we do paintin' here yo! */
     function canvasBrushButton() {
@@ -81,32 +92,49 @@
     };
     
     /* wake up babe, new events just dropped! */
-    function canvasButtonsPositionUpdate(e) {
-        let rect = document.getElementById("frame").getBoundingClientRect();
-        let maxRight = rect.width - (5 * pixelSize) - (8 * pixelSize);
-        let maxTop = rect.height - (5 * pixelSize) - (4 * pixelSize);
-        
+    function canvasButtonsPositionUpdate() {
+        /* TODO: some device-dependent quirks */
         clearTimeout(timerCanvasButtonsPositionUpdate);
         timerCanvasButtonsPositionUpdate = setTimeout(() => {
-            canvasButtonsPositionRight = rect.right - window.innerWidth;
-            if (canvasButtonsPositionRight  <= 0) {
-                canvasButtonsPositionRight = 0;
-            } else if (canvasButtonsPositionRight >= maxRight) {
-                canvasButtonsPositionRight = maxRight;
-            }
+            if (canvasLandscapeMQ.matches) {
+                if (pixelRatio >= 1) {
+                    let xMaxVal = canvasPadX + pixelSize * 8;
+                    let canvasFull = 116 * pixelSize + canvasPadX * 2;
+                    let viewportFull = window.innerWidth + window.scrollX;
+                    let xRightOverflow = Math.floor(canvasFull - viewportFull);
+                    let xPadding = canvasPadX - xRightOverflow > 0 ? canvasPadX - xRightOverflow : 0;
+                    let xTempVal = window.innerWidth + window.scrollX - xPadding - (8 * pixelSize);
+                    canvasButtonsPositionLeft = xMaxVal > xTempVal ? xMaxVal: xTempVal;
+                    canvasButtonsPositionRight = "invalid";
+                    
+                    let yMaxVal = canvasPadY + pixelSize * 17;
+                    let yPadding = canvasPadY - window.scrollY > 0 ? canvasPadY - window.scrollY : 0;
+                    let yTempVal = window.scrollY + yPadding
+                    canvasButtonsPositionTop = yMaxVal < yTempVal ? yMaxVal: yTempVal;
+                } else {
+                    canvasButtonsPositionLeft = canvasPadX + (116 * pixelSize) - (8 * pixelSize);
+                    canvasButtonsPositionTop = canvasPadY;
+                    canvasButtonsPositionRight = "invalid";
+                }       
+            } else {
+                if (pixelRatio >= 1) {
+                    let yMaxVal = canvasPadX + pixelSize * 98;
+                    let yPadding = canvasPadX - window.scrollY > 0 ? canvasPadX - window.scrollY : 0;
+                    let yTempVal = window.scrollY + yPadding;
+                    canvasButtonsPositionRight = yMaxVal < yTempVal ? yMaxVal: yTempVal;
+                    canvasButtonsPositionLeft = "invalid";
 
-            canvasButtonsPositionTop = rect.top * -1;
-            if (canvasButtonsPositionTop <= 0) {
-                canvasButtonsPositionTop = 0;
-            } else if (canvasButtonsPositionTop >= maxTop) {
-                canvasButtonsPositionTop = maxTop;
-            }
-            kValueString = `-top: ${canvasButtonsPositionTop}, -right: ${canvasButtonsPositionRight}`;
-            for (var key in rect) {
-                if(typeof rect[key] !== 'function') {
-                    kValueString  += `, ${ key } : ${ rect[key] }`;
+                    let xMaxVal = canvasPadY + pixelSize * 17;
+                    let xPadding = canvasPadY - window.scrollX > 0 ? canvasPadY - window.scrollX : 0;
+                    let xTempVal = window.scrollX + xPadding;
+                    canvasButtonsPositionTop = xMaxVal < xTempVal ? xMaxVal: xTempVal;
+                } else {
+                    canvasButtonsPositionRight = canvasPadY;
+                    canvasButtonsPositionTop = canvasPadX;
+                    canvasButtonsPositionLeft = "invalid";
                 }
             }
+            //kValueString = `ww: ${window.innerWidth}, wh: ${window.innerHeight}, scrollX: ${window.scrollX}, scrollY: ${window.scrollY}, pixelSize: ${pixelSize}, pixelRatio: ${pixelRatio}`;
         }, 100);
     };
 
@@ -311,112 +339,158 @@
             }, 330);
         }
     };
+
+    /* the rest TODO */
+    function updatePixelRatio() {
+		window.matchMedia(`(resolution: ${pixelRatio}dppx)`).removeEventListener("change", updatePixelRatio);
+		pixelRatio = window.devicePixelRatio;
+		window.matchMedia(`(resolution: ${pixelRatio}dppx)`).addEventListener("change", updatePixelRatio, { once: true });
+	};
+
+	function updatePixelSize() {
+		const windowWidth = Math.ceil(window.innerWidth * pixelRatio);
+		const windowHeight = Math.ceil(window.innerHeight * pixelRatio);
+
+		/* held together with spit and prayer TODO */
+        canvasLandscapeMQ = window.matchMedia("(orientation: landscape)");
+		if (canvasLandscapeMQ.matches) {
+			pixelWidth = Math.floor(windowWidth / 116);
+			pixelHeight = Math.floor(windowHeight / 34);
+			pixelSize = calcLBIR(pixelWidth, pixelHeight, 4, 24);
+
+			canvasPadY = Math.floor((windowHeight - (pixelSize * 34)) / 2);
+			canvasPadX = Math.floor((windowWidth - (pixelSize * 116)) / 2);
+			canvasRotateDegree = 0;
+			canvasOffsetY = 0;
+		} else {
+			pixelWidth = Math.floor(windowWidth / 34);
+			pixelHeight = Math.floor(windowHeight / 116);
+			pixelSize = calcLBIR(pixelWidth, pixelHeight, 4, 24);
+
+			canvasPadY = Math.floor((windowWidth - (pixelSize * 34)) / 2);
+			canvasPadX = Math.floor((windowHeight - (pixelSize * 116)) / 2);
+			canvasOffsetY = pixelSize * 116 + canvasPadX * 2;
+			canvasRotateDegree = -90;
+		}
+
+        canvasButtonsPositionUpdate();
+	};
     
-    onMount(() => {	/* keep track of your staff */
+    /* keep track of your stuff here */
+    const debouncedUpdatePixelSize = debounceFunction(updatePixelSize, 300);
+    onMount(() => {
+        updatePixelRatio();
+		updatePixelSize();
+
         canvasBrushButton();
+
+		/* events */
+        window.addEventListener('resize', debouncedUpdatePixelSize);
 		window.addEventListener('load', canvasButtonsPositionUpdate);
-        window.addEventListener('resize', canvasButtonsPositionUpdate);
         document.addEventListener('scroll', canvasButtonsPositionUpdate);
 		
 		return () => {
+            window.removeEventListener('resize', debouncedUpdatePixelSize);
             window.removeEventListener('load', canvasButtonsPositionUpdate);
-            window.removeEventListener('resize', canvasButtonsPositionUpdate);
             document.removeEventListener('scroll', canvasButtonsPositionUpdate);
+            window.matchMedia(`(resolution: ${pixelRatio}dppx)`).removeEventListener("change", updatePixelRatio);
 		}
 	});
 </script>
 
-<div id="frame" class="frame" style="width: {116 * pixelSize}px; height: {27 * pixelSize}px">
-    <div id="greater-canvas" class="greater-canvas" style="--pixelSize: {pixelSize}px;">
-        {#each Array(5) as _, indexCol (indexCol)}
-            <div class="column">
-                {#each Array(27) as _, indexPix (indexPix)}
-                    <div class="pixel frame-pixel"></div>
-                {/each}
-            </div>
-        {/each}
-        {#each Array(106) as _, indexCol (indexCol)}
-            <div class="column">
-                {#each Array(5) as _, indexPix (indexPix)}
-                    <div class="pixel frame-pixel"></div>
-                {/each}
-                {#each Array(17) as _, indexPix (indexPix)}
-                    <div id="pixel-{indexCol}-{indexPix}" class="pixel canvas-pixel"></div>
-                {/each}
-                {#each Array(5) as _, indexPix (indexPix)}
-                    <div class="pixel frame-pixel"></div>
-                {/each}
-            </div>
-        {/each}
-        {#each Array(5) as _, indexCol (indexCol)}
-            <div class="column">
-                {#each Array(27) as _, indexPix (indexPix)}
-                    <div class="pixel frame-pixel"></div>
-                {/each}
-            </div>
-        {/each}
-    </div>
+<div id="container" class="container" style="width: {116 * pixelSize}px; height: {34 * pixelSize}px; --cRotateDeg: {canvasRotateDegree}deg; --cOffsetY: {canvasOffsetY}px; --cPadY: {canvasPadY}px; --cPadX: {canvasPadX}px;">
+    <div id="frame" class="frame" style="width: {116 * pixelSize}px; height: {27 * pixelSize}px">
+        <div id="greater-canvas" class="greater-canvas" style="--pixelSize: {pixelSize}px;">
+            {#each Array(5) as _, indexCol (indexCol)}
+                <div class="column">
+                    {#each Array(27) as _, indexPix (indexPix)}
+                        <div class="pixel frame-pixel"></div>
+                    {/each}
+                </div>
+            {/each}
+            {#each Array(106) as _, indexCol (indexCol)}
+                <div class="column">
+                    {#each Array(5) as _, indexPix (indexPix)}
+                        <div class="pixel frame-pixel"></div>
+                    {/each}
+                    {#each Array(17) as _, indexPix (indexPix)}
+                        <div id="pixel-{indexCol}-{indexPix}" class="pixel canvas-pixel"></div>
+                    {/each}
+                    {#each Array(5) as _, indexPix (indexPix)}
+                        <div class="pixel frame-pixel"></div>
+                    {/each}
+                </div>
+            {/each}
+            {#each Array(5) as _, indexCol (indexCol)}
+                <div class="column">
+                    {#each Array(27) as _, indexPix (indexPix)}
+                        <div class="pixel frame-pixel"></div>
+                    {/each}
+                </div>
+            {/each}
+        </div>
 
-    <!--actual painting happens here and is translated onto pixels underneath afterwards-->
-    <canvas id="canvas" class="canvas" width="{106 * pixelSize}" height="{17 * pixelSize}" style="top: {5 * pixelSize}px; left: {5 * pixelSize}px;"
-            on:pointerdown={handleCanvasPointerDown} on:pointermove={handleCanvasPointerMove} on:pointerup={handleCanvasPointerUp}
-            on:pointerleave={handleCanvasPointerLeave} on:pointercancel={handleCanvasPointerCancel} on:dragstart={handleCanvasDragStart}>
-                <b><i>Your browser does not support canvas element.</i></b>
-    </canvas>
+        <!--actual painting happens here and is translated onto pixels underneath afterwards-->
+        <canvas id="canvas" class="canvas" width="{106 * pixelSize}" height="{17 * pixelSize}" style="top: {5 * pixelSize}px; left: {5 * pixelSize}px;"
+                on:pointerdown={handleCanvasPointerDown} on:pointermove={handleCanvasPointerMove} on:pointerup={handleCanvasPointerUp}
+                on:pointerleave={handleCanvasPointerLeave} on:pointercancel={handleCanvasPointerCancel} on:dragstart={handleCanvasDragStart}>
+                    <b><i>Your browser does not support canvas element.</i></b>
+        </canvas>
 
-    <!--gradient decore for the frame around the canvas-->
-    <div class="canvas-overlay-left-gradient" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px"></div>
-    <div class="canvas-overlay-top-gradient" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px"></div>
-    <div class="canvas-overlay-right-gradient" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px"></div>
-    <div class="canvas-overlay-bot-gradient" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px"></div>
+        <!--gradient decore for the frame around the canvas-->
+        <div class="canvas-overlay-left-gradient" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px"></div>
+        <div class="canvas-overlay-top-gradient" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px"></div>
+        <div class="canvas-overlay-right-gradient" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px"></div>
+        <div class="canvas-overlay-bot-gradient" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px"></div>
 
-    <!--font-size adjustments might be harmful, need testing on mobile devices-->
-    <div class="canvas-overlay-axis-y" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px">
-        <div class="canvas-overlay-axis-y-arrow-body"></div>
-        <div class="canvas-overlay-axis-y-arrow-head" style="width: {pixelSize}px; height: {pixelSize}px; top: {pixelSize / 5}px"></div>
-        <div class="canvas-overlay-axis-y-arrow-rest" style="width: {5 * pixelSize}px; height: {22 * pixelSize}px">
-            <div class="canvas-overlay-axis-y-arrow-rest-name" style="font-size: {pixelSize / 10}em; right: {pixelSize * -1.5}px; top: {pixelSize}px"><b>Y</b></div> 
-            <div class="canvas-overlay-axis-y-arrow-rest-dash" style="width: {5 * pixelSize}px; height: {17 * pixelSize}px">
-                <div class="canvas-overlay-axis-y-arrow-rest-dash-first" style="font-size: {pixelSize / 10}em; right: {pixelSize / 2}px; bottom: {pixelSize / 5}px"><b><i>k</i></b></div>
-                <div class="canvas-overlay-axis-y-arrow-rest-dash-last" style="font-size: {pixelSize / 10}em; right: {pixelSize / 2}px; top: {pixelSize * -1}px"><b><i>k+17</i></b></div>
+        <!--font-size adjustments might be harmful, need testing on mobile devices-->
+        <div class="canvas-overlay-axis-y" style="width: {5 * pixelSize}px; height: {27 * pixelSize}px">
+            <div class="canvas-overlay-axis-y-arrow-body"></div>
+            <div class="canvas-overlay-axis-y-arrow-head" style="width: {pixelSize}px; height: {pixelSize}px; top: {pixelSize / 5}px"></div>
+            <div class="canvas-overlay-axis-y-arrow-rest" style="width: {5 * pixelSize}px; height: {22 * pixelSize}px">
+                <div class="canvas-overlay-axis-y-arrow-rest-name" style="font-size: {pixelSize / 10}em; right: {pixelSize * -1.5}px; top: {pixelSize}px"><b>Y</b></div> 
+                <div class="canvas-overlay-axis-y-arrow-rest-dash" style="width: {5 * pixelSize}px; height: {17 * pixelSize}px">
+                    <div class="canvas-overlay-axis-y-arrow-rest-dash-first" style="font-size: {pixelSize / 10}em; right: {pixelSize / 2}px; bottom: {pixelSize / 5}px"><b><i>k</i></b></div>
+                    <div class="canvas-overlay-axis-y-arrow-rest-dash-last" style="font-size: {pixelSize / 10}em; right: {pixelSize / 2}px; top: {pixelSize * -1}px"><b><i>k+17</i></b></div>
+                </div>
             </div>
+        </div>
+
+        <!--font-size adjustments might be harmful, need testing on mobile devices-->
+        <div class="canvas-overlay-axis-x" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px">
+            <div class="canvas-overlay-axis-x-arrow-body"></div> 
+            <div class="canvas-overlay-axis-x-arrow-head" style="width: {pixelSize}px; height: {pixelSize}px; right: {pixelSize / 5}px"></div>
+            <div class="canvas-overlay-axis-x-arrow-rest" style="width: {111 * pixelSize}px; height: {5 * pixelSize}px">
+                <div class="canvas-overlay-axis-x-arrow-rest-name" style="font-size: {pixelSize / 10}em; right: {pixelSize * 1.3}px; top: {pixelSize * -2}px"><b>X</b></div> 
+                <div class="canvas-overlay-axis-x-arrow-rest-dash" style="width: {106 * pixelSize}px; height: {5 * pixelSize}px">
+                    <div class="canvas-overlay-axis-x-arrow-rest-dash-first" style="font-size: {pixelSize / 10}em; left: {pixelSize / 5}px"><b><i>0</i></b></div>
+                    <div class="canvas-overlay-axis-x-arrow-rest-dash-last" style="font-size: {pixelSize / 10}em; right: {pixelSize * -1}px"><b><i>106</i></b></div>
+                </div>
+            </div>
+        </div>
+
+        <!--floating buttons go here!-->
+        <div id="canvas-buttons" class="canvas-buttons" style="width: {8 * pixelSize}px; height: {4 * pixelSize}px; --canvasButtonsPositionRight: {canvasButtonsPositionRight}px; --canvasButtonsPositionLeft: {canvasButtonsPositionLeft}px; --canvasButtonsPositionTop: {canvasButtonsPositionTop}px;">
+            <button on:click={canvasBrushButton} class="canvas-buttons-brush" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+            <button on:click={canvasEraseButton} class="canvas-buttons-erase" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
         </div>
     </div>
 
-    <!--font-size adjustments might be harmful, need testing on mobile devices-->
-    <div class="canvas-overlay-axis-x" style="width: {116 * pixelSize}px; height: {5 * pixelSize}px">
-        <div class="canvas-overlay-axis-x-arrow-body"></div> 
-        <div class="canvas-overlay-axis-x-arrow-head" style="width: {pixelSize}px; height: {pixelSize}px; right: {pixelSize / 5}px"></div>
-        <div class="canvas-overlay-axis-x-arrow-rest" style="width: {111 * pixelSize}px; height: {5 * pixelSize}px">
-            <div class="canvas-overlay-axis-x-arrow-rest-name" style="font-size: {pixelSize / 10}em; right: {pixelSize * 1.3}px; top: {pixelSize * -2}px"><b>X</b></div> 
-            <div class="canvas-overlay-axis-x-arrow-rest-dash" style="width: {106 * pixelSize}px; height: {5 * pixelSize}px">
-                <div class="canvas-overlay-axis-x-arrow-rest-dash-first" style="font-size: {pixelSize / 10}em; left: {pixelSize / 5}px"><b><i>0</i></b></div>
-                <div class="canvas-overlay-axis-x-arrow-rest-dash-last" style="font-size: {pixelSize / 10}em; right: {pixelSize * -1}px"><b><i>106</i></b></div>
-            </div>
+    <!--k-value textarea, buttons and stuff-->
+    <div class="k-buttons" style="width: {96 * pixelSize}px; height: {6 * pixelSize}px; padding-top: {pixelSize / 2}px; padding-bottom: {pixelSize / 2}px;">
+        <div  class="k-buttons-value" style="width: {96 * pixelSize}px; height: {2.5 * pixelSize}px">
+            <button on:click={kValueDisplayButton} type="button" style="font-size: {2 * pixelSize - 4}px; width: {8 * pixelSize}px; height: {2.5 * pixelSize}px"><i>k<sub>{kValueBase}</sub></i></button>
+            <textarea bind:value={kValueString} on:input={kValueChangeHandler} on:focusout={kValueChangeHandler} id="textarea" style="line-height: {2.5 * pixelSize - 1}px; font-size: {2 * pixelSize - 6}px; width: {88 * pixelSize}px; height: {2.5 * pixelSize}px"></textarea>
         </div>
-    </div>
-
-    <!--floating buttons go here!-->
-    <div id="canvas-buttons" class="canvas-buttons" style="width: {8 * pixelSize}px; height: {4 * pixelSize}px; --canvasButtonsPositionRight: {canvasButtonsPositionRight}px; --canvasButtonsPositionTop: {canvasButtonsPositionTop}px;">
-        <button on:click={canvasBrushButton} class="canvas-buttons-brush" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
-        <button on:click={canvasEraseButton} class="canvas-buttons-erase" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
-    </div>
-</div>
-
-<!--k-value textarea, buttons and stuff-->
-<div class="k-buttons" style="width: {96 * pixelSize}px; height: {6 * pixelSize}px; padding-top: {pixelSize / 2}px; padding-bottom: {pixelSize / 2}px;">
-    <div  class="k-buttons-value" style="width: {96 * pixelSize}px; height: {2.5 * pixelSize}px">
-        <button on:click={kValueDisplayButton} type="button" style="font-size: {2 * pixelSize - 4}px; width: {8 * pixelSize}px; height: {2.5 * pixelSize}px"><i>k<sub>{kValueBase}</sub></i></button>
-        <textarea bind:value={kValueString} on:input={kValueChangeHandler} on:focusout={kValueChangeHandler} id="textarea" style="line-height: {2.5 * pixelSize - 1}px; font-size: {2 * pixelSize - 6}px; width: {88 * pixelSize}px; height: {2.5 * pixelSize}px"></textarea>
-    </div>
-        <div class="k-buttons-action" style="width: {96 * pixelSize}px; height: {2.5 * pixelSize}px">
-        <button on:click={kValueCommentButton} class="k-buttons-action-comment" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Comment</button>          
-        <button on:click={kValuePasteButton} class="k-buttons-action-paste" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Paste</button>
-        <button on:click={kValueCopyButton} class="k-buttons-action-copy" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Copy</button>
-        <div class="k-buttons-action-options" style="width: {50 * pixelSize}px; height: {2.5 * pixelSize}px">
-            <button class="k-buttons-action-options-tutorial" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
-            <button class="k-buttons-action-options-select" type="button" style="font-size: {2 * pixelSize - 6}px; width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
-            <button class="k-buttons-action-options-clear" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+            <div class="k-buttons-action" style="width: {96 * pixelSize}px; height: {2.5 * pixelSize}px">
+            <button on:click={kValueCommentButton} class="k-buttons-action-comment" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Comment</button>          
+            <button on:click={kValuePasteButton} class="k-buttons-action-paste" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Paste</button>
+            <button on:click={kValueCopyButton} class="k-buttons-action-copy" type="button" style="font-size: {2 * pixelSize - 6}px; width: {12 * pixelSize}px; height: {2.5 * pixelSize}px">Copy</button>
+            <div class="k-buttons-action-options" style="width: {50 * pixelSize}px; height: {2.5 * pixelSize}px">
+                <button class="k-buttons-action-options-tutorial" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+                <button class="k-buttons-action-options-select" type="button" style="font-size: {2 * pixelSize - 6}px; width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+                <button class="k-buttons-action-options-clear" type="button" style="width: {2.5 * pixelSize}px; height: {2.5 * pixelSize}px"></button>
+            </div>
         </div>
     </div>
 </div>
@@ -425,6 +499,15 @@
 <div class="canvas-error canvas-active canvas-success canvas-pixel-active" style="display: none;"></div>
 
 <style>
+    .container {
+		transform: rotate(var(--cRotateDeg));
+		padding: var(--cPadY) var(--cPadX);
+        transform-style: preserve-3D;
+        transform-origin: left top;
+		top: var(--cOffsetY);
+        position: absolute;
+    }
+
     .frame {
         position: relative;
         display: block;
@@ -620,6 +703,7 @@
         display: flex;
         transition: all 0.25s;
         right: var(--canvasButtonsPositionRight);
+        left: var(--canvasButtonsPositionLeft);
         top: var(--canvasButtonsPositionTop);
     }
 

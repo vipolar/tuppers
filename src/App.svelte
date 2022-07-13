@@ -2,56 +2,53 @@
 	//import Display from './Display.svelte'
 	import Canvas from './Canvas.svelte'
 
-	let pixelSize = 0;
+	let framePixelBoxShadow = "#ffffff";
+	let framePixelBackground = "#a7a7a7";
+	let canvasPixelBoxShadow = "#ffffff";
+	let canvasPixelBackground = "#999999";
+	let canvasPixelBoxShadowActive = "#8b0000";
+	let canvasPixelBackgroundActive = "#111111";
 
-	const windowWidth = window.innerWidth;
-	const windowHeight = window.innerHeight;
-	/* needs a tonne of work! */
-	if (windowWidth > windowHeight) {
-		let w = Math.floor(windowWidth / 116);
-		let h = Math.floor(windowHeight / 33);
-		pixelSize = w > h ? h : w;
-		pixelSize = pixelSize <= 16 ? pixelSize : 16;
-		pixelSize = pixelSize >= 4 ? pixelSize : 4;
-	} else { /* portrait mode */
-		let w = Math.floor(windowWidth / 33);
-		let h = Math.floor(windowHeight / 116)
-		pixelSize = w > h ? h : w;
-		pixelSize = pixelSize <= 16 ? pixelSize : 16;
-		pixelSize = pixelSize >= 4 ? pixelSize : 4;
-	}
+	/* canvas */
+	let canvasBoxShadow = "#000000";
+	let canvasBoxShadowError = "#ff0000";
+	let canvasBoxShadowActive = "#00ffdd";
+	let canvasBoxShadowSuccess = "#55ff00";
+
+	/* overlay */
+	let canvasBverlayGradientStart = "transparent";
+	let canvasOverlayGradientFinish = "#ffffff";
+	let canvasOverlayDecoreArrowLine = "#000000";
+	let canvasOverlayDecoreArrowLegend = "#000000";
+
+	/* buttons, inputs, etc. */
+	let kToolsBackground = "#dddddd";
+	let kToolsForeground = "#000000";
+	let kToolsOutline = "#0064c8";
+	let kToolsBorder = "#ff0000";
 </script>
 
-<!--
-<body style="height: 2000px; width: 2000px;">
-<Demo {pixelSize}></Demo>
+<body style="--frame-pixel-box-shadow: {framePixelBoxShadow};
+				--frame-pixel-background: {framePixelBackground};
+				--canvas-pixel-box-shadow: {canvasPixelBoxShadow};
+				--canvas-pixel-background: {canvasPixelBackground};
+				--canvas-pixel-box-shadow-active: {canvasPixelBoxShadowActive};
+				--canvas-pixel-background-active: {canvasPixelBackgroundActive};
+
+				--canvas-box-shadow: {canvasBoxShadow};
+				--canvas-box-shadow-error: {canvasBoxShadowError};
+				--canvas-box-shadow-active: {canvasBoxShadowActive};
+				--canvas-box-shadow-success: {canvasBoxShadowSuccess};
+
+				--canvas-overlay-gradient-start: {canvasBverlayGradientStart};
+				--canvas-overlay-gradient-finish: {canvasOverlayGradientFinish};
+				--canvas-overlay-decore-arrow-line: {canvasOverlayDecoreArrowLine};
+				--canvas-overlay-decore-arrow-legend: {canvasOverlayDecoreArrowLegend};
+
+				--k-tools-background: {kToolsBackground};
+				--k-tools-foreground: {kToolsForeground};
+				--k-tools-outline: {kToolsOutline};
+				--k-tools-border: {kToolsBorder};
+				">
+	<Canvas></Canvas>
 </body>
--->
-<div class="canvas" style="width: {116 * pixelSize}px; height: {34 * pixelSize}px; --portraitOffset: {116 * pixelSize}px">
-	<Canvas {pixelSize}></Canvas>
-</div>
-
-<style>
-	.canvas {
-        transform-style: preserve-3D;
-        transform-origin: left top;
-        position: absolute;
-        margin-right: auto;
-        margin-left: auto;
-        right: 0;
-        left: 0;
-    }
-
-	@media (orientation: landscape) {
-        .canvas {
-            align-self: center;
-        }
-    }
-
-    @media (orientation: portrait) {
-        .canvas {
-            transform: rotate(-90deg);
-            top: var(--portraitOffset);
-        }
-    }
-</style>

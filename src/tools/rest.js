@@ -1,3 +1,11 @@
+export function calcLBIR(w, h, min, max) {
+    let val = w > h ? h : w;
+    val = val <= max ? val : max;
+    val = val >= min ? val : min;
+
+    return val;
+}
+
 export function setCharAt(str, index, chr) {
     if(index > str.length - 1)
         return str;
